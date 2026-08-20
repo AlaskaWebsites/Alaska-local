@@ -1,0 +1,67 @@
+{
+  "slug": "barbearia-style",
+  "name": "Barbearia Style",
+  "description": "Cortes modernos e barba bem feita",
+  "logo": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=200&h=200&fit=crop",
+  "banner": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&h=400&fit=crop",
+  "phoneWhatsApp": "5511999999999",
+  "address": "Rua das Barbearias, 456 - Centro",
+  "currency": "BRL",
+  "deliveryFee": 0,
+  "minOrderValue": 0,
+  "template": "hub",
+  "links": [
+    {
+      "id": "link-1",
+      "title": "📱 Agendar Horário",
+      "url": "https://wa.me/5511999999999?text=Olá, gostaria de agendar um horário",
+      "icon": "calendar",
+      "color": "bg-green-500"
+    },
+    {
+      "id": "link-2", 
+      "title": "📍 Ver no Google Maps",
+      "url": "https://maps.google.com",
+      "icon": "map-pin",
+      "color": "bg-blue-500"
+    },
+    {
+      "id": "link-3",
+      "title": "📸 Instagram",
+      "url": "https://instagram.com",
+      "icon": "instagram",
+      "color": "bg-pink-500"
+    },
+    {
+      "id": "link-4",
+      "title": "💬 WhatsApp",
+      "url": "https://wa.me/5511999999999",
+      "icon": "message-circle",
+      "color": "bg-green-600"
+    }
+  ],
+  "openingHours": {
+    "open": "09:00",
+    "close": "19:00"
+  },
+  "services": [
+    {
+      "id": "service-1",
+      "name": "Corte Masculino",
+      "price": 35,
+      "description": "Corte moderno com lavagem inclusa"
+    },
+    {
+      "id": "service-2", 
+      "name": "Barba Modelada",
+      "price": 25,
+      "description": "Barba com toalha quente e modelagem"
+    },
+    {
+      "id": "service-3",
+      "name": "Corte + Barba",
+      "price": 50,
+      "description": "Combo completo com desconto"
+    }
+  ]
+}

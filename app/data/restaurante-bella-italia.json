@@ -1,0 +1,125 @@
+{
+  "slug": "restaurante-bella-italia",
+  "name": "Bella Italia",
+  "description": "Autêntica culinária italiana no coração da cidade",
+  "logo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=200&fit=crop",
+  "banner": "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=1200&h=400&fit=crop",
+  "phoneWhatsApp": "5511999999999",
+  "address": "Rua da Pizza, 789 - Centro",
+  "currency": "BRL",
+  "deliveryFee": 8,
+  "minOrderValue": 30,
+  "template": "menu",
+  "openingHours": {
+    "open": "18:00",
+    "close": "23:00"
+  },
+  "categories": [
+    {
+      "id": "cat-pizzas",
+      "name": "Pizzas",
+      "icon": "pizza",
+      "products": [
+        {
+          "id": "prod-margherita",
+          "name": "Pizza Margherita",
+          "description": "Molho de tomate, mussarela de búfala e manjericão fresco",
+          "price": 45,
+          "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "opt-tamanho",
+              "title": "Tamanho",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                {
+                  "id": "opt-pequena",
+                  "name": "Pequena (30cm)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "opt-media",
+                  "name": "Média (35cm)",
+                  "price": 10,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "opt-grande",
+                  "name": "Grande (40cm)",
+                  "price": 15,
+                  "maxQuantity": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "prod-calabresa",
+          "name": "Pizza Calabresa",
+          "description": "Molho de tomate, mussarela e calabresa defumada",
+          "price": 42,
+          "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=300&fit=crop",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "opt-tamanho-calabresa",
+              "title": "Tamanho",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                {
+                  "id": "opt-pequena-c",
+                  "name": "Pequena (30cm)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "opt-media-c",
+                  "name": "Média (35cm)",
+                  "price": 10,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "opt-grande-c",
+                  "name": "Grande (40cm)",
+                  "price": 15,
+                  "maxQuantity": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cat-massas",
+      "name": "Massas",
+      "icon": "utensils",
+      "products": [
+        {
+          "id": "prod-spaghetti",
+          "name": "Spaghetti Carbonara",
+          "description": "Spaghetti com bacon, ovo e parmesão",
+          "price": 38,
+          "image": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400&h=300&fit=crop",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "prod-lasanha",
+          "name": "Lasanha à Bolonhesa",
+          "description": "Camadas de massa, molho bolonhesa e bechamel",
+          "price": 42,
+          "image": "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=400&h=300&fit=crop",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    }
+  ]
+}

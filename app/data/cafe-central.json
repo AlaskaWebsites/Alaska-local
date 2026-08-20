@@ -1,0 +1,54 @@
+{
+  "slug": "cafe-central",
+  "name": "Café Central",
+  "description": "O melhor café da cidade, ambiente acolhedor",
+  "logo": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&h=200&fit=crop",
+  "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=400&fit=crop",
+  "phoneWhatsApp": "5511999999999",
+  "address": "Rua do Café, 123 - Centro",
+  "currency": "BRL",
+  "deliveryFee": 0,
+  "minOrderValue": 0,
+  "template": "hub",
+  "links": [
+    {
+      "id": "link-1",
+      "title": "☕ Cardápio Completo",
+      "url": "https://wa.me/5511999999999?text=Olá, gostaria de ver o cardápio",
+      "icon": "coffee",
+      "color": "bg-amber-600"
+    },
+    {
+      "id": "link-2",
+      "title": "📍 Localização",
+      "url": "https://maps.google.com",
+      "icon": "map-pin",
+      "color": "bg-blue-500"
+    },
+    {
+      "id": "link-3",
+      "title": "📸 Instagram",
+      "url": "https://instagram.com",
+      "icon": "instagram",
+      "color": "bg-pink-500"
+    },
+    {
+      "id": "link-4",
+      "title": "💬 WhatsApp",
+      "url": "https://wa.me/5511999999999",
+      "icon": "message-circle",
+      "color": "bg-green-600"
+    },
+    {
+      "id": "link-5",
+      "title": "⭐ Avaliações",
+      "url": "https://google.com/maps",
+      "icon": "star",
+      "color": "bg-yellow-500"
+    }
+  ],
+  "openingHours": {
+    "open": "07:00",
+    "close": "20:00"
+  }
+}

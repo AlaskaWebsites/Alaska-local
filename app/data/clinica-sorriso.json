@@ -1,0 +1,66 @@
+{
+  "slug": "clinica-sorriso",
+  "name": "Clínica Sorriso",
+  "description": "Odontologia moderna com foco em seu bem-estar",
+  "logo": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=200&h=200&fit=crop",
+  "banner": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=400&fit=crop",
+  "phoneWhatsApp": "5511999999999",
+  "address": "Rua da Saúde, 321 - Centro",
+  "currency": "BRL",
+  "deliveryFee": 0,
+  "minOrderValue": 0,
+  "template": "booking",
+  "links": [
+    {
+      "id": "link-1",
+      "title": "📱 Agendar Consulta",
+      "url": "https://wa.me/5511999999999?text=Olá, gostaria de agendar uma consulta",
+      "icon": "calendar",
+      "color": "bg-blue-500"
+    },
+    {
+      "id": "link-2",
+      "title": "📍 Ver no Google Maps",
+      "url": "https://maps.google.com",
+      "icon": "map-pin",
+      "color": "bg-green-500"
+    },
+    {
+      "id": "link-3",
+      "title": "💬 WhatsApp",
+      "url": "https://wa.me/5511999999999",
+      "icon": "message-circle",
+      "color": "bg-green-600"
+    }
+  ],
+  "services": [
+    {
+      "id": "service-1",
+      "name": "Consulta de Rotina",
+      "price": 80,
+      "description": "Avaliação geral da saúde bucal"
+    },
+    {
+      "id": "service-2",
+      "name": "Limpeza Profissional",
+      "price": 120,
+      "description": "Limpeza ultrassônica e polimento"
+    },
+    {
+      "id": "service-3",
+      "name": "Clareamento",
+      "price": 350,
+      "description": "Clareamento dental a laser"
+    },
+    {
+      "id": "service-4",
+      "name": "Canal",
+      "price": 450,
+      "description": "Tratamento de canal"
+    }
+  ],
+  "openingHours": {
+    "open": "08:00",
+    "close": "18:00"
+  }
+}
