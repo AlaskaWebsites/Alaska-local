@@ -1,0 +1,30 @@
+{
+  "name": "Alaska-local",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@lucide/vue": "^1.33.0",
+    "@vueuse/core": "^14.4.0",
+    "lucide-vue-next": "^1.0.0",
+    "nuxt": "^4.5.2",
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.14.0",
+    "@pinia/nuxt": "^1.0.2",
+    "@vue/test-utils": "^2.4.11",
+    "@vueuse/nuxt": "^14.4.0",
+    "pinia": "^4.0.3",
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.10"
+  }
+}
