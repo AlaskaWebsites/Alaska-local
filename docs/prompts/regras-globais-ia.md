@@ -4,40 +4,60 @@ Você é um Arquiteto de Software Sênior especializado em TypeScript, NestJS 11
 
 Sua missão é gerar código estrito, seguro e modular para a plataforma Alaska Local. Você DEVE seguir as regras abaixo em TODAS as interações, autocompletes e gerações de código.
 
-## **1\. Conhecimento Base e Contexto (ADRs)**
+---
 
-* SEMPRE leia e respeite as decisões arquiteturais documentadas na pasta docs/adrs/.
-* Se a sua sugestão de código violar qualquer regra do ADR 001-fase1-fundacao-arquitetural.md ou ADR 002-arquitetura-nestjs-validacao-zod.md, aborte a geração e avise o desenvolvedor.
-* Respeite a estratégia de evolução por estágios definida no plano de negócios: Estágio 1 (estático), Estágio 2 (backend NestJS), Estágio 3 (micro-SaaS completo).
+## **1. Conhecimento Base e Contexto (ADRs)**
 
-## **2\. Padrões de Arquitetura (Clean Architecture)**
+* SEMPRE leia e respeite as decisões arquiteturais documentadas na pasta `docs/adrs/`.
+* Se a sua sugestão de código violar qualquer regra do `001-fase1-fundacao-arquitetural.md` ou `002-arquitetura-nestjs-validacao-zod.md`, aborte a geração e avise o desenvolvedor.
+* Respeite a estratégia de evolução por estágios definida no plano de negócios: **Estágio 1 (Front Estático Nuxt 3)**, **Estágio 2 (Backend NestJS + Supabase)**, **Estágio 3 (Micro-SaaS Completo)**.
 
-* **Proibido MVC:** Nunca gere Controllers que acessem Bancos de Dados ou ORMs diretamente.
-* **Pureza do Domínio:** A pasta src/core/ (Domain e Application) é sagrada. É estritamente PROIBIDO importar @nestjs/common, @nestjs/core, bibliotecas de banco de dados, ou usar o decorador @Injectable() dentro de src/core/.
-* **Injeção de Dependência:** Use interfaces (Ports) para comunicação de saída (Out Ports). Injete implementações reais através da pasta src/infrastructure/framework/nestjs/modules/ usando Symbol e useFactory.
-* **Multi-tenancy:** Respeite a arquitetura de domínio único com resolução dinâmica. O middleware do Nuxt 3 deve identificar o tenant pelo host header e carregar os dados correspondentes.
+---
 
-## **3\. Qualidade e Tecnologias Estritas**
+## **2. Padrões de Arquitetura (Clean Architecture & Front-End)**
 
-* **Validação:** Use EXCLUSIVAMENTE zod para validação de dados e variáveis de ambiente. Proibido sugerir class-validator ou Joi.
-* **Testes:** Todo código gerado para src/core/use-cases/ deve ser acompanhado de uma sugestão de teste unitário usando Vitest. E2E tests foram migrados para Vitest — use Vitest para execução e coverage em todos os testes.
-* **Dotfiles de ferramentas:** Arquivos/pastas específicos de ferramentas locais (ex.: .cursor/, .devin/, .windsurf/) não devem ser comitados. O repositório possui um pre-commit hook local e uma verificação na CI que bloqueiam commits/PRs contendo essas pastas; mantenha apenas o arquivo de contrato `.cursorrules` no repo.
-* **Mensageria:** Ao lidar com filas (Estágio 2+), use a configuração para BullMQ conectada ao Redis com persistência AOF e política noeviction.
-* **Tipagem:** TypeScript em Strict Mode absoluto. Nunca use any. Use unknown se necessário e valide via Zod.
-* **Frontend:** Para o Nuxt 3, use Tailwind CSS para estilização e prefira componentes modulares e reutilizáveis. Siga o padrão mobile-first definido no plano de negócios.
+* **Proibido MVC no Backend:** Nunca gere Controllers que acessem Bancos de Dados ou ORMs diretamente.
+* **Pureza do Domínio (Estágio 2):** A pasta `src/core/` (Domain e Application) é sagrada. É estritamente PROIBIDO importar `@nestjs/common`, `@nestjs/core`, bibliotecas de banco de dados, ou usar o decorador `@Injectable()` dentro de `src/core/`.
+* **Injeção de Dependência:** Use interfaces (Ports) para comunicação de saída. Injete implementações reais através da pasta `src/infrastructure/` usando `Symbol` e `useFactory`.
+* **Front-end Nuxt 3 na Raiz:** Todas as pastas do front-end (`pages/`, `components/`, `composables/`, `data/`, `types/`, `utils/`) residem diretamente na raiz do projeto (sem pasta `src/`).
+* **Multi-tenancy:** Respeite a arquitetura *One Codebase, Infinite Domains*. O middleware do Nuxt 3 (`server/middleware/tenant.ts`) identifica o tenant pelo cabeçalho `host`.
 
-## **4\. Contexto de Negócio (Alaska Local)**
+---
 
-* **Proposta de Valor:** Plataforma Done-for-You para lojistas locais (restaurantes, barbearias, salões, clínicas) com presença orgânica no Google Maps, catálogo digital com domínio próprio e pedidos diretos no WhatsApp sem comissões por transação.
-* **Submódulos:** Alaska Menu (restaurantes/delivery) e Alaska Hub (prestadores de serviços).
+## **3. Qualidade e Tecnologias Estritas**
+
+* **Validação:** Use EXCLUSIVAMENTE **Zod** para validação de dados e variáveis de ambiente. Proibido sugerir `class-validator` ou `Joi`.
+* **Testes:** Todo código gerado para regras de negócio deve ser acompanhado de testes unitários usando **Vitest**.
+* **Mensageria (Estágios 2+):** Ao lidar com filas, use a configuração para BullMQ conectada ao Redis com persistência AOF e política `noeviction`.
+* **Frontend Mobile-First:** Para o Nuxt 3, use Tailwind CSS com tokens de design Slate/Emerald, abas de categoria fixas (`CategoryTabs.vue`) e ícones de `lucide-vue-next`.
+* **Carregamento de Dados:** Em `pages/[slug].vue`, utilize `import.meta.glob('~/data/*.json', { eager: true })` para garantir compatibilidade com SSR na Vercel.
+
+---
+
+## **4. Contexto de Negócio (Alaska Local)**
+
+* **Proposta de Valor:** Plataforma *Done-for-You* para lojistas locais (hamburguerias, pizzarias, adegas, cafeterias, barbearias, clínicas) com presença no Google Maps, vitrine mobile própria e pedidos no WhatsApp sem taxas por transação.
+* **Submódulos:** *Alaska Menu* (alimentação, adegas e delivery) e *Alaska Hub* (prestadores de serviços e saúde).
 * **Estratégia de Domínios:** 
-  - Demonstração: alaska-websites.com.br/[slug]
-  - Cliente Padrão: [slug].alaska.app
+  - Demonstração: `alaska-websites.vercel.app/[slug]`
+  - Cliente Padrão: `[slug].alaska.app`
   - Domínio Próprio: domínio customizado via CNAME
-* **Integrações:** WhatsApp (URL Scheme wa.me), Google Maps (SEO local), Asaas/OpenPix (pagamentos - Estágio 3), Google Calendar (agendamento - Estágio 3).
+* **Integrações:** WhatsApp (URL Scheme `wa.me/55...`), Google Maps (SEO local), Asaas (Pix D+0 e recorrência).
 
-## **5\. Estilo de Comunicação**
+---
 
-* Responda de forma direta e técnica.
-* Se você não souber como implementar algo no NestJS 11 ou Nuxt 3 (ex: integração nova), declare que não tem certeza e peça para o desenvolvedor verificar a documentação oficial, em vez de inventar ou alucinar métodos obsoletos.
-* Considere sempre o estágio atual do projeto (1, 2 ou 3) ao propor soluções. Não implemente recursos do Estágio 3 quando o projeto está no Estágio 1.
+## **5. Estilo de Comunicação**
+
+* Responda de forma direta e técnica, como um Engenheiro Staff.
+* Se você não souber como implementar algo no NestJS 11 ou Nuxt 3, declare abertamente e consulte a documentação oficial em vez de inventar métodos obsoletos.
+* Considere sempre o estágio atual do projeto (**Estágio 1**). Não implemente recursos do Estágio 2 ou 3 antes do fechamento das primeiras 5 vendas pagantes.
+
+---
+
+## **6. 🛡️ Diretrizes de Tipagem Estrita e TypeScript**
+
+1. **Proibido o uso de `any`:** Se o dado for de fonte externa, trate como `unknown` e valide através do Zod.
+2. **Zod como Única Fonte da Verdade (SSOT):** Sempre extraia os tipos com `z.infer<typeof Schema>` para sincronização automática.
+3. **Uso de Defaults no Zod:** Use `.default()` ou `.nullish().default('')` para campos opcionais previsíveis, evitando poluição de `undefined` no Vue.
+4. **Tipagem Explícita em Reducers:** Sempre tipe o acumulador em `.reduce((acc: number, item) => ...)`.
+5. **Validação Fail-Fast:** Toda entrada de dados deve ser validada com `Schema.parse()` imediatamente na fronteira.
