@@ -182,8 +182,9 @@
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-xl z-40">
       <div class="max-w-md mx-auto flex items-center justify-between">
         <div>
-          <span class="text-xs text-gray-500 block">{{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens'
-            }}</span>
+          <span class="text-xs text-gray-500 block">
+            {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
+          </span>
           <span class="text-lg font-bold text-gray-900">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true"
@@ -375,13 +376,24 @@ const { data: tenant } = await useAsyncData(`tenant-${slug}`, async () => {
   }
 })
 
-// 2. Estado de Produto Selecionado para Modal
+// 2. SEO & OpenGraph Dinâmico (Gera Preview Rico no WhatsApp ao Compartilhar o Link)
+useSeoMeta({
+  title: () => tenant.value ? `${tenant.value.name} — Cardápio Digital & Pedidos` : 'Alaska Local',
+  description: () => tenant.value?.description || 'Faça seu pedido online de forma rápida pelo WhatsApp.',
+  ogTitle: () => tenant.value?.name,
+  ogDescription: () => tenant.value?.description,
+  ogImage: () => tenant.value?.banner || tenant.value?.logo,
+  ogType: 'website',
+  twitterCard: 'summary_large_image'
+})
+
+// 3. Estado de Produto Selecionado para Modal
 const selectedProduct = ref<Product | null>(null)
 const selectedOptions = ref<Map<string, Option[]>>(new Map())
 const productObservation = ref('')
 const productQuantity = ref(1)
 
-// 3. Estado do Carrinho e Checkout
+// 4. Estado do Carrinho e Checkout
 interface CartItemState {
   product: Product
   quantity: number
@@ -406,7 +418,7 @@ const checkoutData = ref({
   }
 })
 
-// 4. Computeds de Controle
+// 5. Computeds de Controle
 const isOpen = computed(() => {
   if (!tenant.value?.openingHours) return true
   const now = new Date()
@@ -457,7 +469,7 @@ const isCheckoutValid = computed(() => {
   return true
 })
 
-// 5. Funções de Formatação
+// 6. Funções de Formatação
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -465,7 +477,7 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// 6. Manipulação do Modal de Produto
+// 7. Manipulação do Modal de Produto
 function openProductModal(product: Product) {
   if (!product.available) return
   selectedProduct.value = product
@@ -541,7 +553,7 @@ function removeCartItem(index: number) {
   }
 }
 
-// 7. Disparo Formatado para o WhatsApp
+// 8. Disparo Formatado para o WhatsApp
 function sendWhatsAppOrder() {
   if (!tenant.value || !isCheckoutValid.value) return
 
