@@ -132,7 +132,35 @@
           </div>
         </div>
 
-        <!-- 4. Alaska Hub: Barbearia & Estética -->
+        <!-- 4. Alaska Menu: Adega & Bebidas -->
+        <div
+          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
+          <div class="bg-purple-600 p-4 text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <Wine class="w-5 h-5" />
+              <h3 class="font-bold text-base">Alaska Menu</h3>
+            </div>
+            <span class="text-[10px] bg-purple-700/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Adega
+              24h</span>
+          </div>
+
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm">Adega & Distribuidora Prime</h4>
+              <p class="text-xs text-slate-500 mt-1">
+                Cervejas geladas em pack, combos de whisky e gin com gelo de sabor, carvão e conveniência rápida.
+              </p>
+            </div>
+
+            <NuxtLink to="/adega-prime"
+              class="w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all group-hover:bg-purple-700">
+              <span>Abrir Adega</span>
+              <ArrowRight class="w-4 h-4" />
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- 5. Alaska Hub: Barbearia & Estética -->
         <div
           class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
           <div class="bg-slate-800 p-4 text-white flex items-center justify-between">
@@ -160,9 +188,9 @@
           </div>
         </div>
 
-        <!-- 5. Alaska Hub: Saúde & Clínica -->
+        <!-- 6. Alaska Hub: Saúde & Clínica -->
         <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group md:col-span-2 lg:col-span-1">
+          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
           <div class="bg-cyan-600 p-4 text-white flex items-center justify-between">
             <div class="flex items-center gap-2">
               <Calendar class="w-5 h-5" />
@@ -221,6 +249,7 @@ import {
   Sparkles,
   Utensils,
   Coffee,
+  Wine,
   Scissors,
   Calendar,
   ArrowRight,
@@ -231,7 +260,7 @@ import {
 useHead({
   title: 'Alaska Local — Vitrines e Cardápios Digitais',
   meta: [
-    { name: 'description', content: 'Soluções digitais locais para food service, delivery e prestadores de serviços.' }
+    { name: 'description', content: 'Soluções digitais locais para food service, adegas, delivery e prestadores de serviços.' }
   ]
 })
 </script>
