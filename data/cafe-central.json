@@ -1,54 +1,111 @@
 {
   "slug": "cafe-central",
   "name": "Café Central",
-  "description": "O melhor café da cidade, ambiente acolhedor",
-  "logo": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&h=200&fit=crop",
-  "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=400&fit=crop",
-  "phoneWhatsApp": "5511999999999",
+  "description": "O melhor café da cidade, ambiente acolhedor e doces artesanais.",
+  "logo": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=200&h=200&fit=crop&q=80",
+  "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=400&fit=crop&q=80",
+  "phoneWhatsApp": "11988887777",
   "address": "Rua do Café, 123 - Centro",
-  "currency": "BRL",
-  "deliveryFee": 0,
-  "minOrderValue": 0,
-  "template": "hub",
-  "links": [
-    {
-      "id": "link-1",
-      "title": "☕ Cardápio Completo",
-      "url": "https://wa.me/5511999999999?text=Olá, gostaria de ver o cardápio",
-      "icon": "coffee",
-      "color": "bg-amber-600"
-    },
-    {
-      "id": "link-2",
-      "title": "📍 Localização",
-      "url": "https://maps.google.com",
-      "icon": "map-pin",
-      "color": "bg-blue-500"
-    },
-    {
-      "id": "link-3",
-      "title": "📸 Instagram",
-      "url": "https://instagram.com",
-      "icon": "instagram",
-      "color": "bg-pink-500"
-    },
-    {
-      "id": "link-4",
-      "title": "💬 WhatsApp",
-      "url": "https://wa.me/5511999999999",
-      "icon": "message-circle",
-      "color": "bg-green-600"
-    },
-    {
-      "id": "link-5",
-      "title": "⭐ Avaliações",
-      "url": "https://google.com/maps",
-      "icon": "star",
-      "color": "bg-yellow-500"
-    }
-  ],
+  "currency": "R$",
+  "deliveryFee": 4.00,
+  "minOrderValue": 15.00,
   "openingHours": {
     "open": "07:00",
     "close": "20:00"
-  }
+  },
+  "categories": [
+    {
+      "id": "cafes-especiais",
+      "name": "Cafés Especiais & Quentes",
+      "icon": "coffee",
+      "products": [
+        {
+          "id": "espresso-duplo",
+          "name": "Espresso Duplo Especial",
+          "description": "Café 100% arábica com notas florais e crema aveludada.",
+          "price": 9.00,
+          "image": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "cappuccino-italiano",
+          "name": "Cappuccino Italiano Cremoso",
+          "description": "Espresso, leite vaporizado com espuma densa e polvilhado com cacau 70%.",
+          "price": 14.50,
+          "image": "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "tipo-leite",
+              "title": "Tipo de Leite",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "leite-integral", "name": "Leite Integral", "price": 0, "maxQuantity": 1 },
+                { "id": "leite-aveia", "name": "Leite de Aveia (Vegano)", "price": 3.50, "maxQuantity": 1 },
+                { "id": "leite-desnatado", "name": "Leite Desnatado", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "iced-caramel-latte",
+          "name": "Iced Caramel Latte (Gelado)",
+          "description": "Espresso duplo, leite gelado, xarope artesanal de caramelo e gelo.",
+          "price": 17.00,
+          "image": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "confeitaria-salgados",
+      "name": "Doces & Salgados Artesanais",
+      "icon": "cake",
+      "products": [
+        {
+          "id": "croissant-manteiga",
+          "name": "Croissant Francês na Manteiga",
+          "description": "Massa folhada artesanal leve, crocante por fora e macia por dentro.",
+          "price": 12.00,
+          "image": "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "recheio-croissant",
+              "title": "Adicionar Recheio?",
+              "required": false,
+              "min": 0,
+              "max": 1,
+              "options": [
+                { "id": "queijo-presunto", "name": "Queijo & Presunto Gratinado", "price": 5.00, "maxQuantity": 1 },
+                { "id": "nutella", "name": "Nutella Pura", "price": 6.00, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cheesecake-frutas-vermelhas",
+          "name": "Cheesecake de Frutas Vermelhas",
+          "description": "Fatia generosa com base de biscoito amanteigado e calda artesanal de amoras e framboesas.",
+          "price": 18.90,
+          "image": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "pao-de-queijo-canastra",
+          "name": "Pão de Queijo da Canastra (Porção 6 un)",
+          "description": "Feito com legítimo queijo da Serra da Canastra, assado na hora.",
+          "price": 14.00,
+          "image": "https://images.unsplash.com/photo-1598142723725-46a412843224?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    }
+  ]
 }

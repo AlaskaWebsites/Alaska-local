@@ -1,67 +1,90 @@
 {
   "slug": "barbearia-style",
   "name": "Barbearia Style",
-  "description": "Cortes modernos e barba bem feita",
-  "logo": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=200&h=200&fit=crop",
-  "banner": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&h=400&fit=crop",
-  "phoneWhatsApp": "5511999999999",
+  "description": "Cortes modernos, barba com toalha quente, pigmentação e estética masculina.",
+  "logo": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200&h=200&fit=crop&q=80",
+  "banner": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&h=400&fit=crop&q=80",
+  "phoneWhatsApp": "11977776666",
   "address": "Rua das Barbearias, 456 - Centro",
-  "currency": "BRL",
+  "currency": "R$",
   "deliveryFee": 0,
   "minOrderValue": 0,
-  "template": "hub",
-  "links": [
-    {
-      "id": "link-1",
-      "title": "📱 Agendar Horário",
-      "url": "https://wa.me/5511999999999?text=Olá, gostaria de agendar um horário",
-      "icon": "calendar",
-      "color": "bg-green-500"
-    },
-    {
-      "id": "link-2", 
-      "title": "📍 Ver no Google Maps",
-      "url": "https://maps.google.com",
-      "icon": "map-pin",
-      "color": "bg-blue-500"
-    },
-    {
-      "id": "link-3",
-      "title": "📸 Instagram",
-      "url": "https://instagram.com",
-      "icon": "instagram",
-      "color": "bg-pink-500"
-    },
-    {
-      "id": "link-4",
-      "title": "💬 WhatsApp",
-      "url": "https://wa.me/5511999999999",
-      "icon": "message-circle",
-      "color": "bg-green-600"
-    }
-  ],
   "openingHours": {
     "open": "09:00",
     "close": "19:00"
   },
-  "services": [
+  "categories": [
     {
-      "id": "service-1",
-      "name": "Corte Masculino",
-      "price": 35,
-      "description": "Corte moderno com lavagem inclusa"
+      "id": "servicos-principais",
+      "name": "Cortes & Serviços",
+      "icon": "scissors",
+      "products": [
+        {
+          "id": "corte-degrade-navalhado",
+          "name": "Corte Degradê / Fade Navalhado",
+          "description": "Lavagem, corte moderno personalizado na tesoura/máquina, finalização com pomada e alinhamento.",
+          "price": 45.00,
+          "image": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "profissional-barbearia",
+              "title": "Barbeiro de Preferência",
+              "required": false,
+              "min": 0,
+              "max": 1,
+              "options": [
+                { "id": "barbeiro-qualquer", "name": "Qualquer Profissional Disponível", "price": 0, "maxQuantity": 1 },
+                { "id": "barbeiro-lucas", "name": "Lucas (Master)", "price": 0, "maxQuantity": 1 },
+                { "id": "barbeiro-marcos", "name": "Marcos (Fade Specialist)", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "barboterapia-completa",
+          "name": "Barba Terapia com Toalha Quente",
+          "description": "Esfoliação facial, toalha quente aromática, óleo hidratante e desenho de barba na navalha.",
+          "price": 35.00,
+          "image": "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "combo-corte-barba",
+          "name": "Combo VIP: Corte + Barba + Sobrancelha",
+          "description": "O pacote completo com desconto: Corte degradê, barboterapia relaxante e alinhamento de sobrancelha.",
+          "price": 70.00,
+          "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
     },
     {
-      "id": "service-2", 
-      "name": "Barba Modelada",
-      "price": 25,
-      "description": "Barba com toalha quente e modelagem"
-    },
-    {
-      "id": "service-3",
-      "name": "Corte + Barba",
-      "price": 50,
-      "description": "Combo completo com desconto"
+      "id": "tratamentos-quimica",
+      "name": "Química & Tratamentos",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "pigmentacao-barba-cabelo",
+          "name": "Pigmentação de Barba / Cabelo",
+          "description": "Disfarce de falhas e realce dos contornos com acabamento natural.",
+          "price": 25.00,
+          "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "selagem-alisamento",
+          "name": "Selagem / Alinhamento dos Fios",
+          "description": "Redução de volume e hidratação profunda para cabelos rebeldes.",
+          "price": 60.00,
+          "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
     }
   ]
 }

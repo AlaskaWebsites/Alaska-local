@@ -1,66 +1,90 @@
 {
   "slug": "clinica-sorriso",
   "name": "Clínica Sorriso",
-  "description": "Odontologia moderna com foco em seu bem-estar",
-  "logo": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=200&h=200&fit=crop",
-  "banner": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=400&fit=crop",
-  "phoneWhatsApp": "5511999999999",
+  "description": "Odontologia moderna com foco em estética, implantes e saúde bucal.",
+  "logo": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200&h=200&fit=crop&q=80",
+  "banner": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1200&h=400&fit=crop&q=80",
+  "phoneWhatsApp": "11966665555",
   "address": "Rua da Saúde, 321 - Centro",
-  "currency": "BRL",
+  "currency": "R$",
   "deliveryFee": 0,
   "minOrderValue": 0,
-  "template": "booking",
-  "links": [
-    {
-      "id": "link-1",
-      "title": "📱 Agendar Consulta",
-      "url": "https://wa.me/5511999999999?text=Olá, gostaria de agendar uma consulta",
-      "icon": "calendar",
-      "color": "bg-blue-500"
-    },
-    {
-      "id": "link-2",
-      "title": "📍 Ver no Google Maps",
-      "url": "https://maps.google.com",
-      "icon": "map-pin",
-      "color": "bg-green-500"
-    },
-    {
-      "id": "link-3",
-      "title": "💬 WhatsApp",
-      "url": "https://wa.me/5511999999999",
-      "icon": "message-circle",
-      "color": "bg-green-600"
-    }
-  ],
-  "services": [
-    {
-      "id": "service-1",
-      "name": "Consulta de Rotina",
-      "price": 80,
-      "description": "Avaliação geral da saúde bucal"
-    },
-    {
-      "id": "service-2",
-      "name": "Limpeza Profissional",
-      "price": 120,
-      "description": "Limpeza ultrassônica e polimento"
-    },
-    {
-      "id": "service-3",
-      "name": "Clareamento",
-      "price": 350,
-      "description": "Clareamento dental a laser"
-    },
-    {
-      "id": "service-4",
-      "name": "Canal",
-      "price": 450,
-      "description": "Tratamento de canal"
-    }
-  ],
   "openingHours": {
     "open": "08:00",
     "close": "18:00"
-  }
+  },
+  "categories": [
+    {
+      "id": "consultas-avaliacoes",
+      "name": "Consultas & Avaliações",
+      "icon": "stethoscope",
+      "products": [
+        {
+          "id": "avaliacao-odontologica",
+          "name": "Avaliação Inicial + Check-up Digital",
+          "description": "Exame clínico detalhado, diagnóstico preventivo e plano de tratamento personalizado.",
+          "price": 80.00,
+          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "periodo-preferencia",
+              "title": "Período de Preferência para Atendimento",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                {
+                  "id": "manha",
+                  "name": "Manhã (08h às 12h)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tarde",
+                  "name": "Tarde (13h às 18h)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "profilaxia-limpeza",
+          "name": "Limpeza Completa (Profilaxia + Remoção de Tártaro)",
+          "description": "Raspagem ultrassônica, polimento coronário e aplicação tópica de flúor.",
+          "price": 140.00,
+          "image": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "estetica-clareamento",
+      "name": "Estética & Clareamento",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "clareamento-caseiro",
+          "name": "Clareamento Dental Caseiro Supervisionado",
+          "description": "Moldeiras de silicone sob medida + kit de gel clareador para uso domiciliar com acompanhamento.",
+          "price": 380.00,
+          "image": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "restauracao-estetica",
+          "name": "Restauração Estética em Resina",
+          "description": "Reconstrução anatômica com resina composta de alta resistência na cor exata do dente.",
+          "price": 120.00,
+          "image": "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    }
+  ]
 }
