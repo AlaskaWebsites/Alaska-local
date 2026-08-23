@@ -3,9 +3,9 @@ import { describe, it, expect } from 'vitest'
 
 function parseTimeToMinutes(timeStr?: string): number {
   if (!timeStr) return 0
-  const parts = timeStr.split(':')
-  const hours = Number(parts[0] || 0)
-  const minutes = Number(parts || 0) // Corrigido parts
+  const [hStr, mStr] = timeStr.split(':')
+  const hours = parseInt(hStr || '0', 10)
+  const minutes = parseInt(mStr || '0', 10)
   return hours * 60 + minutes
 }
 
@@ -16,7 +16,7 @@ function checkIsOpen(now: Date, openingHours?: { open: string; close: string }):
   const openMin = parseTimeToMinutes(openingHours.open)
   const closeMin = parseTimeToMinutes(openingHours.close)
 
-  // Horário normal no mesmo dia (ex: 08:00 às 18:00)
+  // Horário normal diurno (ex: 08:00 às 18:00)
   if (closeMin >= openMin) {
     return currentMinutes >= openMin && currentMinutes <= closeMin
   }
