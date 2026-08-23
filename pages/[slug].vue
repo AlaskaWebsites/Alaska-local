@@ -1,84 +1,102 @@
 <!-- pages/[slug].vue -->
 <template>
   <div v-if="tenant" class="min-h-screen bg-slate-50 pb-32">
-    <!-- Header com Banner Full e Conteúdo Centralizado -->
-    <header class="relative bg-white border-b border-slate-100 shadow-xs">
-      <!-- Banner Full Width -->
-      <div class="h-44 md:h-52 w-full overflow-hidden bg-slate-900">
-        <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name"
-          class="w-full h-full object-cover opacity-90" />
-        <div v-else class="w-full h-full bg-gradient-to-r from-slate-800 to-slate-900"></div>
-      </div>
+    <!-- 1. Banner de Fundo (iFood Style) -->
+    <div class="relative h-48 sm:h-56 w-full overflow-hidden bg-slate-900">
+      <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name" class="w-full h-full object-cover opacity-90" />
+      <div v-else class="w-full h-full bg-gradient-to-r from-slate-800 to-slate-900"></div>
 
-      <!-- Container Centralizado (Alinhado com o Catálogo no Desktop e Mobile) -->
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 pb-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <!-- Botão Voltar para a Home -->
+      <NuxtLink to="/"
+        class="absolute top-4 left-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-xs transition-colors z-10"
+        title="Voltar ao início">
+        <ArrowLeft class="w-5 h-5" />
+      </NuxtLink>
+    </div>
 
-          <!-- Bloco Esquerdo: Logo + Informações -->
-          <div class="flex items-start gap-4">
-            <!-- Logo com Moldura -->
-            <div
-              class="relative -mt-10 md:-mt-12 shrink-0 z-10 w-20 h-20 md:w-24 md:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
-              <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
-              <div v-else
-                class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl">
-                {{ tenant.name.charAt(0) }}
-              </div>
-            </div>
+    <!-- 2. Card Flutuante de Identidade do Restaurante (iFood Style) -->
+    <header class="max-w-4xl mx-auto px-4 -mt-14 relative z-20">
+      <div
+        class="bg-white rounded-3xl p-5 shadow-floating border border-slate-100/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
 
-            <!-- Título, Status, Descrição e Detalhes -->
-            <div class="flex-1 min-w-0 pt-1.5 space-y-1.5">
-              <div class="flex flex-wrap items-center gap-2.5">
-                <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">{{ tenant.name }}</h1>
-                <span
-                  :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0">
-                  {{ isOpen ? '🟢 Aberto' : '🕒 Fechado' }}
-                </span>
-              </div>
+        <!-- Logo Circular Centralizado com Borda Branca -->
+        <div
+          class="relative -mt-12 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-soft overflow-hidden bg-white">
+          <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
+          <div v-else
+            class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl">
+            {{ tenant.name.charAt(0) }}
+          </div>
+        </div>
 
-              <p v-if="tenant.description"
-                class="text-xs sm:text-sm text-slate-500 line-clamp-2 max-w-2xl leading-relaxed">
+        <!-- Dados do Estabelecimento -->
+        <div class="flex-1 min-w-0 space-y-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">
+                {{ tenant.name }}
+              </h1>
+              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-500 line-clamp-1 mt-0.5">
                 {{ tenant.description }}
               </p>
+            </div>
 
-              <!-- Metadados Agrupados (Horário, Mínimo e Endereço juntos) -->
-              <div class="flex flex-wrap items-center gap-y-1.5 gap-x-3 text-xs text-slate-500 pt-0.5">
-                <div v-if="tenant.openingHours" class="flex items-center gap-1.5">
-                  <Clock class="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{{ tenant.openingHours.open }} - {{ tenant.openingHours.close }}</span>
-                </div>
-                <div v-if="tenant.minOrderValue" class="flex items-center gap-1.5">
-                  <span class="text-slate-300">•</span>
-                  <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-slate-300">•</span>
-                  <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span class="truncate max-w-xs sm:max-w-md">{{ tenant.address || 'Atendimento Local' }}</span>
-                </div>
-              </div>
+            <!-- Status Aberto/Fechado -->
+            <span
+              :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'"
+              class="inline-flex items-center self-center sm:self-auto px-3 py-1 rounded-full text-xs font-bold border shrink-0">
+              {{ isOpen ? '🟢 Aberto agora' : '🕒 Fechado' }}
+            </span>
+          </div>
+
+          <!-- Linha de Metadados iFood (Avaliação, Tempo, Frete e Mínimo) -->
+          <div
+            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1.5 gap-x-3 text-xs text-slate-600 pt-1">
+            <!-- Avaliação Prova Social -->
+            <div class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
+              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span>4.9</span>
+              <span class="text-slate-400 font-normal">(Google Maps)</span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <span>🛵 Entrega • 30-45 min</span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <span class="text-slate-300">•</span>
+              <span>Taxa: {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}</span>
+            </div>
+
+            <div v-if="tenant.minOrderValue" class="flex items-center gap-1">
+              <span class="text-slate-300">•</span>
+              <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
             </div>
           </div>
 
-          <!-- Bloco Direito: Botão Falar no WhatsApp -->
-          <div class="shrink-0 flex items-center md:self-center pt-2 md:pt-0">
+          <!-- Endereço e Botão WhatsApp -->
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+            <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-500 truncate">
+              <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span class="truncate">{{ tenant.address || 'Atendimento e entrega local' }}</span>
+            </div>
+
             <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
-              class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-colors border border-emerald-200/80 shadow-2xs">
-              <Phone class="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Falar no WhatsApp</span>
+              class="inline-flex items-center justify-center gap-1.5 text-emerald-600 font-bold hover:underline">
+              <Phone class="w-3.5 h-3.5" />
+              <span>Dúvidas no WhatsApp</span>
             </a>
           </div>
-
         </div>
       </div>
     </header>
 
-    <!-- Barra Fixa de Categorias com Navegação Rápida (Centralizada) -->
-    <CategoryTabs :categories="tenant.categories" />
+    <!-- 3. Barra Fixa de Categorias (Chips Horizontais) -->
+    <CategoryTabs :categories="tenant.categories" class="mt-4" />
 
-    <!-- Catálogo de Produtos (Centralizado em 2 Colunas no Desktop) -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-8">
+    <!-- 4. Catálogo de Produtos -->
+    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-8">
       <section v-for="category in tenant.categories" :key="category.id" :id="category.id"
         class="space-y-3 scroll-mt-20">
         <div class="flex items-center gap-2">
@@ -117,14 +135,13 @@
       </section>
     </main>
 
-    <!-- Modal de Customização do Produto (Full Screen no Mobile, Pop-up no Desktop) -->
+    <!-- Modal de Customização do Produto (Tela Cheia no Mobile, Modal no Desktop) -->
     <div v-if="selectedProduct"
       class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
       <div
         class="bg-white w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-2xl sm:shadow-floating"
         @click.stop>
-        <!-- Header Modal -->
         <div class="relative h-56 sm:h-48 w-full bg-slate-100 shrink-0">
           <img v-if="selectedProduct.image" :src="selectedProduct.image" :alt="selectedProduct.name"
             class="w-full h-full object-cover" />
@@ -135,7 +152,6 @@
           </button>
         </div>
 
-        <!-- Conteúdo Rolável -->
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
           <div>
             <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
@@ -211,7 +227,7 @@
     <!-- Barra Fixa Inferior com Resumo da Sacola -->
     <div v-if="cart.items.length > 0"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-floating z-40">
-      <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
           <span class="text-xs text-slate-500 block">
             {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
@@ -226,7 +242,7 @@
       </div>
     </div>
 
-    <!-- Drawer de Finalização do Carrinho -->
+    <!-- Drawer de Finalização do Carrinho (Tela Cheia no Mobile, Modal no Desktop) -->
     <div v-if="isCartDrawerOpen"
       class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
@@ -378,7 +394,7 @@
 </template>
 
 <script setup lang="ts">
-import { Phone, MapPin, Clock, X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-vue-next'
+import { Phone, MapPin, Clock, X, ShoppingCart, Plus, Minus, Trash2, Star, ArrowLeft } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
 
