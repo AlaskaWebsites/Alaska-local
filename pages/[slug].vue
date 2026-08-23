@@ -18,8 +18,7 @@
     <header class="max-w-4xl mx-auto px-4 -mt-14 relative z-20">
       <div
         class="bg-white rounded-3xl p-5 shadow-floating border border-slate-100/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
-
-        <!-- Logo Circular Centralizado com Borda Branca -->
+        <!-- Logo Circular Centralizado -->
         <div
           class="relative -mt-12 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-soft overflow-hidden bg-white">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
@@ -49,10 +48,9 @@
             </span>
           </div>
 
-          <!-- Linha de Metadados iFood (Avaliação, Tempo, Frete e Mínimo) -->
+          <!-- Linha de Metadados iFood -->
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1.5 gap-x-3 text-xs text-slate-600 pt-1">
-            <!-- Avaliação Prova Social -->
             <div class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
               <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>4.9</span>
@@ -74,7 +72,7 @@
             </div>
           </div>
 
-          <!-- Endereço e Botão WhatsApp -->
+          <!-- Endereço e WhatsApp -->
           <div
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
             <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-500 truncate">
@@ -92,10 +90,75 @@
       </div>
     </header>
 
-    <!-- 3. Barra Fixa de Categorias (Chips Horizontais) -->
-    <CategoryTabs :categories="tenant.categories" class="mt-4" />
+    <!-- 3. Banner de Vantagem / Promoção (iFood Style) -->
+    <div class="max-w-4xl mx-auto px-4 mt-4">
+      <div
+        class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-200/60 rounded-2xl p-3 flex items-center justify-between text-xs text-emerald-800 font-medium">
+        <div class="flex items-center gap-2">
+          <span class="text-base">🛵</span>
+          <span>Peça pelo canal oficial com <strong>preço original de balcão</strong> e sem taxas extras!</span>
+        </div>
+        <span class="text-emerald-700 font-bold shrink-0 text-[11px] hidden sm:inline">Aproveite ›</span>
+      </div>
+    </div>
 
-    <!-- 4. Catálogo de Produtos -->
+    <!-- 4. Seção Destaques & Mais Pedidos com Controles de Scroll no Desktop -->
+    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-6 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+          <Flame class="w-4 h-4 text-amber-500 fill-amber-500" />
+          <span>Destaques & Mais Pedidos</span>
+        </h2>
+
+        <!-- Mobile: Texto / Desktop: Botões de Navegação com Mouse -->
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs text-slate-400 font-medium sm:hidden">Deslize para o lado ›</span>
+
+          <div class="hidden sm:flex items-center gap-1.5">
+            <button @click="scrollCarousel('left')"
+              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all"
+              title="Anterior" aria-label="Rolar para esquerda">
+              <ChevronLeft class="w-4 h-4" />
+            </button>
+            <button @click="scrollCarousel('right')"
+              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all"
+              title="Próximo" aria-label="Rolar para direita">
+              <ChevronRight class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carrossel com Scroll Horizontal Suave e Ref para o Mouse -->
+      <div ref="carouselRef"
+        class="flex gap-3.5 overflow-x-auto no-scrollbar scroll-smooth pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
+          class="shrink-0 w-36 sm:w-44 bg-white rounded-2xl p-2.5 border border-slate-100 shadow-xs active:scale-[0.98] transition-transform cursor-pointer hover:border-slate-200 hover:shadow-sm flex flex-col justify-between group">
+          <div class="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden bg-slate-100 mb-2">
+            <img v-if="product.image" :src="product.image" :alt="product.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <span
+              class="absolute top-1.5 left-1.5 bg-amber-500/95 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-2xs">
+              Mais pedido
+            </span>
+          </div>
+
+          <div class="space-y-1">
+            <span class="font-extrabold text-sm text-slate-900 block">
+              {{ formatCurrency(product.price) }}
+            </span>
+            <h3 class="font-bold text-xs text-slate-800 line-clamp-2 leading-tight">
+              {{ product.name }}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Barra Fixa de Categorias (Chips Horizontais) -->
+    <CategoryTabs :categories="tenant.categories" class="mt-6" />
+
+    <!-- 6. Catálogo Completo de Produtos (2 Colunas no Desktop) -->
     <main class="max-w-4xl mx-auto px-4 mt-6 space-y-8">
       <section v-for="category in tenant.categories" :key="category.id" :id="category.id"
         class="space-y-3 scroll-mt-20">
@@ -242,7 +305,7 @@
       </div>
     </div>
 
-    <!-- Drawer de Finalização do Carrinho (Tela Cheia no Mobile, Modal no Desktop) -->
+    <!-- Drawer de Finalização do Carrinho -->
     <div v-if="isCartDrawerOpen"
       class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
@@ -394,7 +457,21 @@
 </template>
 
 <script setup lang="ts">
-import { Phone, MapPin, Clock, X, ShoppingCart, Plus, Minus, Trash2, Star, ArrowLeft } from 'lucide-vue-next'
+import {
+  Phone,
+  MapPin,
+  Clock,
+  X,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  Star,
+  ArrowLeft,
+  Flame,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
 
@@ -466,7 +543,28 @@ const checkoutData = ref({
   }
 })
 
-// 5. Computeds
+// 5. Computeds & Destaques Dinâmicos
+const featuredProducts = computed(() => {
+  if (!tenant.value) return []
+  const all: Product[] = []
+  tenant.value.categories.forEach(category => {
+    all.push(...category.products.filter(p => p.available))
+  })
+  return all.slice(0, 6)
+})
+
+// Controle de Rolagem do Carrossel com Mouse no Desktop
+const carouselRef = ref<HTMLElement | null>(null)
+
+function scrollCarousel(direction: 'left' | 'right') {
+  if (!carouselRef.value) return
+  const scrollAmount = 350
+  carouselRef.value.scrollBy({
+    left: direction === 'left' ? -scrollAmount : scrollAmount,
+    behavior: 'smooth'
+  })
+}
+
 function parseTimeToMinutes(timeStr?: string): number {
   if (!timeStr) return 0
   const [hStr, mStr] = timeStr.split(':')
