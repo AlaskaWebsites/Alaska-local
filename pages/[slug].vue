@@ -129,7 +129,7 @@
         </div>
       </div>
 
-      <!-- Carrossel com Scroll Horizontal Suave e Ref para o Mouse -->
+      <!-- Carrossel com Scroll Horizontal Suave -->
       <div ref="carouselRef"
         class="flex gap-3.5 overflow-x-auto no-scrollbar scroll-smooth pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
@@ -198,96 +198,129 @@
       </section>
     </main>
 
-    <!-- Modal de Customização do Produto (Tela Cheia no Mobile, Modal no Desktop) -->
+    <!-- 7. Modal de Customização do Produto (iFood Pro Style) -->
     <div v-if="selectedProduct"
       class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
       <div
-        class="bg-white w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-2xl sm:shadow-floating"
+        class="bg-white w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:shadow-floating"
         @click.stop>
-        <div class="relative h-56 sm:h-48 w-full bg-slate-100 shrink-0">
+        <!-- Header da Foto com Badge do Restaurante e Botão Fechar -->
+        <div class="relative h-60 sm:h-52 w-full bg-slate-100 shrink-0">
           <img v-if="selectedProduct.image" :src="selectedProduct.image" :alt="selectedProduct.name"
             class="w-full h-full object-cover" />
+
+          <!-- Botão Fechar Flutuante -->
           <button @click="closeProductModal"
             class="absolute top-4 right-4 bg-slate-900/60 hover:bg-slate-900/80 text-white p-2 rounded-full transition-colors backdrop-blur-xs z-10 shadow-md"
             aria-label="Fechar">
             <X class="w-5 h-5" />
           </button>
-        </div>
 
-        <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
-          <div>
-            <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
-            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">{{ selectedProduct.description }}</p>
-            <span class="text-lg font-extrabold text-slate-900 mt-2 block">
-              {{ formatCurrency(selectedProduct.price) }}
+          <!-- Badge do Restaurante sobre a foto (iFood Style) -->
+          <div
+            class="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-100 text-[11px]">
+            <img v-if="tenant.logo" :src="tenant.logo" class="w-4 h-4 rounded-full object-cover" />
+            <span class="font-bold text-slate-800 truncate max-w-[130px]">{{ tenant.name }}</span>
+            <span class="text-slate-300">•</span>
+            <span class="flex items-center gap-0.5 font-bold text-slate-900">
+              <Star class="w-3 h-3 fill-amber-400 text-amber-400" /> 4.9
             </span>
           </div>
+        </div>
 
-          <!-- Grupos de Opcionais -->
-          <div v-for="group in selectedProduct.optionGroups" :key="group.id"
-            class="border-t border-slate-100 pt-4 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <h4 class="font-bold text-xs text-slate-900">
-                {{ group.title }}
-                <span v-if="group.required" class="text-red-500 font-bold">*</span>
-              </h4>
-              <span class="text-[11px] text-slate-400 font-medium">
-                {{ group.max === 1 ? 'Escolha 1' : `Até ${group.max}` }}
+        <!-- Conteúdo com Rolagem Ampla -->
+        <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-5">
+          <!-- Título, Descrição e Preço -->
+          <div class="space-y-1.5">
+            <h3 class="text-xl font-extrabold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">{{ selectedProduct.description }}</p>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-xs font-semibold text-slate-400">Serve até 1 ou 2 pessoas</span>
+              <span class="text-xl font-black text-slate-900">
+                {{ formatCurrency(selectedProduct.price) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Grupos de Opcionais (Cabeçalho iFood Style) -->
+          <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2">
+            <!-- Faixa de Destaque do Grupo (iFood Style) -->
+            <div
+              class="bg-slate-50 border-y border-slate-100/80 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-xs sm:text-sm text-slate-900">{{ group.title }}</h4>
+                <p class="text-[11px] text-slate-500 font-medium">
+                  {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
+                </p>
+              </div>
+
+              <!-- Badge Obrigatório / Opcional -->
+              <span v-if="group.required"
+                class="bg-slate-900 text-white text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+                OBRIGATÓRIO
+              </span>
+              <span v-else
+                class="bg-slate-200/80 text-slate-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+                OPCIONAL
               </span>
             </div>
 
-            <div class="space-y-2">
+            <!-- Lista de Opções com Controles no Lado Direito (Thumb-Friendly) -->
+            <div class="space-y-2 pt-1">
               <label v-for="option in group.options" :key="option.id"
-                class="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
-                :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-50/40' : ''">
-                <div class="flex items-center gap-2.5">
-                  <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
-                    :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
-                    class="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500" />
-                  <span class="text-xs font-medium text-slate-800">{{ option.name }}</span>
+                class="flex items-center justify-between p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-50/40 shadow-2xs' : ''">
+                <!-- Nome e Preço Adicional à Esquerda -->
+                <div class="flex flex-col pr-3">
+                  <span class="text-xs sm:text-sm font-medium text-slate-800">{{ option.name }}</span>
+                  <span v-if="option.price > 0" class="text-xs font-bold text-emerald-700 mt-0.5">
+                    + {{ formatCurrency(option.price) }}
+                  </span>
                 </div>
-                <span v-if="option.price > 0" class="text-xs font-bold text-slate-700">
-                  + {{ formatCurrency(option.price) }}
-                </span>
+
+                <!-- Input Rádio ou Checkbox à Direita (iFood Style) -->
+                <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
+                  :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
+                  class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 shrink-0 cursor-pointer" />
               </label>
             </div>
           </div>
 
           <!-- Observação -->
-          <div class="border-t border-slate-100 pt-4">
+          <div class="pt-3 border-t border-slate-100">
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Alguma observação?</label>
             <textarea v-model="productObservation" rows="2"
               placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
-              class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+              class="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none bg-slate-50/50"></textarea>
           </div>
         </div>
 
-        <!-- Footer Modal -->
+        <!-- Footer do Modal (Sempre Visível na Base) -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white flex items-center gap-3 shrink-0 shadow-lg">
-          <div class="flex items-center border border-slate-200 rounded-xl p-1 shrink-0 bg-slate-50">
+          <div class="flex items-center border border-slate-200 rounded-2xl p-1 shrink-0 bg-slate-50">
             <button @click="productQuantity > 1 ? productQuantity-- : null"
-              class="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform"
+              class="p-2 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform"
               :disabled="productQuantity <= 1">
               <Minus class="w-4 h-4" />
             </button>
-            <span class="w-8 text-center font-bold text-sm text-slate-900">{{ productQuantity }}</span>
+            <span class="w-8 text-center font-extrabold text-sm text-slate-900">{{ productQuantity }}</span>
             <button @click="productQuantity++"
-              class="p-1.5 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform">
+              class="p-2 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform">
               <Plus class="w-4 h-4" />
             </button>
           </div>
 
           <button @click="addToCart" :disabled="!isProductConfigValid"
-            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-between">
+            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-between">
             <span>Adicionar</span>
-            <span class="font-extrabold text-sm">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
+            <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Barra Fixa Inferior com Resumo da Sacola -->
+    <!-- 8. Barra Fixa Inferior com Resumo da Sacola -->
     <div v-if="cart.items.length > 0"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-floating z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
@@ -298,19 +331,19 @@
           <span class="text-lg font-extrabold text-slate-900">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true"
-          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold px-5 py-3 rounded-xl shadow-md flex items-center gap-2 transition-all text-xs">
+          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold px-5 py-3 rounded-2xl shadow-md flex items-center gap-2 transition-all text-xs">
           <ShoppingCart class="w-4 h-4" />
           <span>Ver Sacola</span>
         </button>
       </div>
     </div>
 
-    <!-- Drawer de Finalização do Carrinho -->
+    <!-- 9. Drawer de Finalização do Carrinho -->
     <div v-if="isCartDrawerOpen"
       class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
       <div
-        class="bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-2xl sm:shadow-floating"
+        class="bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:shadow-floating"
         @click.stop>
         <div class="p-4 border-b border-slate-100 flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -326,7 +359,7 @@
           <!-- Itens -->
           <div class="space-y-2.5">
             <div v-for="(item, index) in cart.items" :key="index"
-              class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-start justify-between gap-2">
+              class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-start justify-between gap-2">
               <div class="flex-1">
                 <div class="flex items-center gap-1.5">
                   <span class="font-bold text-emerald-700">{{ item.quantity }}x</span>
@@ -357,12 +390,12 @@
             <div class="grid grid-cols-2 gap-2">
               <button @click="checkoutData.deliveryType = 'delivery'"
                 :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                class="py-2.5 rounded-xl transition-colors">
+                class="py-2.5 rounded-2xl transition-colors">
                 🛵 Entrega (Delivery)
               </button>
               <button @click="checkoutData.deliveryType = 'pickup'"
                 :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                class="py-2.5 rounded-xl transition-colors">
+                class="py-2.5 rounded-2xl transition-colors">
                 🛍️ Retirada no Balcão
               </button>
             </div>
@@ -373,7 +406,7 @@
             <div>
               <label class="block font-bold text-slate-700 mb-1">Seu Nome *</label>
               <input v-model="checkoutData.customerName" type="text" placeholder="Ex: João da Silva"
-                class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
             </div>
 
             <div v-if="checkoutData.deliveryType === 'delivery'" class="space-y-2">
@@ -381,12 +414,12 @@
                 <div class="col-span-2">
                   <label class="block font-bold text-slate-700 mb-1">Rua / Logradouro *</label>
                   <input v-model="checkoutData.address.street" type="text" placeholder="Ex: Av. Brasil"
-                    class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
                 </div>
                 <div>
                   <label class="block font-bold text-slate-700 mb-1">Número *</label>
                   <input v-model="checkoutData.address.number" type="text" placeholder="123"
-                    class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
                 </div>
               </div>
 
@@ -394,12 +427,12 @@
                 <div>
                   <label class="block font-bold text-slate-700 mb-1">Bairro *</label>
                   <input v-model="checkoutData.address.neighborhood" type="text" placeholder="Centro"
-                    class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
                 </div>
                 <div>
                   <label class="block font-bold text-slate-700 mb-1">Complemento</label>
                   <input v-model="checkoutData.address.complement" type="text" placeholder="Apto 42"
-                    class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
                 </div>
               </div>
             </div>
@@ -408,7 +441,7 @@
             <div class="pt-1">
               <label class="block font-bold text-slate-700 mb-1">Forma de Pagamento *</label>
               <select v-model="checkoutData.paymentMethod"
-                class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white font-medium">
+                class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white font-medium">
                 <option value="Pix">Pix (Chave informada no pedido)</option>
                 <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
                 <option value="Cartão de Débito">Cartão de Débito (na entrega)</option>
@@ -418,7 +451,7 @@
               <div v-if="checkoutData.paymentMethod === 'Dinheiro'" class="mt-2">
                 <label class="block font-bold text-slate-700 mb-1">Precisa de troco para quanto?</label>
                 <input v-model.number="checkoutData.changeFor" type="number" placeholder="Ex: 50 ou 100"
-                  class="w-full p-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                  class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
               </div>
             </div>
           </div>
@@ -443,7 +476,7 @@
         <!-- Botão WhatsApp -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 text-xs transition-all">
+            class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 text-xs transition-all">
             <span>Enviar Pedido pelo WhatsApp</span>
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path
