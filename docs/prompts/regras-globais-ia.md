@@ -19,15 +19,18 @@ Sua missão é gerar código estrito, seguro e modular para a plataforma Alaska 
 * **Proibido MVC no Backend:** Nunca gere Controllers que acessem Bancos de Dados ou ORMs diretamente.
 * **Pureza do Domínio (Estágio 2):** A pasta `src/core/` (Domain e Application) é sagrada. É estritamente PROIBIDO importar `@nestjs/common`, `@nestjs/core`, bibliotecas de banco de dados, ou usar o decorador `@Injectable()` dentro de `src/core/`.
 * **Injeção de Dependência:** Use interfaces (Ports) para comunicação de saída. Injete implementações reais através da pasta `src/infrastructure/` usando `Symbol` e `useFactory`.
-* **Front-end Nuxt 3 na Raiz:** Todas as pastas do front-end (`pages/`, `components/`, `composables/`, `data/`, `types/`, `utils/`) residem diretamente na raiz do projeto (sem pasta `src/`).
+* **Front-end Nuxt 3 na Raiz:** Todas as pastas do front-end (`pages/`, `components/`, `composables/`, `data/`, `types/`, `utils/`, `tests/`) residem diretamente na raiz do projeto (sem pasta `src/`).
 * **Multi-tenancy:** Respeite a arquitetura *One Codebase, Infinite Domains*. O middleware do Nuxt 3 (`server/middleware/tenant.ts`) identifica o tenant pelo cabeçalho `host`.
 
 ---
 
-## **3. Qualidade e Tecnologias Estritas**
+## **3. Qualidade, Tecnologias & Política Estrita de Testes**
 
 * **Validação:** Use EXCLUSIVAMENTE **Zod** para validação de dados e variáveis de ambiente. Proibido sugerir `class-validator` ou `Joi`.
-* **Testes:** Todo código gerado para regras de negócio deve ser acompanhado de testes unitários usando **Vitest**.
+* **🧪 Política de Testes Unitários (Unit-First):**
+  - **Foco Exclusivo em Testes Unitários:** Por hora, o projeto adota estritamente testes unitários rápidos e isolados com **Vitest** (sem complexidade ou sobrecarga de testes E2E no Estágio 1).
+  - **Cobertura Obrigatória do Core de Negócio:** Qualquer funcionalidade nova, regra de cálculo ou alteração que toque no core (cálculos de subtotal/frete no carrinho, mutações de estado, gerador de payload do WhatsApp, schemas Zod e cálculos de horários de funcionamento) **DEVE obrigatoriamente** ser acompanhada do respectivo teste unitário em `tests/units/*.test.ts`.
+  - **Pragmatismo sem Burocracia:** Ajustes puramente visuais de UI (Tailwind CSS, classes cosméticas, ícones, textos estáticos de layout) **NÃO exigem** testes unitários.
 * **Mensageria (Estágios 2+):** Ao lidar com filas, use a configuração para BullMQ conectada ao Redis com persistência AOF e política `noeviction`.
 * **Frontend Mobile-First:** Para o Nuxt 3, use Tailwind CSS com tokens de design Slate/Emerald, abas de categoria fixas (`CategoryTabs.vue`) e ícones de `lucide-vue-next`.
 * **Carregamento de Dados:** Em `pages/[slug].vue`, utilize `import.meta.glob('~/data/*.json', { eager: true })` para garantir compatibilidade com SSR na Vercel.

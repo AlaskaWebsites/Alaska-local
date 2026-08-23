@@ -1,62 +1,84 @@
 <!-- pages/[slug].vue -->
 <template>
   <div v-if="tenant" class="min-h-screen bg-slate-50 pb-32">
-    <!-- Header com Banner e Logo -->
-    <header class="relative bg-white border-b border-slate-100">
-      <div class="h-44 w-full overflow-hidden bg-slate-900">
+    <!-- Header com Banner Full e Conteúdo Centralizado -->
+    <header class="relative bg-white border-b border-slate-100 shadow-xs">
+      <!-- Banner Full Width -->
+      <div class="h-44 md:h-52 w-full overflow-hidden bg-slate-900">
         <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name"
-          class="w-full h-full object-cover opacity-85" />
+          class="w-full h-full object-cover opacity-90" />
         <div v-else class="w-full h-full bg-gradient-to-r from-slate-800 to-slate-900"></div>
       </div>
 
-      <div class="px-4 pb-4 pt-3 flex items-start gap-3.5">
-        <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name"
-          class="w-16 h-16 rounded-2xl border-2 border-white shadow-soft -mt-8 object-cover bg-white shrink-0" />
-        <div class="flex-1">
-          <div class="flex items-center justify-between">
-            <h1 class="font-bold text-lg text-slate-900 leading-tight">{{ tenant.name }}</h1>
-            <span
-              :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'"
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border shrink-0">
-              {{ isOpen ? '🟢 Aberto' : '🕒 Fechado' }}
-            </span>
-          </div>
-          <p v-if="tenant.description" class="text-xs text-slate-500 line-clamp-1 mt-0.5">
-            {{ tenant.description }}
-          </p>
+      <!-- Container Centralizado (Alinhado com o Catálogo no Desktop e Mobile) -->
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 pb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
 
-          <div class="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-slate-500 mt-2">
-            <div v-if="tenant.openingHours" class="flex items-center gap-1">
-              <Clock class="w-3.5 h-3.5 text-slate-400" />
-              <span>{{ tenant.openingHours.open }} - {{ tenant.openingHours.close }}</span>
+          <!-- Bloco Esquerdo: Logo + Informações -->
+          <div class="flex items-start gap-4">
+            <!-- Logo com Moldura -->
+            <div
+              class="relative -mt-10 md:-mt-12 shrink-0 z-10 w-20 h-20 md:w-24 md:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
+              <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
+              <div v-else
+                class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl">
+                {{ tenant.name.charAt(0) }}
+              </div>
             </div>
-            <div v-if="tenant.minOrderValue" class="flex items-center gap-1">
-              <span>• Pedido mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
+
+            <!-- Título, Status, Descrição e Detalhes -->
+            <div class="flex-1 min-w-0 pt-1.5 space-y-1.5">
+              <div class="flex flex-wrap items-center gap-2.5">
+                <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">{{ tenant.name }}</h1>
+                <span
+                  :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border shrink-0">
+                  {{ isOpen ? '🟢 Aberto' : '🕒 Fechado' }}
+                </span>
+              </div>
+
+              <p v-if="tenant.description"
+                class="text-xs sm:text-sm text-slate-500 line-clamp-2 max-w-2xl leading-relaxed">
+                {{ tenant.description }}
+              </p>
+
+              <!-- Metadados Agrupados (Horário, Mínimo e Endereço juntos) -->
+              <div class="flex flex-wrap items-center gap-y-1.5 gap-x-3 text-xs text-slate-500 pt-0.5">
+                <div v-if="tenant.openingHours" class="flex items-center gap-1.5">
+                  <Clock class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{{ tenant.openingHours.open }} - {{ tenant.openingHours.close }}</span>
+                </div>
+                <div v-if="tenant.minOrderValue" class="flex items-center gap-1.5">
+                  <span class="text-slate-300">•</span>
+                  <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-slate-300">•</span>
+                  <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span class="truncate max-w-xs sm:max-w-md">{{ tenant.address || 'Atendimento Local' }}</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Info de Endereço e WhatsApp -->
-      <div
-        class="px-4 py-2.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
-        <div class="flex items-center gap-1.5 truncate max-w-[70%]">
-          <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span class="truncate">{{ tenant.address || 'Atendimento Local' }}</span>
+          <!-- Bloco Direito: Botão Falar no WhatsApp -->
+          <div class="shrink-0 flex items-center md:self-center pt-2 md:pt-0">
+            <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
+              class="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-4 py-2.5 rounded-xl text-xs transition-colors border border-emerald-200/80 shadow-2xs">
+              <Phone class="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Falar no WhatsApp</span>
+            </a>
+          </div>
+
         </div>
-        <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
-          class="flex items-center gap-1 text-emerald-600 font-bold hover:underline">
-          <Phone class="w-3.5 h-3.5" />
-          <span>WhatsApp</span>
-        </a>
       </div>
     </header>
 
-    <!-- Barra Fixa de Categorias com Navegação Rápida -->
+    <!-- Barra Fixa de Categorias com Navegação Rápida (Centralizada) -->
     <CategoryTabs :categories="tenant.categories" />
 
-    <!-- Catálogo de Produtos -->
-    <main class="container mx-auto px-4 mt-6 space-y-8">
+    <!-- Catálogo de Produtos (Centralizado em 2 Colunas no Desktop) -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-8">
       <section v-for="category in tenant.categories" :key="category.id" :id="category.id"
         class="space-y-3 scroll-mt-20">
         <div class="flex items-center gap-2">
@@ -64,9 +86,9 @@
           <h2 class="text-base font-bold text-slate-900 tracking-tight">{{ category.name }}</h2>
         </div>
 
-        <div class="grid grid-cols-1 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <div v-for="product in category.products" :key="product.id" @click="openProductModal(product)"
-            class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-xs flex items-center justify-between gap-3.5 active:scale-[0.99] transition-transform cursor-pointer hover:border-slate-200">
+            class="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs flex items-center justify-between gap-3.5 active:scale-[0.99] transition-transform cursor-pointer hover:border-slate-200 hover:shadow-sm">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <h3 class="font-bold text-slate-900 text-sm truncate">{{ product.name }}</h3>
@@ -95,47 +117,50 @@
       </section>
     </main>
 
-    <!-- Modal de Customização do Produto -->
+    <!-- Modal de Customização do Produto (Full Screen no Mobile, Pop-up no Desktop) -->
     <div v-if="selectedProduct"
-      class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center z-50 p-0 sm:p-4 animate-in fade-in duration-200"
+      class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
       <div
-        class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-lg max-h-[88vh] flex flex-col overflow-hidden shadow-floating animate-in slide-in-from-bottom duration-200"
+        class="bg-white w-full h-full sm:h-auto sm:max-h-[85vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-2xl sm:shadow-floating"
         @click.stop>
-        <div class="relative h-44 w-full bg-slate-100 shrink-0">
+        <!-- Header Modal -->
+        <div class="relative h-56 sm:h-48 w-full bg-slate-100 shrink-0">
           <img v-if="selectedProduct.image" :src="selectedProduct.image" :alt="selectedProduct.name"
             class="w-full h-full object-cover" />
           <button @click="closeProductModal"
-            class="absolute top-3 right-3 bg-slate-900/50 text-white hover:bg-slate-900/70 p-1.5 rounded-full transition-colors">
+            class="absolute top-4 right-4 bg-slate-900/60 hover:bg-slate-900/80 text-white p-2 rounded-full transition-colors backdrop-blur-xs z-10 shadow-md"
+            aria-label="Fechar">
             <X class="w-5 h-5" />
           </button>
         </div>
 
-        <div class="p-4 overflow-y-auto flex-1 space-y-4">
+        <!-- Conteúdo Rolável -->
+        <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
           <div>
-            <h3 class="text-lg font-bold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
-            <p class="text-xs text-slate-500 mt-1 leading-relaxed">{{ selectedProduct.description }}</p>
-            <span class="text-base font-extrabold text-slate-900 mt-1.5 block">
+            <h3 class="text-xl font-bold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">{{ selectedProduct.description }}</p>
+            <span class="text-lg font-extrabold text-slate-900 mt-2 block">
               {{ formatCurrency(selectedProduct.price) }}
             </span>
           </div>
 
-          <!-- Opcionais -->
+          <!-- Grupos de Opcionais -->
           <div v-for="group in selectedProduct.optionGroups" :key="group.id"
-            class="border-t border-slate-100 pt-3.5 space-y-2">
+            class="border-t border-slate-100 pt-4 space-y-2.5">
             <div class="flex items-center justify-between">
               <h4 class="font-bold text-xs text-slate-900">
                 {{ group.title }}
                 <span v-if="group.required" class="text-red-500 font-bold">*</span>
               </h4>
-              <span class="text-[11px] text-slate-400">
+              <span class="text-[11px] text-slate-400 font-medium">
                 {{ group.max === 1 ? 'Escolha 1' : `Até ${group.max}` }}
               </span>
             </div>
 
-            <div class="space-y-1.5">
+            <div class="space-y-2">
               <label v-for="option in group.options" :key="option.id"
-                class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
+                class="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
                 :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-50/40' : ''">
                 <div class="flex items-center gap-2.5">
                   <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
@@ -151,30 +176,33 @@
           </div>
 
           <!-- Observação -->
-          <div class="border-t border-slate-100 pt-3.5">
+          <div class="border-t border-slate-100 pt-4">
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Alguma observação?</label>
-            <textarea v-model="productObservation" rows="2" placeholder="Ex: Sem cebola, carne ao ponto, etc."
-              class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
+            <textarea v-model="productObservation" rows="2"
+              placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
+              class="w-full text-xs p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"></textarea>
           </div>
         </div>
 
-        <!-- Footer do Modal -->
-        <div class="p-4 border-t border-slate-100 bg-white flex items-center gap-3">
-          <div class="flex items-center border border-slate-200 rounded-xl p-1 shrink-0">
+        <!-- Footer Modal -->
+        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white flex items-center gap-3 shrink-0 shadow-lg">
+          <div class="flex items-center border border-slate-200 rounded-xl p-1 shrink-0 bg-slate-50">
             <button @click="productQuantity > 1 ? productQuantity-- : null"
-              class="p-1 text-slate-500 hover:text-slate-900 disabled:opacity-30" :disabled="productQuantity <= 1">
+              class="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform"
+              :disabled="productQuantity <= 1">
               <Minus class="w-4 h-4" />
             </button>
             <span class="w-8 text-center font-bold text-sm text-slate-900">{{ productQuantity }}</span>
-            <button @click="productQuantity++" class="p-1 text-slate-500 hover:text-slate-900">
+            <button @click="productQuantity++"
+              class="p-1.5 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform">
               <Plus class="w-4 h-4" />
             </button>
           </div>
 
           <button @click="addToCart" :disabled="!isProductConfigValid"
-            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-50 text-white py-3 px-4 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-between">
+            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-between">
             <span>Adicionar</span>
-            <span>{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
+            <span class="font-extrabold text-sm">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
           </button>
         </div>
       </div>
@@ -183,10 +211,11 @@
     <!-- Barra Fixa Inferior com Resumo da Sacola -->
     <div v-if="cart.items.length > 0"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-floating z-40">
-      <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="max-w-5xl mx-auto flex items-center justify-between">
         <div>
-          <span class="text-xs text-slate-500 block">{{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens'
-          }}</span>
+          <span class="text-xs text-slate-500 block">
+            {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
+          </span>
           <span class="text-lg font-extrabold text-slate-900">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true"
@@ -199,10 +228,10 @@
 
     <!-- Drawer de Finalização do Carrinho -->
     <div v-if="isCartDrawerOpen"
-      class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
+      class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
       <div
-        class="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden shadow-floating"
+        class="bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-2xl sm:shadow-floating"
         @click.stop>
         <div class="p-4 border-b border-slate-100 flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -333,7 +362,7 @@
         </div>
 
         <!-- Botão WhatsApp -->
-        <div class="p-4 border-t border-slate-100 bg-white">
+        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
             class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2 text-xs transition-all">
             <span>Enviar Pedido pelo WhatsApp</span>
@@ -362,13 +391,11 @@ const { data: tenant } = await useAsyncData(`tenant-${slug}`, async () => {
     const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: any }>
     const fileKeys = Object.keys(files)
 
-    // 1. Tenta encontrar pelo slug exato
     const matchedKey = fileKeys.find(key => key.endsWith(`/${slug}.json`))
     if (matchedKey && files[matchedKey]) {
       return TenantSchema.parse(files[matchedKey].default)
     }
 
-    // 2. Fallback para hamburgueria-x ou a primeira demo disponível
     const fallbackKey = fileKeys.find(key => key.includes('hamburgueria-x.json')) || fileKeys[0]
     if (fallbackKey && files[fallbackKey]) {
       return TenantSchema.parse(files[fallbackKey].default)
@@ -426,9 +453,9 @@ const checkoutData = ref({
 // 5. Computeds
 function parseTimeToMinutes(timeStr?: string): number {
   if (!timeStr) return 0
-  const parts = timeStr.split(':')
-  const hours = Number(parts[0] || 0)
-  const minutes = Number(parts || 0)
+  const [hStr, mStr] = timeStr.split(':')
+  const hours = parseInt(hStr || '0', 10)
+  const minutes = parseInt(mStr || '0', 10)
   return hours * 60 + minutes
 }
 
@@ -442,12 +469,10 @@ const isOpen = computed(() => {
   const openMin = parseTimeToMinutes(hours.open)
   const closeMin = parseTimeToMinutes(hours.close)
 
-  // Horário normal no mesmo dia (ex: 08:00 às 18:00 ou 18:00 às 23:30)
   if (closeMin >= openMin) {
     return currentMinutes >= openMin && currentMinutes <= closeMin
   }
 
-  // Horário noturno que passa da meia-noite (ex: 18:00 às 02:00)
   return currentMinutes >= openMin || currentMinutes <= closeMin
 })
 
@@ -503,7 +528,6 @@ function openProductModal(product: Product) {
   productObservation.value = ''
   productQuantity.value = 1
 
-  // Pré-selecionar opções obrigatórias simples de 1 escolha
   product.optionGroups?.forEach(group => {
     const firstOption = group.options[0]
     if (group.required && group.max === 1 && firstOption) {
