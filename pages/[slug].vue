@@ -2,6 +2,14 @@
 <template>
   <div v-if="tenant"
     class="min-h-screen bg-slate-950 text-slate-100 pb-36 selection:bg-emerald-500 selection:text-slate-950">
+
+    <!-- Toast Feedback de Link Copiado -->
+    <div v-if="isCopied" role="status" aria-live="polite"
+      class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2 rounded-full font-black text-xs shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-300 border border-emerald-400">
+      <Check class="w-4 h-4 text-slate-950" aria-hidden="true" />
+      <span>Link do cardápio copiado!</span>
+    </div>
+
     <!-- 1. Banner de Fundo -->
     <div class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900">
       <img v-if="tenant.banner" :src="tenant.banner" :alt="`Banner de ${tenant.name}`"
@@ -14,6 +22,15 @@
         aria-label="Voltar para a página inicial com todas as lojas" title="Voltar ao início">
         <ArrowLeft class="w-5 h-5" aria-hidden="true" />
       </NuxtLink>
+
+      <!-- Botão Nativo de Compartilhar (Web Share API / Copiar Link) -->
+      <button @click="shareStore"
+        class="absolute top-4 right-4 bg-slate-950/70 hover:bg-slate-900 text-white p-2.5 rounded-full backdrop-blur-md border border-slate-700/60 transition-all z-10 shadow-lg cursor-pointer flex items-center justify-center"
+        :aria-label="isCopied ? 'Link copiado para a área de transferência' : 'Compartilhar cardápio da loja'"
+        :title="isCopied ? 'Link copiado!' : 'Compartilhar'">
+        <Check v-if="isCopied" class="w-5 h-5 text-emerald-400 animate-in zoom-in-50 duration-200" aria-hidden="true" />
+        <Share2 v-else class="w-5 h-5 text-white" aria-hidden="true" />
+      </button>
     </div>
 
     <!-- 2. Card Flutuante de Identidade do Restaurante -->
@@ -556,7 +573,9 @@ import {
   ArrowLeft,
   Flame,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Share2,
+  Check
 } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
@@ -598,11 +617,50 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 3. Estados dos Modais
+// 3. Estados dos Modais & Compartilhamento
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
 const isCartDrawerOpen = ref(false)
+const isCopied = ref(false)
+
+// Botão de Compartilhar (Web Share API com Fallback de Copiar Link)
+const shareStore = async () => {
+  if (!import.meta.client || !tenant.value) return
+
+  // Se estiver testando em localhost, usa o link público da Vercel para abrir no WhatsApp
+  const shareUrl =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? `https://alaskalocal.vercel.app/${tenant.value.slug}`
+      : window.location.href
+
+  const shareData = {
+    title: tenant.value.name,
+    text: tenant.value.description || `Confira o cardápio e faça seu pedido na ${tenant.value.name}!`,
+    url: shareUrl,
+  }
+
+  // Tenta a Web Share API nativa do celular
+  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    try {
+      await navigator.share(shareData)
+      return
+    } catch (err: any) {
+      if (err.name === 'AbortError') return
+    }
+  }
+
+  // Fallback para Desktop: Copiar link de produção para a Área de Transferência
+  try {
+    await navigator.clipboard.writeText(shareUrl)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2500)
+  } catch (err) {
+    console.error('Erro ao copiar link:', err)
+  }
+}
 
 // Trava Global de Scroll
 const isAnyOverlayOpen = computed(() => {
@@ -694,9 +752,9 @@ function scrollCarousel(direction: 'left' | 'right') {
 
 function parseTimeToMinutes(timeStr?: string): number {
   if (!timeStr) return 0
-  const [hStr, mStr] = timeStr.split(':')
-  const hours = parseInt(hStr || '0', 10)
-  const minutes = parseInt(mStr || '0', 10)
+  const parts = timeStr.split(':')
+  const hours = parseInt(parts.at(0) || '0', 10)
+  const minutes = parseInt(parts.at(1) || '0', 10)
   return hours * 60 + minutes
 }
 
