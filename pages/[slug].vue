@@ -15,11 +15,11 @@
       </NuxtLink>
     </div>
 
-    <!-- 2. Card Flutuante de Identidade do Restaurante (Dark Style) -->
+    <!-- 2. Card Flutuante de Identidade do Restaurante -->
     <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
       <div
         class="bg-slate-900/95 backdrop-blur-md rounded-3xl p-5 shadow-2xl border border-slate-800 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
-        <!-- Logo Circular Centralizado -->
+        <!-- Logo Circular -->
         <div
           class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-slate-800 shadow-xl overflow-hidden bg-slate-950">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
@@ -49,10 +49,10 @@
             </span>
           </div>
 
-          <!-- Linha de Metadados iFood -->
+          <!-- Linha de Metadados -->
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-3 text-xs text-slate-400 pt-1">
-            <!-- Selo Clicável de Avaliações -->
+            <!-- Selo de Avaliações -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true"
               class="flex items-center gap-1 font-bold text-slate-200 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
               title="Ver detalhes das avaliações">
@@ -62,7 +62,7 @@
               <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" />
             </button>
 
-            <!-- Selo Clicável de Informações -->
+            <!-- Selo de Informações -->
             <button @click="isInfoOpen = true"
               class="flex items-center gap-1 font-medium text-slate-300 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
               title="Ver informações da loja">
@@ -116,7 +116,7 @@
       </div>
     </div>
 
-    <!-- 4. Seção Destaques & Mais Pedidos com Rolagem Suave -->
+    <!-- 4. Seção Destaques & Mais Pedidos -->
     <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -212,7 +212,7 @@
       </section>
     </main>
 
-    <!-- 7. Modal de Customização do Produto (Dark Style) -->
+    <!-- 7. Modal de Customização do Produto -->
     <div v-if="selectedProduct"
       class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
@@ -260,7 +260,6 @@
 
           <!-- Grupos de Opcionais -->
           <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2">
-            <!-- Faixa de Destaque -->
             <div
               class="bg-slate-950 border-y border-slate-800 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
               <div>
@@ -509,7 +508,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, toRef, onMounted, onUnmounted } from 'vue'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import {
   Phone,
   MapPin,
@@ -569,9 +569,49 @@ useSeoMeta({
 // 3. Estados dos Modais
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
-
-// 4. Estado de Produto Selecionado
 const selectedProduct = ref<Product | null>(null)
+const isCartDrawerOpen = ref(false)
+
+// Trava Global de Scroll: Trava se QUALQUER modal ou gaveta estiver aberta
+const isAnyOverlayOpen = computed(() => {
+  return (
+    !!selectedProduct.value ||
+    isCartDrawerOpen.value ||
+    isReviewsOpen.value ||
+    isInfoOpen.value
+  )
+})
+
+useBodyScrollLock(isAnyOverlayOpen)
+
+// Fechamento com Tecla ESC no Desktop para qualquer modal ativo
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    if (selectedProduct.value) {
+      closeProductModal()
+    } else if (isCartDrawerOpen.value) {
+      isCartDrawerOpen.value = false
+    } else if (isReviewsOpen.value) {
+      isReviewsOpen.value = false
+    } else if (isInfoOpen.value) {
+      isInfoOpen.value = false
+    }
+  }
+}
+
+onMounted(() => {
+  if (import.meta.client) {
+    window.addEventListener('keydown', handleKeyDown)
+  }
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener('keydown', handleKeyDown)
+  }
+})
+
+// 4. Estado de Customização do Produto
 const selectedOptions = ref<Map<string, Option[]>>(new Map())
 const productObservation = ref('')
 const productQuantity = ref(1)
@@ -586,7 +626,6 @@ interface CartItemState {
 }
 
 const cart = ref<{ items: CartItemState[] }>({ items: [] })
-const isCartDrawerOpen = ref(false)
 
 const checkoutData = ref({
   deliveryType: 'delivery' as 'delivery' | 'pickup',
