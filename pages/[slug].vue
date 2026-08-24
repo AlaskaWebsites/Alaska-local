@@ -51,7 +51,17 @@
           <!-- Linha de Metadados iFood -->
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1.5 gap-x-3 text-xs text-slate-600 pt-1">
-            <div class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
+            <!-- Selo Clicável de Avaliações -->
+            <button v-if="tenant.reviews" @click="isReviewsOpen = true"
+              class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-0.5 rounded-md cursor-pointer transition-all shadow-2xs"
+              title="Ver detalhes das avaliações">
+              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span>{{ tenant.reviews.score.toFixed(1) }}</span>
+              <span class="text-slate-500 font-medium">({{ tenant.reviews.totalReviews }})</span>
+              <ChevronRight class="w-3 h-3 text-slate-400 ml-0.5" />
+            </button>
+
+            <div v-else class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
               <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>4.9</span>
               <span class="text-slate-400 font-normal">(Google Maps)</span>
@@ -110,18 +120,18 @@
           <span>Destaques & Mais Pedidos</span>
         </h2>
 
-        <!-- Mobile: Texto / Desktop: Botões de Navegação com Mouse -->
+        <!-- Mobile: Texto / Deskinset-block-start: Botões de Navegação com Mouse -->
         <div class="flex items-center gap-1.5">
           <span class="text-xs text-slate-400 font-medium sm:hidden">Deslize para o lado ›</span>
 
           <div class="hidden sm:flex items-center gap-1.5">
             <button @click="scrollCarousel('left')"
-              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all"
+              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all cursor-pointer"
               title="Anterior" aria-label="Rolar para esquerda">
               <ChevronLeft class="w-4 h-4" />
             </button>
             <button @click="scrollCarousel('right')"
-              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all"
+              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all cursor-pointer"
               title="Próximo" aria-label="Rolar para direita">
               <ChevronRight class="w-4 h-4" />
             </button>
@@ -212,7 +222,7 @@
 
           <!-- Botão Fechar Flutuante -->
           <button @click="closeProductModal"
-            class="absolute top-4 right-4 bg-slate-900/60 hover:bg-slate-900/80 text-white p-2 rounded-full transition-colors backdrop-blur-xs z-10 shadow-md"
+            class="absolute top-4 right-4 bg-slate-900/60 hover:bg-slate-900/80 text-white p-2 rounded-full transition-colors backdrop-blur-xs z-10 shadow-md cursor-pointer"
             aria-label="Fechar">
             <X class="w-5 h-5" />
           </button>
@@ -224,7 +234,8 @@
             <span class="font-bold text-slate-800 truncate max-w-[130px]">{{ tenant.name }}</span>
             <span class="text-slate-300">•</span>
             <span class="flex items-center gap-0.5 font-bold text-slate-900">
-              <Star class="w-3 h-3 fill-amber-400 text-amber-400" /> 4.9
+              <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
+              {{ tenant.reviews ? tenant.reviews.score.toFixed(1) : '4.9' }}
             </span>
           </div>
         </div>
@@ -266,12 +277,11 @@
               </span>
             </div>
 
-            <!-- Lista de Opções com Controles no Lado Direito (Thumb-Friendly) -->
+            <!-- Lista de Opções -->
             <div class="space-y-2 pt-1">
               <label v-for="option in group.options" :key="option.id"
                 class="flex items-center justify-between p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
                 :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-50/40 shadow-2xs' : ''">
-                <!-- Nome e Preço Adicional à Esquerda -->
                 <div class="flex flex-col pr-3">
                   <span class="text-xs sm:text-sm font-medium text-slate-800">{{ option.name }}</span>
                   <span v-if="option.price > 0" class="text-xs font-bold text-emerald-700 mt-0.5">
@@ -279,7 +289,6 @@
                   </span>
                 </div>
 
-                <!-- Input Rádio ou Checkbox à Direita (iFood Style) -->
                 <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
                   :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
                   class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 shrink-0 cursor-pointer" />
@@ -296,23 +305,23 @@
           </div>
         </div>
 
-        <!-- Footer do Modal (Sempre Visível na Base) -->
+        <!-- Footer do Modal -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white flex items-center gap-3 shrink-0 shadow-lg">
           <div class="flex items-center border border-slate-200 rounded-2xl p-1 shrink-0 bg-slate-50">
             <button @click="productQuantity > 1 ? productQuantity-- : null"
-              class="p-2 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform"
+              class="p-2 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
               :disabled="productQuantity <= 1">
               <Minus class="w-4 h-4" />
             </button>
             <span class="w-8 text-center font-extrabold text-sm text-slate-900">{{ productQuantity }}</span>
             <button @click="productQuantity++"
-              class="p-2 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform">
+              class="p-2 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform cursor-pointer">
               <Plus class="w-4 h-4" />
             </button>
           </div>
 
           <button @click="addToCart" :disabled="!isProductConfigValid"
-            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-between">
+            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-between cursor-pointer">
             <span>Adicionar</span>
             <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
           </button>
@@ -331,7 +340,7 @@
           <span class="text-lg font-extrabold text-slate-900">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true"
-          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold px-5 py-3 rounded-2xl shadow-md flex items-center gap-2 transition-all text-xs">
+          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold px-5 py-3 rounded-2xl shadow-md flex items-center gap-2 transition-all text-xs cursor-pointer">
           <ShoppingCart class="w-4 h-4" />
           <span>Ver Sacola</span>
         </button>
@@ -350,7 +359,7 @@
             <ShoppingCart class="w-5 h-5 text-emerald-600" />
             <h3 class="font-bold text-base text-slate-900">Sua Sacola</h3>
           </div>
-          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-slate-600">
+          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">
             <X class="w-5 h-5" />
           </button>
         </div>
@@ -378,7 +387,8 @@
                 </span>
               </div>
 
-              <button @click="removeCartItem(index)" class="text-red-500 hover:text-red-700 p-1" title="Remover item">
+              <button @click="removeCartItem(index)" class="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+                title="Remover item">
                 <Trash2 class="w-4 h-4" />
               </button>
             </div>
@@ -390,12 +400,12 @@
             <div class="grid grid-cols-2 gap-2">
               <button @click="checkoutData.deliveryType = 'delivery'"
                 :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                class="py-2.5 rounded-2xl transition-colors">
+                class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛵 Entrega (Delivery)
               </button>
               <button @click="checkoutData.deliveryType = 'pickup'"
                 :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
-                class="py-2.5 rounded-2xl transition-colors">
+                class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛍️ Retirada no Balcão
               </button>
             </div>
@@ -476,7 +486,7 @@
         <!-- Botão WhatsApp -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 text-xs transition-all">
+            class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 text-xs transition-all cursor-pointer">
             <span>Enviar Pedido pelo WhatsApp</span>
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -486,10 +496,15 @@
         </div>
       </div>
     </div>
+
+    <!-- 10. Modal de Avaliações da Loja (iFood Style) -->
+    <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :is-open="isReviewsOpen"
+      @close="isReviewsOpen = false" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import {
   Phone,
   MapPin,
@@ -545,13 +560,16 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 3. Estado de Produto Selecionado
+// 3. Estado de Avaliações
+const isReviewsOpen = ref(false)
+
+// 4. Estado de Produto Selecionado
 const selectedProduct = ref<Product | null>(null)
 const selectedOptions = ref<Map<string, Option[]>>(new Map())
 const productObservation = ref('')
 const productQuantity = ref(1)
 
-// 4. Estado do Carrinho
+// 5. Estado do Carrinho
 interface CartItemState {
   product: Product
   quantity: number
@@ -576,7 +594,7 @@ const checkoutData = ref({
   }
 })
 
-// 5. Computeds & Destaques Dinâmicos
+// 6. Computeds & Destaques Dinâmicos
 const featuredProducts = computed(() => {
   if (!tenant.value) return []
   const all: Product[] = []
@@ -592,10 +610,8 @@ const carouselRef = ref<HTMLElement | null>(null)
 function scrollCarousel(direction: 'left' | 'right') {
   if (!carouselRef.value) return
   const scrollAmount = 350
-  carouselRef.value.scrollBy({
-    left: direction === 'left' ? -scrollAmount : scrollAmount,
-    behavior: 'smooth'
-  })
+  const delta = direction === 'left' ? -scrollAmount : scrollAmount
+  carouselRef.value.scrollLeft += delta
 }
 
 function parseTimeToMinutes(timeStr?: string): number {
@@ -659,7 +675,7 @@ const isCheckoutValid = computed(() => {
   return true
 })
 
-// 6. Formatação
+// 7. Formatação
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -667,7 +683,7 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// 7. Modal
+// 8. Modal do Produto
 function openProductModal(product: Product) {
   if (!product.available) return
   selectedProduct.value = product
@@ -743,7 +759,7 @@ function removeCartItem(index: number) {
   }
 }
 
-// 8. Despacho WhatsApp
+// 9. Despacho WhatsApp
 function sendWhatsAppOrder() {
   if (!tenant.value || !isCheckoutValid.value) return
 

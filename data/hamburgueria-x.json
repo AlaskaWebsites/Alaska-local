@@ -261,5 +261,72 @@
         }
       ]
     }
-  ]
+  ],
+  "reviews": {
+    "score": 4.9,
+    "totalReviews": 486,
+    "serviceQuality": {
+      "level": 3,
+      "experienceLabel": "Experiência excelente",
+      "description": "Com base nos pedidos dos últimos 3 meses, a loja oferece um serviço de alta qualidade e rapidez.",
+      "badges": [
+        {
+          "icon": "star",
+          "label": "Avaliações excelentes",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Poucas reclamações",
+          "status": "warning"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Zero ou poucos cancelamentos",
+          "status": "success"
+        }
+      ]
+    },
+    "distribution": {
+      "5": 88,
+      "4": 8,
+      "3": 2,
+      "2": 1,
+      "1": 1
+    },
+    "comments": [
+      {
+        "id": "rev-1",
+        "author": "Aline M.",
+        "rating": 5,
+        "date": "Há 2 dias",
+        "comment": "Lanche sensacional! Chegou super rápido e bem quentinho. A carne no ponto perfeito e a maionese da casa é surreal.",
+        "itemsOrdered": [
+          "1x Smash Burger Duplo",
+          "1x Batata Rústica Individual"
+        ]
+      },
+      {
+        "id": "rev-2",
+        "author": "Marcos Vinicius",
+        "rating": 5,
+        "date": "Há 5 dias",
+        "comment": "Melhor hambúrguer da região, atendimento impecável e embalagem bem lacrada.",
+        "itemsOrdered": [
+          "2x Smash Salada",
+          "1x Coca-Cola Zero"
+        ]
+      },
+      {
+        "id": "rev-3",
+        "author": "Camila Santana",
+        "rating": 4,
+        "date": "Há 1 semana",
+        "comment": "Muito saboroso, ingredientes frescos! Só o refrigerante que veio um pouco sem gelo, mas o lanche estava perfeito.",
+        "itemsOrdered": [
+          "1x Bacon Blast Burger"
+        ]
+      }
+    ]
+  }
 }
