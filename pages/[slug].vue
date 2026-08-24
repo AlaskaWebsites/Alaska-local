@@ -458,8 +458,8 @@
           <div class="border-t border-slate-800 pt-3 space-y-2.5">
             <div>
               <label for="checkout-name" class="block font-bold text-slate-300 mb-1">Seu Nome *</label>
-              <input id="checkout-name" v-model="checkoutData.customerName" type="text" placeholder="Ex: João da Silva"
-                required
+              <input id="checkout-name" ref="nameInputRef" v-model="checkoutData.customerName" type="text"
+                placeholder="Ex: João da Silva" required
                 class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
             </div>
 
@@ -557,7 +557,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRef, onMounted, onUnmounted } from 'vue'
+import { ref, computed, toRef, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import {
   Phone,
@@ -623,12 +623,22 @@ const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
 const isCartDrawerOpen = ref(false)
 const isCopied = ref(false)
+const nameInputRef = ref<HTMLInputElement | null>(null)
+
+// Foco Automático no Primeiro Campo (Seu Nome) ao abrir o Checkout
+watch(isCartDrawerOpen, async (isOpen) => {
+  if (isOpen) {
+    await nextTick()
+    setTimeout(() => {
+      nameInputRef.value?.focus({ preventScroll: true })
+    }, 150)
+  }
+})
 
 // Botão de Compartilhar (Web Share API com Fallback de Copiar Link)
 const shareStore = async () => {
   if (!import.meta.client || !tenant.value) return
 
-  // Se estiver testando em localhost, usa o link público da Vercel para abrir no WhatsApp
   const shareUrl =
     window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
       ? `https://alaskalocal.vercel.app/${tenant.value.slug}`
@@ -650,7 +660,7 @@ const shareStore = async () => {
     }
   }
 
-  // Fallback para Desktop: Copiar link de produção para a Área de Transferência
+  // Fallback para Desktop: Copiar para Área de Transferência
   try {
     await navigator.clipboard.writeText(shareUrl)
     isCopied.value = true
