@@ -288,21 +288,33 @@
             </div>
           </div>
 
-          <!-- Grupos de Opcionais -->
+          <!-- Grupos de Opcionais com Feedback Visual de Obrigatórios -->
           <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2" role="group"
-            :aria-labelledby="`group-title-${group.id}`">
-            <div
-              class="bg-slate-950 border-y border-slate-800 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
+            :aria-labelledby="`group-title-${group.id}`" :aria-invalid="group.required && !isGroupValid(group)">
+            <div class="border-y px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between transition-colors"
+              :class="group.required && !isGroupValid(group) ? 'bg-amber-950/20 border-amber-900/40' : 'bg-slate-950 border-slate-800'">
               <div>
-                <h4 :id="`group-title-${group.id}`" class="font-bold text-xs sm:text-sm text-white">{{ group.title }}
+                <h4 :id="`group-title-${group.id}`" class="font-bold text-xs sm:text-sm text-white">
+                  {{ group.title }}
                 </h4>
-                <p class="text-[11px] text-slate-400 font-medium">
+                <p class="text-[11px] font-medium"
+                  :class="group.required && !isGroupValid(group) ? 'text-amber-400' : 'text-slate-400'">
                   {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
+                  <span v-if="getSelectedCountInGroup(group.id) > 0" class="text-emerald-400 font-bold ml-1">
+                    ({{ getSelectedCountInGroup(group.id) }}/{{ group.max }} selecionado{{
+                      getSelectedCountInGroup(group.id) > 1 ? 's' : '' }})
+                  </span>
                 </p>
               </div>
 
-              <span v-if="group.required"
-                class="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+              <!-- Badges Dinâmicos -->
+              <span v-if="group.required && isGroupValid(group)"
+                class="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 flex items-center gap-1">
+                <Check class="w-2.5 h-2.5 text-emerald-400" aria-hidden="true" />
+                CONCLUÍDO
+              </span>
+              <span v-else-if="group.required && !isGroupValid(group)"
+                class="bg-amber-950/90 text-amber-300 border border-amber-700/80 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 animate-pulse">
                 OBRIGATÓRIO
               </span>
               <span v-else
@@ -340,30 +352,40 @@
           </div>
         </div>
 
-        <!-- Footer do Modal -->
-        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900 flex items-center gap-3 shrink-0">
-          <div class="flex items-center border border-slate-800 rounded-2xl p-1 shrink-0 bg-slate-950" role="group"
-            aria-label="Controle de quantidade">
-            <button @click="productQuantity > 1 ? productQuantity-- : null"
-              class="p-2 text-slate-400 hover:text-white disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
-              aria-label="Diminuir quantidade" :disabled="productQuantity <= 1">
-              <Minus class="w-4 h-4" aria-hidden="true" />
-            </button>
-            <span class="w-8 text-center font-extrabold text-sm text-white" aria-live="polite">{{ productQuantity
-            }}</span>
-            <button @click="productQuantity++"
-              class="p-2 text-slate-400 hover:text-white active:scale-95 transition-transform cursor-pointer"
-              aria-label="Aumentar quantidade">
-              <Plus class="w-4 h-4" aria-hidden="true" />
+        <!-- Footer do Modal com Mensagem de Aviso se Incompleto -->
+        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900 flex flex-col gap-2 shrink-0">
+          <div class="flex items-center gap-3 w-full">
+            <div class="flex items-center border border-slate-800 rounded-2xl p-1 shrink-0 bg-slate-950" role="group"
+              aria-label="Controle de quantidade">
+              <button @click="productQuantity > 1 ? productQuantity-- : null"
+                class="p-2 text-slate-400 hover:text-white disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
+                aria-label="Diminuir quantidade" :disabled="productQuantity <= 1">
+                <Minus class="w-4 h-4" aria-hidden="true" />
+              </button>
+              <span class="w-8 text-center font-extrabold text-sm text-white" aria-live="polite">{{ productQuantity
+              }}</span>
+              <button @click="productQuantity++"
+                class="p-2 text-slate-400 hover:text-white active:scale-95 transition-transform cursor-pointer"
+                aria-label="Aumentar quantidade">
+                <Plus class="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <button @click="addToCart" :disabled="!isProductConfigValid"
+              :aria-label="`Adicionar ${productQuantity} item ao carrinho por ${formatCurrency(calculateProductTotal() * productQuantity)}`"
+              class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer">
+              <span>Adicionar</span>
+              <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
             </button>
           </div>
 
-          <button @click="addToCart" :disabled="!isProductConfigValid"
-            :aria-label="`Adicionar ${productQuantity} item ao carrinho por ${formatCurrency(calculateProductTotal() * productQuantity)}`"
-            class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 text-slate-950 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer">
-            <span>Adicionar</span>
-            <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
-          </button>
+          <!-- Mensagem Explicativa Contextual -->
+          <p v-if="!isProductConfigValid"
+            class="text-[11px] text-amber-400 font-semibold text-center flex items-center justify-center gap-1.5 pt-1 animate-in fade-in duration-200"
+            role="alert">
+            <AlertCircle class="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+            <span>Selecione as opções obrigatórias para poder adicionar</span>
+          </p>
         </div>
       </div>
     </div>
@@ -575,7 +597,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Share2,
-  Check
+  Check,
+  AlertCircle
 } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
@@ -715,6 +738,19 @@ onUnmounted(() => {
 const selectedOptions = ref<Map<string, Option[]>>(new Map())
 const productObservation = ref('')
 const productQuantity = ref(1)
+
+// Helpers de Validação Visual de Opcionais
+function isGroupValid(group: OptionGroup): boolean {
+  const selected = selectedOptions.value.get(group.id) || []
+  if (group.required) {
+    return selected.length >= (group.min || 1)
+  }
+  return true
+}
+
+function getSelectedCountInGroup(groupId: string): number {
+  return (selectedOptions.value.get(groupId) || []).length
+}
 
 // 5. Estado do Carrinho
 interface CartItemState {
