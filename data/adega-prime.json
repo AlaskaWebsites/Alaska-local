@@ -238,5 +238,71 @@
                 }
             ]
         }
+    ],
+  "reviews": {
+    "score": 4.6,
+    "totalReviews": 156,
+    "serviceQuality": {
+      "level": 3,
+      "experienceLabel": "Entrega rápida noturna",
+      "description": "Com base nos pedidos dos últimos 3 meses, a adega oferece cervejas trincando e combos com entrega 24h.",
+      "badges": [
+        {
+          "icon": "star",
+          "label": "Cervejas geladas",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Atendimento madrugada",
+          "status": "success"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Combos completos",
+          "status": "warning"
+        }
+      ]
+    },
+    "distribution": {
+      "5": 78,
+      "4": 14,
+      "3": 5,
+      "2": 2,
+      "1": 1
+    },
+    "comments": [
+      {
+        "id": "rev-1",
+        "author": "Felipe G.",
+        "rating": 5,
+        "date": "Há 2 dias",
+        "comment": "Kit Gin Tanqueray show! As tônicas Schweppes e os gelos de maracujá e morango deixaram o drink perfeito. Entrega super rápida mesmo sendo madrugada.",
+        "itemsOrdered": [
+          "1x Kit Gin Tanqueray 750ml + 4 Tônicas + Gelo de Sabor"
+        ]
+      },
+      {
+        "id": "rev-2",
+        "author": "Bruno Henrique",
+        "rating": 5,
+        "date": "Há 5 dias",
+        "comment": "Pack Heineken realmente trincando! Pediu super gelada e veio perfeita para o churrasco. Carvão de acendimento rápido funcionou muito bem.",
+        "itemsOrdered": [
+          "1x Pack Cerveja Heineken 350ml (12 Latas)",
+          "2x Carvão Vegetal Eucalipto 3kg"
+        ]
+      },
+      {
+        "id": "rev-3",
+        "author": "Lucas Mendes",
+        "rating": 4,
+        "date": "Há 1 semana",
+        "comment": "Kit Whisky Red Label completo com energéticos. Só faltou um copo a mais no kit, mas o produto veio certinho e gelado.",
+        "itemsOrdered": [
+          "1x Kit Whisky Red Label 1L + 4 Energéticos Red Bull"
+        ]
+      }
     ]
+  }
 }

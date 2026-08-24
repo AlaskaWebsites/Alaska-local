@@ -23,7 +23,7 @@ export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional().default(''),
-  price: z.number(),
+  price: z.number().min(0, 'Preço não pode ser negativo'),
   image: z.string().optional().default(''),
   available: z.boolean().default(true),
   optionGroups: z.array(OptionGroupSchema).optional().default([]),
@@ -39,8 +39,8 @@ export const CategorySchema = z.object({
 
 // 4. Horários de Funcionamento
 export const OpeningHoursSchema = z.object({
-  open: z.string(),
-  close: z.string(),
+  open: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
+  close: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
 })
 
 // 5. Avaliações (iFood Style)
@@ -87,11 +87,11 @@ export const TenantSchema = z.object({
   description: z.string().optional().default(''),
   logo: z.string().optional().default(''),
   banner: z.string().optional().default(''),
-  phoneWhatsApp: z.string(),
+  phoneWhatsApp: z.string().transform((val) => val.replace(/\D/g, '')), // Remove não-dígitos
   address: z.string().optional().default(''),
   currency: z.string().default('R$'),
   deliveryFee: z.number().default(0),
-  minOrderValue: z.number().optional(),
+  minOrderValue: z.number().default(0),
   openingHours: OpeningHoursSchema.optional(),
   categories: z.array(CategorySchema),
   reviews: StoreReviewsSchema.optional(),

@@ -107,5 +107,73 @@
         }
       ]
     }
-  ]
+  ],
+  "reviews": {
+    "score": 4.7,
+    "totalReviews": 289,
+    "serviceQuality": {
+      "level": 3,
+      "experienceLabel": "Atendimento acolhedor",
+      "description": "Com base nos pedidos dos últimos 3 meses, a cafeteria oferece produtos artesanais com atendimento personalizado.",
+      "badges": [
+        {
+          "icon": "star",
+          "label": "Café especial",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Doces frescos",
+          "status": "success"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Embalagem elegante",
+          "status": "warning"
+        }
+      ]
+    },
+    "distribution": {
+      "5": 82,
+      "4": 12,
+      "3": 4,
+      "2": 1,
+      "1": 1
+    },
+    "comments": [
+      {
+        "id": "rev-1",
+        "author": "Juliana S.",
+        "rating": 5,
+        "date": "Há 1 dia",
+        "comment": "Cappuccino italiano simplesmente perfeito! Crema aveludada, polvilhado de cacau 70% e leite no ponto exato. O croissant com Nutella era divino.",
+        "itemsOrdered": [
+          "1x Cappuccino Italiano Cremoso",
+          "1x Croissant com Nutella"
+        ]
+      },
+      {
+        "id": "rev-2",
+        "author": "Ricardo Oliveira",
+        "rating": 5,
+        "date": "Há 4 dias",
+        "comment": "Cheesecake de frutas vermelhas sensacional! Base crocante, recheio cremoso e calda de amoras frescas. Iced Caramel Latte delicioso.",
+        "itemsOrdered": [
+          "1x Cheesecake de Frutas Vermelhas",
+          "1x Iced Caramel Latte"
+        ]
+      },
+      {
+        "id": "rev-3",
+        "author": "Ana Beatriz",
+        "rating": 4,
+        "date": "Há 1 semana",
+        "comment": "Espresso duplo muito bom, notas florais bem presentes. Pão de queijo da Canastra autêntico e quentinho. Recomendo!",
+        "itemsOrdered": [
+          "2x Espresso Duplo Especial",
+          "1x Pão de Queijo da Canastra"
+        ]
+      }
+    ]
+  }
 }

@@ -1,14 +1,14 @@
 {
   "slug": "pizzaria-napolitana",
-  "name": "pizzaria-napolitana,Pizzaria Napolitana,11987654321",
-  "description": "Burgers artesanais grelhados na brasa, smashs crocantes e porções exclusivas.",
+  "name": "Pizzaria Napolitana",
+  "description": "Autêntica pizza napolitana com massa fermentada natural e ingredientes italianos importados.",
   "logo": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&h=200&fit=crop&q=80",
-  "banner": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=1200&h=400&fit=crop&q=80",
+  "banner": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11987654321",
-  "address": "Rua das Hamburguerias, 123 - Centro",
+  "address": "Rua das Pizzas, 456 - Centro",
   "currency": "R$",
-  "deliveryFee": 5,
-  "minOrderValue": 20,
+  "deliveryFee": 6,
+  "minOrderValue": 25,
   "openingHours": {
     "open": "18:00",
     "close": "23:30"
@@ -261,5 +261,71 @@
         }
       ]
     }
-  ]
+  ],
+  "reviews": {
+    "score": 4.7,
+    "totalReviews": 198,
+    "serviceQuality": {
+      "level": 3,
+      "experienceLabel": "Massa artesanal",
+      "description": "Com base nos pedidos dos últimos 3 meses, a pizzaria oferece massa fermentada natural com ingredientes de qualidade.",
+      "badges": [
+        {
+          "icon": "star",
+          "label": "Massa crocante",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Queijo generoso",
+          "status": "success"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Entrega quente",
+          "status": "warning"
+        }
+      ]
+    },
+    "distribution": {
+      "5": 80,
+      "4": 12,
+      "3": 5,
+      "2": 2,
+      "1": 1
+    },
+    "comments": [
+      {
+        "id": "rev-1",
+        "author": "Gustavo F.",
+        "rating": 5,
+        "date": "Há 1 dia",
+        "comment": "Pizza Margherita autêntica! Massa fina e crocante, molho de tomate San Marzano e mussarela de búfala de verdade. Senti que estava em Nápoles!",
+        "itemsOrdered": [
+          "1x Pizza Margherita Grande"
+        ]
+      },
+      {
+        "id": "rev-2",
+        "author": "Mariana Costa",
+        "rating": 5,
+        "date": "Há 4 dias",
+        "comment": "X-Burger Supremo surpreendente! Apesar de ser pizzaria, o burger artesanal é incrível. Bacon crocante, queijo prato de qualidade e molho barbecue caseiro.",
+        "itemsOrdered": [
+          "1x X-Bacon Supremo",
+          "1x Batata Frita com Cheddar & Bacon"
+        ]
+      },
+      {
+        "id": "rev-3",
+        "author": "Ricardo Santos",
+        "rating": 4,
+        "date": "Há 1 semana",
+        "comment": "X-Salada muito fresco e saboroso. Alface americana crocante e tomate caqui maduro. Massa do burger poderia ser um pouco mais no ponto, mas ótimo no geral.",
+        "itemsOrdered": [
+          "1x X-Salada Especial"
+        ]
+      }
+    ]
+  }
 }

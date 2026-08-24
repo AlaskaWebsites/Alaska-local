@@ -15,5 +15,5 @@ function getSlugByCustomDomain(host: string): string {
   
   // Remove www. se presente
   const cleanHost = host.replace(/^www\./, '')
-  return domainToSlugMap[cleanHost] || cleanHost.split('.')[0]
+  return domainToSlugMap[cleanHost] || cleanHost.split('.')[0] || cleanHost
 }
