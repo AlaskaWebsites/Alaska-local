@@ -51,6 +51,15 @@
           <!-- Linha de Metadados iFood -->
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1.5 gap-x-3 text-xs text-slate-600 pt-1">
+            <!-- Selo Clicável de Informações -->
+            <button @click="isInfoOpen = true"
+              class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-0.5 rounded-md cursor-pointer transition-all shadow-2xs"
+              title="Ver informações da loja">
+              <span>ℹ️</span>
+              <span>Informações</span>
+              <ChevronRight class="w-3 h-3 text-slate-400 ml-0.5" />
+            </button>
+
             <!-- Selo Clicável de Avaliações -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true"
               class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-0.5 rounded-md cursor-pointer transition-all shadow-2xs"
@@ -500,6 +509,9 @@
     <!-- 10. Modal de Avaliações da Loja (iFood Style) -->
     <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :is-open="isReviewsOpen"
       @close="isReviewsOpen = false" />
+
+    <!-- 11. Modal de Informações da Loja -->
+    <StoreInfoModal :tenant="tenant" :is-open="isInfoOpen" @close="isInfoOpen = false" />
   </div>
 </template>
 
@@ -522,6 +534,8 @@ import {
 } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
+import StoreReviewsModal from '~/components/StoreReviewsModal.vue'
+import StoreInfoModal from '~/components/StoreInfoModal.vue'
 
 const route = useRoute()
 const slug = (route.params.slug as string) || 'hamburgueria-x'
@@ -562,6 +576,7 @@ useSeoMeta({
 
 // 3. Estado de Avaliações
 const isReviewsOpen = ref(false)
+const isInfoOpen = ref(false)
 
 // 4. Estado de Produto Selecionado
 const selectedProduct = ref<Product | null>(null)

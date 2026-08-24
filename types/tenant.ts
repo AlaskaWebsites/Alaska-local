@@ -95,6 +95,11 @@ export const TenantSchema = z.object({
   openingHours: OpeningHoursSchema.optional(),
   categories: z.array(CategorySchema),
   reviews: StoreReviewsSchema.optional(),
+  // Campos adicionais para aba Informações
+  category: z.string().optional().default(''), // ex: "Lanches", "Restaurantes"
+  distance: z.string().optional().default(''), // ex: "0,4 km"
+  priceRange: z.string().optional().default(''), // ex: "$$$$"
+  paymentMethods: z.array(z.string()).optional().default([]), // ex: ["Pix", "Cartão", "Dinheiro"]
 })
 
 // Tipos TypeScript inferidos automaticamente
