@@ -1,6 +1,7 @@
 <!-- components/StoreInfoModal.vue -->
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, toRef, onMounted, onUnmounted } from "vue";
+import { useBodyScrollLock } from "~/composables/useBodyScrollLock";
 import {
   X,
   MapPin,
@@ -24,6 +25,28 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
+
+// 1. Trava de Rolagem de Fundo (Body Scroll Lock)
+useBodyScrollLock(toRef(props, "isOpen"));
+
+// 2. Fechamento com Tecla ESC (Desktop Accessibility)
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === "Escape" && props.isOpen) {
+    emit("close");
+  }
+};
+
+onMounted(() => {
+  if (import.meta.client) {
+    window.addEventListener("keydown", handleKeyDown);
+  }
+});
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener("keydown", handleKeyDown);
+  }
+});
 
 // Formatação monetária
 const formatCurrency = (value: number): string => {
