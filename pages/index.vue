@@ -1,266 +1,156 @@
 <!-- pages/index.vue -->
 <template>
-  <div class="min-h-screen bg-slate-50 text-slate-900 pb-16 selection:bg-emerald-500 selection:text-white">
-    <!-- Hero Section -->
-    <header
-      class="relative overflow-hidden bg-gradient-to-b from-emerald-900 via-emerald-800 to-slate-900 text-white pt-16 pb-20 px-4 text-center">
-      <div
-        class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]">
-      </div>
+  <div class="min-h-screen bg-slate-50 text-slate-800">
+    <!-- 1. Header & Hero Showcase -->
+    <header class="bg-white border-b border-slate-100 py-12 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto text-center space-y-3">
+        <div
+          class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 border border-emerald-200/60">
+          <Sparkles class="w-3.5 h-3.5 text-emerald-600" />
+          <span>Vitrines Mobile & Pedidos no WhatsApp</span>
+        </div>
 
-      <div class="relative max-w-3xl mx-auto space-y-4">
-        <span
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-          <Sparkles class="w-3.5 h-3.5" />
-          Plataforma Multi-Tenant • Estágio 1
-        </span>
-
-        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight">
-          Alaska <span class="text-emerald-400">Local</span>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Alaska Local — Demonstrações Ativas
         </h1>
 
-        <p class="text-base sm:text-lg text-emerald-100/80 max-w-xl mx-auto leading-relaxed">
-          Vitrines digitais mobile-first, cardápios interativos com fechamento no WhatsApp e otimização para o comércio
-          local.
+        <p class="text-sm sm:text-base text-slate-500 max-w-xl mx-auto leading-relaxed">
+          Selecione um dos modelos abaixo para visualizar a experiência do cardápio digital e catálogo mobile-first em
+          tempo real.
         </p>
 
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs text-emerald-200/70">
-          <span class="flex items-center gap-1">
-            <CheckCircle2 class="w-4 h-4 text-emerald-400" /> Sem taxas por pedido
-          </span>
-          <span class="flex items-center gap-1">
-            <CheckCircle2 class="w-4 h-4 text-emerald-400" /> Domínio próprio
-          </span>
-          <span class="flex items-center gap-1">
-            <CheckCircle2 class="w-4 h-4 text-emerald-400" /> Zero custo de infra
-          </span>
+        <!-- Filtros por Nicho / Vertical -->
+        <div class="pt-4 flex flex-wrap justify-center gap-2">
+          <button @click="activeFilter = 'todos'" :class="[
+            'rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer',
+            activeFilter === 'todos'
+              ? 'bg-slate-900 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          ]">
+            Todos os Modelos ({{ tenantsList.length }})
+          </button>
+          <button @click="activeFilter = 'menu'" :class="[
+            'rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer',
+            activeFilter === 'menu'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          ]">
+            🍔 Alimentação & Espetos (Alaska Menu)
+          </button>
+          <button @click="activeFilter = 'hub'" :class="[
+            'rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer',
+            activeFilter === 'hub'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          ]">
+            ✂️ Serviços & Saúde (Alaska Hub)
+          </button>
         </div>
       </div>
     </header>
 
-    <!-- Seção de Demonstrações -->
-    <main class="max-w-5xl mx-auto px-4 -mt-10 relative z-10 space-y-8">
-      <div class="text-center">
-        <h2
-          class="text-xl sm:text-2xl font-bold text-slate-900 bg-white/90 backdrop-blur-md inline-block px-6 py-2 rounded-2xl shadow-sm border border-slate-100">
-          Vitrines & Demonstrações Disponíveis
-        </h2>
+    <!-- 2. Grid de Vitrines / Demonstrações -->
+    <main class="max-w-4xl mx-auto px-4 py-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <NuxtLink v-for="store in filteredTenants" :key="store.slug" :to="`/${store.slug}`"
+          class="group bg-white rounded-3xl border border-slate-100 shadow-xs hover:shadow-md hover:border-emerald-200 transition-all overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]">
+          <!-- Banner Superior da Loja -->
+          <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
+            <img v-if="store.banner" :src="store.banner" :alt="store.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div v-else class="w-full h-full bg-slate-800"></div>
+
+            <!-- Logo Flutuante sobreposto -->
+            <div
+              class="absolute bottom-2 left-3 h-12 w-12 rounded-xl border-2 border-white overflow-hidden bg-white shadow-sm">
+              <img v-if="store.logo" :src="store.logo" :alt="store.name" class="w-full h-full object-cover" />
+              <div v-else
+                class="w-full h-full flex items-center justify-center bg-slate-200 text-slate-600 font-bold text-sm">
+                {{ store.name.charAt(0) }}
+              </div>
+            </div>
+
+            <!-- Tag de Vertical (Menu vs Hub) -->
+            <span :class="[
+              'absolute top-2.5 right-2.5 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-xs',
+              isHubStore(store.slug)
+                ? 'bg-purple-100 text-purple-800'
+                : 'bg-emerald-100 text-emerald-800'
+            ]">
+              {{ isHubStore(store.slug) ? 'Alaska Hub' : 'Alaska Menu' }}
+            </span>
+          </div>
+
+          <!-- Informações do Estabelecimento -->
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-center justify-between gap-1">
+                <h2 class="font-bold text-base text-slate-900 group-hover:text-emerald-700 transition-colors truncate">
+                  {{ store.name }}
+                </h2>
+                <div v-if="store.reviews" class="flex items-center gap-0.5 text-xs font-bold text-slate-800 shrink-0">
+                  <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  <span>{{ store.reviews.score.toFixed(1) }}</span>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                {{ store.description || 'Vitrines online, pedidos somados e atendimento direto no WhatsApp.' }}
+              </p>
+            </div>
+
+            <!-- Footer do Card com Botão de Ação -->
+            <div
+              class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
+              <span class="text-[11px] text-slate-400">Ver Cardápio / Serviços</span>
+              <span class="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Acessar
+                <ChevronRight class="w-3.5 h-3.5" />
+              </span>
+            </div>
+          </div>
+        </NuxtLink>
       </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- 1. Alaska Menu: Food & Hamburgueria -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-amber-500 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Utensils class="w-5 h-5" />
-              <h3 class="font-bold text-base">Alaska Menu</h3>
-            </div>
-            <span
-              class="text-[10px] bg-amber-600/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Burger</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Hamburgueria X</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Burgers artesanais, smashs, opcionais obrigatórios de ponto de carne, adicionais lucrativos e combos.
-              </p>
-            </div>
-
-            <NuxtLink to="/hamburgueria-x"
-              class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all group-hover:bg-amber-600">
-              <span>Abrir Cardápio</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- 2. Alaska Menu: Restaurante & Pizzaria -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-red-500 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Utensils class="w-5 h-5" />
-              <h3 class="font-bold text-base">Alaska Menu</h3>
-            </div>
-            <span
-              class="text-[10px] bg-red-600/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Italian</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Restaurante Bella Italia</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Pizzas tradicionais, massas frescas, sobremesas e seleção de vinhos com entrega e retirada.
-              </p>
-            </div>
-
-            <NuxtLink to="/restaurante-bella-italia"
-              class="w-full bg-red-500 hover:bg-red-600 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all group-hover:bg-red-600">
-              <span>Abrir Restaurante</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- 3. Alaska Menu: Café & Confeitaria -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-emerald-600 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Coffee class="w-5 h-5" />
-              <h3 class="font-bold text-base">Alaska Menu</h3>
-            </div>
-            <span
-              class="text-[10px] bg-emerald-700/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Cafeteria</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Café Central</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Cafés especiais, doces artesanais, salgados e pedidos express para retirada no balcão.
-              </p>
-            </div>
-
-            <NuxtLink to="/cafe-central"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all group-hover:bg-emerald-700">
-              <span>Abrir Cafeteria</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- 4. Alaska Menu: Adega & Bebidas -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-purple-600 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Wine class="w-5 h-5" />
-              <h3 class="font-bold text-base">Alaska Menu</h3>
-            </div>
-            <span class="text-[10px] bg-purple-700/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Adega
-              24h</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Adega & Distribuidora Prime</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Cervejas geladas em pack, combos de whisky e gin com gelo de sabor, carvão e conveniência rápida.
-              </p>
-            </div>
-
-            <NuxtLink to="/adega-prime"
-              class="w-full bg-purple-600 hover:bg-purple-700 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all group-hover:bg-purple-700">
-              <span>Abrir Adega</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- 5. Alaska Hub: Barbearia & Estética -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-slate-800 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Scissors class="w-5 h-5 text-amber-400" />
-              <h3 class="font-bold text-base">Alaska Hub</h3>
-            </div>
-            <span
-              class="text-[10px] bg-slate-700 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider text-amber-400">Serviços</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Barbearia Style</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Catálogo de serviços (corte, barba, pigmentação), tabela de preços e chamada direta para WhatsApp.
-              </p>
-            </div>
-
-            <NuxtLink to="/barbearia-style"
-              class="w-full bg-slate-800 hover:bg-slate-900 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all">
-              <span>Abrir Barbearia</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-
-        <!-- 6. Alaska Hub: Saúde & Clínica -->
-        <div
-          class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-md transition-all flex flex-col group">
-          <div class="bg-cyan-600 p-4 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <Calendar class="w-5 h-5" />
-              <h3 class="font-bold text-base">Alaska Hub</h3>
-            </div>
-            <span
-              class="text-[10px] bg-cyan-700/60 px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">Clínica</span>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div>
-              <h4 class="font-bold text-slate-900 text-sm">Clínica Sorriso</h4>
-              <p class="text-xs text-slate-500 mt-1">
-                Procedimentos odontológicos, avaliações, convênios aceitos e agendamento de consultas.
-              </p>
-            </div>
-
-            <NuxtLink to="/clinica-sorriso"
-              class="w-full bg-cyan-600 hover:bg-cyan-700 active:scale-[0.98] text-white text-center py-2.5 px-4 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all">
-              <span>Abrir Clínica</span>
-              <ArrowRight class="w-4 h-4" />
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-
-      <!-- Resumo da Arquitetura -->
-      <section class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 sm:p-8">
-        <div class="flex items-center gap-2 mb-4">
-          <ShieldCheck class="w-6 h-6 text-emerald-600" />
-          <h3 class="text-lg font-bold text-slate-900">Fundação Técnica • Estágio 1 (Modo Sem Backend)</h3>
-        </div>
-
-        <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs text-slate-600">
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-            <strong class="text-slate-900 block mb-1">⚡ One Codebase, Infinite Domains</strong>
-            Resolução dinâmica de múltiplos lojistas por slug ou domínio próprio no Nuxt 3.
-          </div>
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-            <strong class="text-slate-900 block mb-1">🛡️ Validação Estrita Zod</strong>
-            Schemas blindados que impedem falhas em tempo de execução ao ler os JSONs locais.
-          </div>
-          <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-            <strong class="text-slate-900 block mb-1">💬 Despacho Nativo WhatsApp</strong>
-            Fechamento de pedidos somados e formatados via URL Scheme (<code class="text-emerald-700">wa.me</code>) sem
-            risco de banimento.
-          </div>
-        </div>
-      </section>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  Sparkles,
-  Utensils,
-  Coffee,
-  Wine,
-  Scissors,
-  Calendar,
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle2
-} from 'lucide-vue-next'
+import { ref, computed } from 'vue'
+import { Sparkles, Star, ChevronRight } from 'lucide-vue-next'
+import type { Tenant } from '~/types/tenant'
 
-useHead({
-  title: 'Alaska Local — Vitrines e Cardápios Digitais',
-  meta: [
-    { name: 'description', content: 'Soluções digitais locais para food service, adegas, delivery e prestadores de serviços.' }
-  ]
+useSeoMeta({
+  title: 'Alaska Local — Showcase de Demonstrações',
+  description: 'Conheça os modelos interativos de vitrines digitais para comércios locais e prestadores de serviço.',
+  ogTitle: 'Alaska Local — Showcase de Demonstrações',
+  ogDescription: 'Vitrines mobile-first com pedidos no WhatsApp e domínio próprio.',
+})
+
+const activeFilter = ref<'todos' | 'menu' | 'hub'>('todos')
+
+// 1. Carregamento Dinâmico de Todos os Arquivos JSON de data/
+const tenantFiles = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: Tenant }>
+
+const tenantsList = computed<Tenant[]>(() => {
+  return Object.values(tenantFiles).map((file) => file.default || file)
+})
+
+// 2. Identificação de Nicho (Hub para serviços/saúde, Menu para alimentação)
+const hubSlugs = ['barbearia-style', 'clinica-sorriso']
+
+function isHubStore(slug: string): boolean {
+  return hubSlugs.includes(slug)
+}
+
+// 3. Filtragem Reativa do Showcase
+const filteredTenants = computed(() => {
+  if (activeFilter.value === 'menu') {
+    return tenantsList.value.filter((store) => !isHubStore(store.slug))
+  }
+  if (activeFilter.value === 'hub') {
+    return tenantsList.value.filter((store) => isHubStore(store.slug))
+  }
+  return tenantsList.value
 })
 </script>
