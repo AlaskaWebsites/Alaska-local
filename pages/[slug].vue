@@ -4,14 +4,15 @@
     class="min-h-screen bg-slate-950 text-slate-100 pb-36 selection:bg-emerald-500 selection:text-slate-950">
     <!-- 1. Banner de Fundo -->
     <div class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900">
-      <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name" class="w-full h-full object-cover opacity-75" />
+      <img v-if="tenant.banner" :src="tenant.banner" :alt="`Banner de ${tenant.name}`"
+        class="w-full h-full object-cover opacity-75" />
       <div v-else class="w-full h-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900"></div>
 
       <!-- Botão Voltar para a Home -->
       <NuxtLink to="/"
         class="absolute top-4 left-4 bg-slate-950/70 hover:bg-slate-900 text-white p-2.5 rounded-full backdrop-blur-md border border-slate-700/60 transition-all z-10 shadow-lg cursor-pointer"
-        title="Voltar ao início">
-        <ArrowLeft class="w-5 h-5" />
+        aria-label="Voltar para a página inicial com todas as lojas" title="Voltar ao início">
+        <ArrowLeft class="w-5 h-5" aria-hidden="true" />
       </NuxtLink>
     </div>
 
@@ -22,9 +23,11 @@
         <!-- Logo Circular -->
         <div
           class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-slate-800 shadow-xl overflow-hidden bg-slate-950">
-          <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
+          <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logotipo de ${tenant.name}`"
+            class="w-full h-full object-cover" />
           <div v-else
-            class="w-full h-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold text-xl">
+            class="w-full h-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold text-xl"
+            aria-hidden="true">
             {{ tenant.name.charAt(0) }}
           </div>
         </div>
@@ -42,7 +45,7 @@
             </div>
 
             <!-- Status Aberto/Fechado -->
-            <span
+            <span role="status"
               :class="isOpen ? 'bg-emerald-950/90 text-emerald-300 border-emerald-800/60' : 'bg-amber-950/90 text-amber-300 border-amber-800/60'"
               class="inline-flex items-center self-center sm:self-auto px-3 py-1 rounded-full text-xs font-bold border shrink-0 backdrop-blur-xs">
               {{ isOpen ? '🟢 Aberto agora' : '🕒 Fechado' }}
@@ -53,22 +56,25 @@
           <div
             class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-3 text-xs text-slate-400 pt-1">
             <!-- Selo de Avaliações -->
-            <button v-if="tenant.reviews" @click="isReviewsOpen = true"
+            <button v-if="tenant.reviews" @click="isReviewsOpen = true" aria-haspopup="dialog"
+              :aria-expanded="isReviewsOpen"
+              :aria-label="`Abrir avaliações da loja. Nota média ${tenant.reviews.score.toFixed(1)} baseada em ${tenant.reviews.totalReviews} avaliações`"
               class="flex items-center gap-1 font-bold text-slate-200 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
               title="Ver detalhes das avaliações">
-              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
               <span>{{ tenant.reviews.score.toFixed(1) }}</span>
               <span class="text-slate-400 font-medium">({{ tenant.reviews.totalReviews }})</span>
-              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" />
+              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" aria-hidden="true" />
             </button>
 
             <!-- Selo de Informações -->
-            <button @click="isInfoOpen = true"
+            <button @click="isInfoOpen = true" aria-haspopup="dialog" :aria-expanded="isInfoOpen"
+              aria-label="Abrir informações operacionais, horários e formas de pagamento da loja"
               class="flex items-center gap-1 font-medium text-slate-300 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
               title="Ver informações da loja">
-              <Info class="w-3.5 h-3.5 text-slate-400" />
+              <Info class="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
               <span>Informações</span>
-              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" />
+              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" aria-hidden="true" />
             </button>
 
             <div class="flex items-center gap-1">
@@ -76,12 +82,12 @@
             </div>
 
             <div class="flex items-center gap-1">
-              <span class="text-slate-600">•</span>
+              <span class="text-slate-600" aria-hidden="true">•</span>
               <span>Taxa: {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}</span>
             </div>
 
             <div v-if="tenant.minOrderValue" class="flex items-center gap-1">
-              <span class="text-slate-600">•</span>
+              <span class="text-slate-600" aria-hidden="true">•</span>
               <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
             </div>
           </div>
@@ -90,13 +96,14 @@
           <div
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2.5 border-t border-slate-800 text-xs">
             <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-400 truncate">
-              <MapPin class="w-3.5 h-3.5 text-slate-500 shrink-0" />
+              <MapPin class="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden="true" />
               <span class="truncate">{{ tenant.address || 'Atendimento e entrega local' }}</span>
             </div>
 
             <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
+              aria-label="Abrir conversa no WhatsApp com o estabelecimento para tirar dúvidas"
               class="inline-flex items-center justify-center gap-1.5 text-emerald-400 font-bold hover:underline">
-              <Phone class="w-3.5 h-3.5" />
+              <Phone class="w-3.5 h-3.5" aria-hidden="true" />
               <span>Dúvidas no WhatsApp</span>
             </a>
           </div>
@@ -109,18 +116,20 @@
       <div
         class="bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-emerald-950/70 border border-emerald-500/30 rounded-2xl p-3.5 flex items-center justify-between text-xs text-emerald-300 font-medium shadow-sm">
         <div class="flex items-center gap-2.5">
-          <span class="text-base">🛵</span>
+          <span class="text-base" aria-hidden="true">🛵</span>
           <span>Peça pelo canal oficial com <strong>preço original de balcão</strong> e sem taxas extras!</span>
         </div>
-        <span class="text-emerald-400 font-bold shrink-0 text-[11px] hidden sm:inline">Aproveite ›</span>
+        <span class="text-emerald-400 font-bold shrink-0 text-[11px] hidden sm:inline" aria-hidden="true">Aproveite
+          ›</span>
       </div>
     </div>
 
     <!-- 4. Seção Destaques & Mais Pedidos -->
-    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5">
+    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
+      aria-labelledby="featured-title">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-white flex items-center gap-2">
-          <Flame class="w-4 h-4 text-amber-500 fill-amber-500" />
+        <h2 id="featured-title" class="text-base font-bold text-white flex items-center gap-2">
+          <Flame class="w-4 h-4 text-amber-500 fill-amber-500" aria-hidden="true" />
           <span>Destaques & Mais Pedidos</span>
         </h2>
 
@@ -131,23 +140,24 @@
           <div class="hidden sm:flex items-center gap-1.5">
             <button @click="scrollCarousel('left')"
               class="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 shadow-sm active:scale-95 transition-all cursor-pointer"
-              title="Anterior" aria-label="Rolar para esquerda">
-              <ChevronLeft class="w-4 h-4" />
+              title="Anterior" aria-label="Rolar carrossel de destaques para a esquerda">
+              <ChevronLeft class="w-4 h-4" aria-hidden="true" />
             </button>
             <button @click="scrollCarousel('right')"
               class="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 shadow-sm active:scale-95 transition-all cursor-pointer"
-              title="Próximo" aria-label="Rolar para direita">
-              <ChevronRight class="w-4 h-4" />
+              title="Próximo" aria-label="Rolar carrossel de destaques para a direita">
+              <ChevronRight class="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
       </div>
 
       <!-- Carrossel -->
-      <div ref="carouselRef"
-        class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
-          class="shrink-0 w-40 sm:w-48 bg-slate-900 rounded-2xl p-3 border border-slate-800/90 shadow-md active:scale-[0.98] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850 flex flex-col justify-between group">
+      <div ref="carouselRef" tabindex="0" role="region" aria-label="Carrossel de produtos em destaque"
+        class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 focus:outline-none">
+        <article v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
+          class="shrink-0 w-40 sm:w-48 bg-slate-900 rounded-2xl p-3 border border-slate-800/90 shadow-md active:scale-[0.98] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850 flex flex-col justify-between group"
+          :aria-label="`${product.name}, por ${formatCurrency(product.price)}`">
           <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden bg-slate-800 mb-2.5">
             <img v-if="product.image" :src="product.image" :alt="product.name"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100" />
@@ -165,7 +175,7 @@
               {{ product.name }}
             </h3>
           </div>
-        </div>
+        </article>
       </div>
     </section>
 
@@ -173,17 +183,19 @@
     <CategoryTabs :categories="tenant.categories" class="mt-8" />
 
     <!-- 6. Catálogo Completo de Produtos -->
-    <main class="max-w-4xl mx-auto px-4 mt-8 space-y-10">
-      <section v-for="category in tenant.categories" :key="category.id" :id="category.id"
-        class="space-y-4 scroll-mt-24">
+    <main class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo de produtos">
+      <section v-for="category in tenant.categories" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
+        :aria-labelledby="`cat-title-${category.id}`">
         <div class="flex items-center gap-2">
-          <span class="w-1.5 h-4 bg-emerald-500 rounded-full"></span>
-          <h2 class="text-base font-bold text-white tracking-tight">{{ category.name }}</h2>
+          <span class="w-1.5 h-4 bg-emerald-500 rounded-full" aria-hidden="true"></span>
+          <h2 :id="`cat-title-${category.id}`" class="text-base font-bold text-white tracking-tight">{{ category.name }}
+          </h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="product in category.products" :key="product.id" @click="openProductModal(product)"
-            class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/90 shadow-md flex items-center justify-between gap-3.5 active:scale-[0.99] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850">
+          <article v-for="product in category.products" :key="product.id" @click="openProductModal(product)"
+            class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/90 shadow-md flex items-center justify-between gap-3.5 active:scale-[0.99] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850"
+            :aria-label="`${product.name}, por ${formatCurrency(product.price)}`">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
                 <h3 class="font-bold text-white text-sm truncate">{{ product.name }}</h3>
@@ -207,7 +219,7 @@
 
             <img v-if="product.image" :src="product.image" :alt="product.name"
               class="w-20 h-20 rounded-xl object-cover shrink-0 bg-slate-800 opacity-90" />
-          </div>
+          </article>
         </div>
       </section>
     </main>
@@ -216,7 +228,7 @@
     <div v-if="selectedProduct"
       class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
-      <div
+      <div role="dialog" aria-modal="true" aria-labelledby="product-modal-title"
         class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
         @click.stop>
         <!-- Header da Foto -->
@@ -227,18 +239,18 @@
           <!-- Botão Fechar -->
           <button @click="closeProductModal"
             class="absolute top-4 right-4 bg-slate-950/80 hover:bg-slate-900 text-white p-2 rounded-full transition-colors backdrop-blur-md z-10 shadow-md border border-slate-700 cursor-pointer"
-            aria-label="Fechar">
-            <X class="w-5 h-5" />
+            aria-label="Fechar modal de montagem do produto">
+            <X class="w-5 h-5" aria-hidden="true" />
           </button>
 
           <!-- Badge do Restaurante -->
           <div
             class="absolute bottom-3 left-3 bg-slate-950/90 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-700 text-[11px]">
-            <img v-if="tenant.logo" :src="tenant.logo" class="w-4 h-4 rounded-full object-cover" />
+            <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-4 h-4 rounded-full object-cover" />
             <span class="font-bold text-white truncate max-w-[130px]">{{ tenant.name }}</span>
-            <span class="text-slate-600">•</span>
+            <span class="text-slate-600" aria-hidden="true">•</span>
             <span class="flex items-center gap-0.5 font-bold text-amber-400">
-              <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
+              <Star class="w-3 h-3 fill-amber-400 text-amber-400" aria-hidden="true" />
               {{ tenant.reviews ? tenant.reviews.score.toFixed(1) : '4.9' }}
             </span>
           </div>
@@ -248,7 +260,8 @@
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-5">
           <!-- Título, Descrição e Preço -->
           <div class="space-y-1.5">
-            <h3 class="text-xl font-extrabold text-white leading-tight">{{ selectedProduct.name }}</h3>
+            <h3 id="product-modal-title" class="text-xl font-extrabold text-white leading-tight">{{ selectedProduct.name
+            }}</h3>
             <p class="text-xs text-slate-400 leading-relaxed">{{ selectedProduct.description }}</p>
             <div class="flex items-center justify-between pt-1">
               <span class="text-xs font-semibold text-slate-500">Serve até 1 ou 2 pessoas</span>
@@ -259,11 +272,13 @@
           </div>
 
           <!-- Grupos de Opcionais -->
-          <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2">
+          <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2" role="group"
+            :aria-labelledby="`group-title-${group.id}`">
             <div
               class="bg-slate-950 border-y border-slate-800 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
               <div>
-                <h4 class="font-bold text-xs sm:text-sm text-white">{{ group.title }}</h4>
+                <h4 :id="`group-title-${group.id}`" class="font-bold text-xs sm:text-sm text-white">{{ group.title }}
+                </h4>
                 <p class="text-[11px] text-slate-400 font-medium">
                   {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
                 </p>
@@ -291,7 +306,7 @@
                   </span>
                 </div>
 
-                <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
+                <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id" :aria-required="group.required"
                   :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
                   class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-400 bg-slate-950 border-slate-700 shrink-0 cursor-pointer" />
               </label>
@@ -300,8 +315,9 @@
 
           <!-- Observação -->
           <div class="pt-3 border-t border-slate-800">
-            <label class="block text-xs font-bold text-slate-300 mb-1.5">Alguma observação?</label>
-            <textarea v-model="productObservation" rows="2"
+            <label for="product-observation-input" class="block text-xs font-bold text-slate-300 mb-1.5">Alguma
+              observação?</label>
+            <textarea id="product-observation-input" v-model="productObservation" rows="2"
               placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
               class="w-full text-xs p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none placeholder:text-slate-600"></textarea>
           </div>
@@ -309,20 +325,24 @@
 
         <!-- Footer do Modal -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900 flex items-center gap-3 shrink-0">
-          <div class="flex items-center border border-slate-800 rounded-2xl p-1 shrink-0 bg-slate-950">
+          <div class="flex items-center border border-slate-800 rounded-2xl p-1 shrink-0 bg-slate-950" role="group"
+            aria-label="Controle de quantidade">
             <button @click="productQuantity > 1 ? productQuantity-- : null"
               class="p-2 text-slate-400 hover:text-white disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
-              :disabled="productQuantity <= 1">
-              <Minus class="w-4 h-4" />
+              aria-label="Diminuir quantidade" :disabled="productQuantity <= 1">
+              <Minus class="w-4 h-4" aria-hidden="true" />
             </button>
-            <span class="w-8 text-center font-extrabold text-sm text-white">{{ productQuantity }}</span>
+            <span class="w-8 text-center font-extrabold text-sm text-white" aria-live="polite">{{ productQuantity
+            }}</span>
             <button @click="productQuantity++"
-              class="p-2 text-slate-400 hover:text-white active:scale-95 transition-transform cursor-pointer">
-              <Plus class="w-4 h-4" />
+              class="p-2 text-slate-400 hover:text-white active:scale-95 transition-transform cursor-pointer"
+              aria-label="Aumentar quantidade">
+              <Plus class="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
 
           <button @click="addToCart" :disabled="!isProductConfigValid"
+            :aria-label="`Adicionar ${productQuantity} item ao carrinho por ${formatCurrency(calculateProductTotal() * productQuantity)}`"
             class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 text-slate-950 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer">
             <span>Adicionar</span>
             <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
@@ -332,18 +352,19 @@
     </div>
 
     <!-- 8. Barra Fixa Inferior da Sacola -->
-    <div v-if="cart.items.length > 0"
+    <div v-if="cart.items.length > 0" role="region" aria-label="Resumo da sacola de compras"
       class="fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 shadow-2xl z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
-          <span class="text-xs text-slate-400 block">
+          <span class="text-xs text-slate-400 block" aria-live="polite">
             {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
           </span>
           <span class="text-lg font-black text-emerald-400">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
-        <button @click="isCartDrawerOpen = true"
+        <button @click="isCartDrawerOpen = true" aria-haspopup="dialog" :aria-expanded="isCartDrawerOpen"
+          :aria-label="`Ver sacola com ${totalItemsCount} ${totalItemsCount === 1 ? 'item' : 'itens'} no total de ${formatCurrency(cartSubtotal)}`"
           class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 transition-all text-xs cursor-pointer">
-          <ShoppingCart class="w-4 h-4" />
+          <ShoppingCart class="w-4 h-4" aria-hidden="true" />
           <span>Ver Sacola</span>
         </button>
       </div>
@@ -353,23 +374,24 @@
     <div v-if="isCartDrawerOpen"
       class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
-      <div
+      <div role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title"
         class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
         @click.stop>
         <div class="p-4 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <ShoppingCart class="w-5 h-5 text-emerald-400" />
-            <h3 class="font-bold text-base text-white">Sua Sacola</h3>
+            <ShoppingCart class="w-5 h-5 text-emerald-400" aria-hidden="true" />
+            <h3 id="cart-drawer-title" class="font-bold text-base text-white">Sua Sacola</h3>
           </div>
-          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-white cursor-pointer">
-            <X class="w-5 h-5" />
+          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Fechar sacola">
+            <X class="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
         <div class="p-4 overflow-y-auto flex-1 space-y-4 text-xs">
           <!-- Itens -->
-          <div class="space-y-2.5">
-            <div v-for="(item, index) in cart.items" :key="index"
+          <div class="space-y-2.5" role="list" aria-label="Itens na sacola">
+            <div v-for="(item, index) in cart.items" :key="index" role="listitem"
               class="p-3.5 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-start justify-between gap-2">
               <div class="flex-1">
                 <div class="flex items-center gap-1.5">
@@ -390,22 +412,24 @@
               </div>
 
               <button @click="removeCartItem(index)" class="text-red-400 hover:text-red-300 p-1 cursor-pointer"
-                title="Remover item">
-                <Trash2 class="w-4 h-4" />
+                :aria-label="`Remover ${item.product.name} da sacola`" title="Remover item">
+                <Trash2 class="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>
 
           <!-- Tipo de Pedido -->
-          <div class="border-t border-slate-800 pt-3">
+          <div class="border-t border-slate-800 pt-3" role="group" aria-label="Tipo de entrega do pedido">
             <label class="block font-bold text-slate-300 mb-1.5">Tipo de Pedido:</label>
             <div class="grid grid-cols-2 gap-2">
               <button @click="checkoutData.deliveryType = 'delivery'"
+                :aria-pressed="checkoutData.deliveryType === 'delivery'"
                 :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛵 Entrega (Delivery)
               </button>
               <button @click="checkoutData.deliveryType = 'pickup'"
+                :aria-pressed="checkoutData.deliveryType === 'pickup'"
                 :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛍️ Retirada no Balcão
@@ -416,34 +440,39 @@
           <!-- Dados do Cliente -->
           <div class="border-t border-slate-800 pt-3 space-y-2.5">
             <div>
-              <label class="block font-bold text-slate-300 mb-1">Seu Nome *</label>
-              <input v-model="checkoutData.customerName" type="text" placeholder="Ex: João da Silva"
+              <label for="checkout-name" class="block font-bold text-slate-300 mb-1">Seu Nome *</label>
+              <input id="checkout-name" v-model="checkoutData.customerName" type="text" placeholder="Ex: João da Silva"
+                required
                 class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
             </div>
 
             <div v-if="checkoutData.deliveryType === 'delivery'" class="space-y-2">
               <div class="grid grid-cols-3 gap-2">
                 <div class="col-span-2">
-                  <label class="block font-bold text-slate-300 mb-1">Rua / Logradouro *</label>
-                  <input v-model="checkoutData.address.street" type="text" placeholder="Ex: Av. Brasil"
+                  <label for="checkout-street" class="block font-bold text-slate-300 mb-1">Rua / Logradouro *</label>
+                  <input id="checkout-street" v-model="checkoutData.address.street" type="text"
+                    placeholder="Ex: Av. Brasil" required
                     class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
-                  <label class="block font-bold text-slate-300 mb-1">Número *</label>
-                  <input v-model="checkoutData.address.number" type="text" placeholder="123"
+                  <label for="checkout-number" class="block font-bold text-slate-300 mb-1">Número *</label>
+                  <input id="checkout-number" v-model="checkoutData.address.number" type="text" placeholder="123"
+                    required
                     class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="block font-bold text-slate-300 mb-1">Bairro *</label>
-                  <input v-model="checkoutData.address.neighborhood" type="text" placeholder="Centro"
+                  <label for="checkout-neighborhood" class="block font-bold text-slate-300 mb-1">Bairro *</label>
+                  <input id="checkout-neighborhood" v-model="checkoutData.address.neighborhood" type="text"
+                    placeholder="Centro" required
                     class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
-                  <label class="block font-bold text-slate-300 mb-1">Complemento</label>
-                  <input v-model="checkoutData.address.complement" type="text" placeholder="Apto 42"
+                  <label for="checkout-complement" class="block font-bold text-slate-300 mb-1">Complemento</label>
+                  <input id="checkout-complement" v-model="checkoutData.address.complement" type="text"
+                    placeholder="Apto 42"
                     class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
@@ -451,8 +480,8 @@
 
             <!-- Pagamento -->
             <div class="pt-1">
-              <label class="block font-bold text-slate-300 mb-1">Forma de Pagamento *</label>
-              <select v-model="checkoutData.paymentMethod"
+              <label for="checkout-payment" class="block font-bold text-slate-300 mb-1">Forma de Pagamento *</label>
+              <select id="checkout-payment" v-model="checkoutData.paymentMethod"
                 class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
                 <option value="Pix">Pix (Chave informada no pedido)</option>
                 <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
@@ -461,8 +490,10 @@
               </select>
 
               <div v-if="checkoutData.paymentMethod === 'Dinheiro'" class="mt-2">
-                <label class="block font-bold text-slate-300 mb-1">Precisa de troco para quanto?</label>
-                <input v-model.number="checkoutData.changeFor" type="number" placeholder="Ex: 50 ou 100"
+                <label for="checkout-change" class="block font-bold text-slate-300 mb-1">Precisa de troco para
+                  quanto?</label>
+                <input id="checkout-change" v-model.number="checkoutData.changeFor" type="number"
+                  placeholder="Ex: 50 ou 100"
                   class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
               </div>
             </div>
@@ -488,9 +519,10 @@
         <!-- Botão WhatsApp -->
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
+            aria-label="Enviar pedido formatado para o WhatsApp do estabelecimento"
             class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-40 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-xs transition-all cursor-pointer">
             <span>Enviar Pedido pelo WhatsApp</span>
-            <svg class="w-4 h-4 fill-slate-950" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 fill-slate-950" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
             </svg>
@@ -572,7 +604,7 @@ const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
 const isCartDrawerOpen = ref(false)
 
-// Trava Global de Scroll: Trava se QUALQUER modal ou gaveta estiver aberta
+// Trava Global de Scroll
 const isAnyOverlayOpen = computed(() => {
   return (
     !!selectedProduct.value ||
@@ -738,7 +770,7 @@ function openProductModal(product: Product) {
   productQuantity.value = 1
 
   product.optionGroups?.forEach(group => {
-    const firstOption = group.options[0]
+    const firstOption = group.options.at(0)
     if (group.required && group.max === 1 && firstOption) {
       selectedOptions.value.set(group.id, [firstOption])
     }

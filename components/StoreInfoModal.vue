@@ -88,22 +88,25 @@ const formatOpeningHours = computed(() => {
     <div v-if="isOpen"
       class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="emit('close')">
-      <div
+      <div role="dialog" aria-modal="true" aria-labelledby="info-modal-title"
         class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
         @click.stop>
         <!-- Header do Modal (Fixo no Topo) -->
         <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
-          <h2 class="text-lg font-extrabold text-white">Informações da Loja</h2>
+          <h2 id="info-modal-title" class="text-lg font-extrabold text-white">
+            Informações da Loja
+          </h2>
           <button @click="emit('close')"
-            class="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer">
-            <X class="h-5 w-5" />
+            class="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+            aria-label="Fechar informações da loja">
+            <X class="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         <!-- Conteúdo com Rolagem Suave -->
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-6">
           <!-- 1. Identidade e Sobre -->
-          <section class="space-y-3">
+          <section aria-labelledby="store-identity-title" class="space-y-3">
             <div class="flex items-center gap-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
               <div class="h-16 w-16 rounded-2xl border-2 border-slate-700 bg-slate-900 overflow-hidden shrink-0">
                 <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="h-full w-full object-cover" />
@@ -113,12 +116,14 @@ const formatOpeningHours = computed(() => {
               </div>
 
               <div class="min-w-0 flex-1">
-                <h3 class="text-base font-bold text-white truncate">{{ tenant.name }}</h3>
+                <h3 id="store-identity-title" class="text-base font-bold text-white truncate">
+                  {{ tenant.name }}
+                </h3>
                 <p v-if="tenant.description" class="text-xs text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
                   {{ tenant.description }}
                 </p>
                 <div class="flex items-center gap-2 mt-2 text-[11px] text-emerald-400 font-semibold">
-                  <ShieldCheck class="w-3.5 h-3.5" />
+                  <ShieldCheck class="w-3.5 h-3.5" aria-hidden="true" />
                   <span>Estabelecimento Verificado no Alaska Local</span>
                 </div>
               </div>
@@ -126,16 +131,16 @@ const formatOpeningHours = computed(() => {
           </section>
 
           <!-- 2. Horários de Atendimento -->
-          <section>
-            <h3 class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <Clock class="w-4 h-4 text-emerald-400" />
+          <section aria-labelledby="store-hours-title">
+            <h3 id="store-hours-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+              <Clock class="w-4 h-4 text-emerald-400" aria-hidden="true" />
               <span>Horário de Funcionamento</span>
             </h3>
 
             <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs text-slate-300 font-medium">Status no Momento:</span>
-                <span
+                <span role="status"
                   :class="isOpenNow ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : 'bg-amber-950 text-amber-300 border-amber-800'"
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
                   {{ isOpenNow ? '🟢 Aberto agora' : '🕒 Fechado no momento' }}
@@ -150,14 +155,14 @@ const formatOpeningHours = computed(() => {
           </section>
 
           <!-- 3. Formas de Pagamento -->
-          <section>
-            <h3 class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <CreditCard class="w-4 h-4 text-emerald-400" />
+          <section aria-labelledby="store-payments-title">
+            <h3 id="store-payments-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+              <CreditCard class="w-4 h-4 text-emerald-400" aria-hidden="true" />
               <span>Formas de Pagamento</span>
             </h3>
 
-            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3 text-xs">
-              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3 text-xs" role="list">
+              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80" role="listitem">
                 <div class="space-y-0.5">
                   <span class="font-bold text-white block">Pix Direto (D+0)</span>
                   <span class="text-slate-400 text-[11px]">Chave informada automaticamente no fechamento do
@@ -166,7 +171,7 @@ const formatOpeningHours = computed(() => {
                 <span class="text-emerald-400 font-bold shrink-0">Instantâneo</span>
               </div>
 
-              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80">
+              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80" role="listitem">
                 <div class="space-y-0.5">
                   <span class="font-bold text-white block">Cartões de Crédito & Débito</span>
                   <span class="text-slate-400 text-[11px]">Visa, Mastercard, Elo na maquininha do entregador</span>
@@ -174,7 +179,7 @@ const formatOpeningHours = computed(() => {
                 <span class="text-slate-400 font-medium shrink-0">Na Entrega</span>
               </div>
 
-              <div class="flex items-start justify-between gap-2">
+              <div class="flex items-start justify-between gap-2" role="listitem">
                 <div class="space-y-0.5">
                   <span class="font-bold text-white block">Dinheiro em Espécie</span>
                   <span class="text-slate-400 text-[11px]">Com opção de troco no checkout</span>
@@ -185,9 +190,9 @@ const formatOpeningHours = computed(() => {
           </section>
 
           <!-- 4. Endereço e Localização -->
-          <section>
-            <h3 class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <MapPin class="w-4 h-4 text-emerald-400" />
+          <section aria-labelledby="store-address-title">
+            <h3 id="store-address-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+              <MapPin class="w-4 h-4 text-emerald-400" aria-hidden="true" />
               <span>Endereço & Entrega</span>
             </h3>
 
@@ -204,8 +209,8 @@ const formatOpeningHours = computed(() => {
                   :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tenant.address)}`"
                   target="_blank"
                   class="shrink-0 p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-400 hover:bg-slate-800 transition-colors flex items-center gap-1.5 font-bold"
-                  title="Abrir no Google Maps">
-                  <Navigation class="w-4 h-4" />
+                  aria-label="Abrir rota no Google Maps para o endereço do estabelecimento">
+                  <Navigation class="w-4 h-4" aria-hidden="true" />
                   <span class="text-[11px]">Rotas</span>
                 </a>
               </div>
