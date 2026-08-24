@@ -1,106 +1,101 @@
 <!-- pages/[slug].vue -->
 <template>
-  <div v-if="tenant" class="min-h-screen bg-slate-50 pb-32">
-    <!-- 1. Banner de Fundo (iFood Style) -->
-    <div class="relative h-48 sm:h-56 w-full overflow-hidden bg-slate-900">
-      <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name" class="w-full h-full object-cover opacity-90" />
-      <div v-else class="w-full h-full bg-gradient-to-r from-slate-800 to-slate-900"></div>
+  <div v-if="tenant"
+    class="min-h-screen bg-slate-950 text-slate-100 pb-36 selection:bg-emerald-500 selection:text-slate-950">
+    <!-- 1. Banner de Fundo -->
+    <div class="relative h-48 sm:h-64 w-full overflow-hidden bg-slate-900">
+      <img v-if="tenant.banner" :src="tenant.banner" :alt="tenant.name" class="w-full h-full object-cover opacity-75" />
+      <div v-else class="w-full h-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900"></div>
 
       <!-- Botão Voltar para a Home -->
       <NuxtLink to="/"
-        class="absolute top-4 left-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full backdrop-blur-xs transition-colors z-10"
+        class="absolute top-4 left-4 bg-slate-950/70 hover:bg-slate-900 text-white p-2.5 rounded-full backdrop-blur-md border border-slate-700/60 transition-all z-10 shadow-lg cursor-pointer"
         title="Voltar ao início">
         <ArrowLeft class="w-5 h-5" />
       </NuxtLink>
     </div>
 
-    <!-- 2. Card Flutuante de Identidade do Restaurante (iFood Style) -->
-    <header class="max-w-4xl mx-auto px-4 -mt-14 relative z-20">
+    <!-- 2. Card Flutuante de Identidade do Restaurante (Dark Style) -->
+    <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
       <div
-        class="bg-white rounded-3xl p-5 shadow-floating border border-slate-100/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
+        class="bg-slate-900/95 backdrop-blur-md rounded-3xl p-5 shadow-2xl border border-slate-800 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
         <!-- Logo Circular Centralizado -->
         <div
-          class="relative -mt-12 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-soft overflow-hidden bg-white">
+          class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-slate-800 shadow-xl overflow-hidden bg-slate-950">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-full h-full object-cover" />
           <div v-else
-            class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400 font-bold text-xl">
+            class="w-full h-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold text-xl">
             {{ tenant.name.charAt(0) }}
           </div>
         </div>
 
         <!-- Dados do Estabelecimento -->
-        <div class="flex-1 min-w-0 space-y-2">
+        <div class="flex-1 min-w-0 space-y-2.5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">
+              <h1 class="font-extrabold text-xl sm:text-2xl text-white leading-tight">
                 {{ tenant.name }}
               </h1>
-              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-500 line-clamp-1 mt-0.5">
+              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-400 line-clamp-1 mt-0.5">
                 {{ tenant.description }}
               </p>
             </div>
 
             <!-- Status Aberto/Fechado -->
             <span
-              :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200'"
-              class="inline-flex items-center self-center sm:self-auto px-3 py-1 rounded-full text-xs font-bold border shrink-0">
+              :class="isOpen ? 'bg-emerald-950/90 text-emerald-300 border-emerald-800/60' : 'bg-amber-950/90 text-amber-300 border-amber-800/60'"
+              class="inline-flex items-center self-center sm:self-auto px-3 py-1 rounded-full text-xs font-bold border shrink-0 backdrop-blur-xs">
               {{ isOpen ? '🟢 Aberto agora' : '🕒 Fechado' }}
             </span>
           </div>
 
           <!-- Linha de Metadados iFood -->
           <div
-            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-1.5 gap-x-3 text-xs text-slate-600 pt-1">
-            <!-- Selo Clicável de Informações -->
-            <button @click="isInfoOpen = true"
-              class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-0.5 rounded-md cursor-pointer transition-all shadow-2xs"
-              title="Ver informações da loja">
-              <span>ℹ️</span>
-              <span>Informações</span>
-              <ChevronRight class="w-3 h-3 text-slate-400 ml-0.5" />
-            </button>
-
+            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-3 text-xs text-slate-400 pt-1">
             <!-- Selo Clicável de Avaliações -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true"
-              class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 active:scale-95 px-2.5 py-0.5 rounded-md cursor-pointer transition-all shadow-2xs"
+              class="flex items-center gap-1 font-bold text-slate-200 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
               title="Ver detalhes das avaliações">
               <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>{{ tenant.reviews.score.toFixed(1) }}</span>
-              <span class="text-slate-500 font-medium">({{ tenant.reviews.totalReviews }})</span>
-              <ChevronRight class="w-3 h-3 text-slate-400 ml-0.5" />
+              <span class="text-slate-400 font-medium">({{ tenant.reviews.totalReviews }})</span>
+              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" />
             </button>
 
-            <div v-else class="flex items-center gap-1 font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
-              <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span>4.9</span>
-              <span class="text-slate-400 font-normal">(Google Maps)</span>
-            </div>
+            <!-- Selo Clicável de Informações -->
+            <button @click="isInfoOpen = true"
+              class="flex items-center gap-1 font-medium text-slate-300 bg-slate-800/90 hover:bg-slate-750 border border-slate-700/80 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-xs"
+              title="Ver informações da loja">
+              <Info class="w-3.5 h-3.5 text-slate-400" />
+              <span>Informações</span>
+              <ChevronRight class="w-3 h-3 text-slate-500 ml-0.5" />
+            </button>
 
             <div class="flex items-center gap-1">
               <span>🛵 Entrega • 30-45 min</span>
             </div>
 
             <div class="flex items-center gap-1">
-              <span class="text-slate-300">•</span>
+              <span class="text-slate-600">•</span>
               <span>Taxa: {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}</span>
             </div>
 
             <div v-if="tenant.minOrderValue" class="flex items-center gap-1">
-              <span class="text-slate-300">•</span>
+              <span class="text-slate-600">•</span>
               <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
             </div>
           </div>
 
           <!-- Endereço e WhatsApp -->
           <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
-            <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-500 truncate">
-              <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2.5 border-t border-slate-800 text-xs">
+            <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-400 truncate">
+              <MapPin class="w-3.5 h-3.5 text-slate-500 shrink-0" />
               <span class="truncate">{{ tenant.address || 'Atendimento e entrega local' }}</span>
             </div>
 
             <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
-              class="inline-flex items-center justify-center gap-1.5 text-emerald-600 font-bold hover:underline">
+              class="inline-flex items-center justify-center gap-1.5 text-emerald-400 font-bold hover:underline">
               <Phone class="w-3.5 h-3.5" />
               <span>Dúvidas no WhatsApp</span>
             </a>
@@ -109,38 +104,38 @@
       </div>
     </header>
 
-    <!-- 3. Banner de Vantagem / Promoção (iFood Style) -->
-    <div class="max-w-4xl mx-auto px-4 mt-4">
+    <!-- 3. Banner de Vantagem / Promoção -->
+    <div class="max-w-4xl mx-auto px-4 mt-5">
       <div
-        class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-200/60 rounded-2xl p-3 flex items-center justify-between text-xs text-emerald-800 font-medium">
-        <div class="flex items-center gap-2">
+        class="bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-emerald-950/70 border border-emerald-500/30 rounded-2xl p-3.5 flex items-center justify-between text-xs text-emerald-300 font-medium shadow-sm">
+        <div class="flex items-center gap-2.5">
           <span class="text-base">🛵</span>
           <span>Peça pelo canal oficial com <strong>preço original de balcão</strong> e sem taxas extras!</span>
         </div>
-        <span class="text-emerald-700 font-bold shrink-0 text-[11px] hidden sm:inline">Aproveite ›</span>
+        <span class="text-emerald-400 font-bold shrink-0 text-[11px] hidden sm:inline">Aproveite ›</span>
       </div>
     </div>
 
-    <!-- 4. Seção Destaques & Mais Pedidos com Controles de Scroll no Desktop -->
-    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-6 space-y-3">
+    <!-- 4. Seção Destaques & Mais Pedidos com Rolagem Suave -->
+    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5">
       <div class="flex items-center justify-between">
-        <h2 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
           <Flame class="w-4 h-4 text-amber-500 fill-amber-500" />
           <span>Destaques & Mais Pedidos</span>
         </h2>
 
-        <!-- Mobile: Texto / Deskinset-block-start: Botões de Navegação com Mouse -->
+        <!-- Controles de Navegação Desktop -->
         <div class="flex items-center gap-1.5">
-          <span class="text-xs text-slate-400 font-medium sm:hidden">Deslize para o lado ›</span>
+          <span class="text-xs text-slate-500 font-medium sm:hidden">Deslize para o lado ›</span>
 
           <div class="hidden sm:flex items-center gap-1.5">
             <button @click="scrollCarousel('left')"
-              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all cursor-pointer"
+              class="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 shadow-sm active:scale-95 transition-all cursor-pointer"
               title="Anterior" aria-label="Rolar para esquerda">
               <ChevronLeft class="w-4 h-4" />
             </button>
             <button @click="scrollCarousel('right')"
-              class="p-1.5 rounded-full bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 shadow-2xs active:scale-95 transition-all cursor-pointer"
+              class="p-1.5 rounded-full bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 shadow-sm active:scale-95 transition-all cursor-pointer"
               title="Próximo" aria-label="Rolar para direita">
               <ChevronRight class="w-4 h-4" />
             </button>
@@ -148,25 +143,25 @@
         </div>
       </div>
 
-      <!-- Carrossel com Scroll Horizontal Suave -->
+      <!-- Carrossel -->
       <div ref="carouselRef"
-        class="flex gap-3.5 overflow-x-auto no-scrollbar scroll-smooth pb-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+        class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
-          class="shrink-0 w-36 sm:w-44 bg-white rounded-2xl p-2.5 border border-slate-100 shadow-xs active:scale-[0.98] transition-transform cursor-pointer hover:border-slate-200 hover:shadow-sm flex flex-col justify-between group">
-          <div class="relative w-full h-28 sm:h-32 rounded-xl overflow-hidden bg-slate-100 mb-2">
+          class="shrink-0 w-40 sm:w-48 bg-slate-900 rounded-2xl p-3 border border-slate-800/90 shadow-md active:scale-[0.98] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850 flex flex-col justify-between group">
+          <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden bg-slate-800 mb-2.5">
             <img v-if="product.image" :src="product.image" :alt="product.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100" />
             <span
-              class="absolute top-1.5 left-1.5 bg-amber-500/95 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-2xs">
+              class="absolute top-1.5 left-1.5 bg-amber-500 text-slate-950 text-[9px] font-extrabold px-1.5 py-0.5 rounded-md shadow-sm">
               Mais pedido
             </span>
           </div>
 
           <div class="space-y-1">
-            <span class="font-extrabold text-sm text-slate-900 block">
+            <span class="font-extrabold text-sm text-emerald-400 block">
               {{ formatCurrency(product.price) }}
             </span>
-            <h3 class="font-bold text-xs text-slate-800 line-clamp-2 leading-tight">
+            <h3 class="font-bold text-xs text-white line-clamp-2 leading-tight">
               {{ product.name }}
             </h3>
           </div>
@@ -174,114 +169,113 @@
       </div>
     </section>
 
-    <!-- 5. Barra Fixa de Categorias (Chips Horizontais) -->
-    <CategoryTabs :categories="tenant.categories" class="mt-6" />
+    <!-- 5. Barra Fixa de Categorias -->
+    <CategoryTabs :categories="tenant.categories" class="mt-8" />
 
-    <!-- 6. Catálogo Completo de Produtos (2 Colunas no Desktop) -->
-    <main class="max-w-4xl mx-auto px-4 mt-6 space-y-8">
+    <!-- 6. Catálogo Completo de Produtos -->
+    <main class="max-w-4xl mx-auto px-4 mt-8 space-y-10">
       <section v-for="category in tenant.categories" :key="category.id" :id="category.id"
-        class="space-y-3 scroll-mt-20">
+        class="space-y-4 scroll-mt-24">
         <div class="flex items-center gap-2">
           <span class="w-1.5 h-4 bg-emerald-500 rounded-full"></span>
-          <h2 class="text-base font-bold text-slate-900 tracking-tight">{{ category.name }}</h2>
+          <h2 class="text-base font-bold text-white tracking-tight">{{ category.name }}</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div v-for="product in category.products" :key="product.id" @click="openProductModal(product)"
-            class="bg-white rounded-2xl p-4 border border-slate-100 shadow-xs flex items-center justify-between gap-3.5 active:scale-[0.99] transition-transform cursor-pointer hover:border-slate-200 hover:shadow-sm">
+            class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/90 shadow-md flex items-center justify-between gap-3.5 active:scale-[0.99] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="font-bold text-slate-900 text-sm truncate">{{ product.name }}</h3>
+                <h3 class="font-bold text-white text-sm truncate">{{ product.name }}</h3>
                 <span v-if="!product.available"
-                  class="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-bold shrink-0">
+                  class="text-[10px] bg-red-950/80 text-red-400 border border-red-800/60 px-1.5 py-0.5 rounded font-bold shrink-0">
                   Esgotado
                 </span>
               </div>
-              <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">{{ product.description }}</p>
+              <p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">{{ product.description }}</p>
 
-              <div class="flex items-center gap-2 mt-2.5">
-                <span class="font-extrabold text-sm text-slate-900">
+              <div class="flex items-center gap-2 mt-3">
+                <span class="font-extrabold text-sm text-emerald-400">
                   {{ formatCurrency(product.price) }}
                 </span>
                 <span v-if="product.optionGroups?.length"
-                  class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">
+                  class="text-[10px] text-emerald-300 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">
                   Montar
                 </span>
               </div>
             </div>
 
             <img v-if="product.image" :src="product.image" :alt="product.name"
-              class="w-20 h-20 rounded-xl object-cover shrink-0 bg-slate-100" />
+              class="w-20 h-20 rounded-xl object-cover shrink-0 bg-slate-800 opacity-90" />
           </div>
         </div>
       </section>
     </main>
 
-    <!-- 7. Modal de Customização do Produto (iFood Pro Style) -->
+    <!-- 7. Modal de Customização do Produto (Dark Style) -->
     <div v-if="selectedProduct"
-      class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="closeProductModal">
       <div
-        class="bg-white w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:shadow-floating"
+        class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
         @click.stop>
-        <!-- Header da Foto com Badge do Restaurante e Botão Fechar -->
-        <div class="relative h-60 sm:h-52 w-full bg-slate-100 shrink-0">
+        <!-- Header da Foto -->
+        <div class="relative h-60 sm:h-52 w-full bg-slate-800 shrink-0">
           <img v-if="selectedProduct.image" :src="selectedProduct.image" :alt="selectedProduct.name"
             class="w-full h-full object-cover" />
 
-          <!-- Botão Fechar Flutuante -->
+          <!-- Botão Fechar -->
           <button @click="closeProductModal"
-            class="absolute top-4 right-4 bg-slate-900/60 hover:bg-slate-900/80 text-white p-2 rounded-full transition-colors backdrop-blur-xs z-10 shadow-md cursor-pointer"
+            class="absolute top-4 right-4 bg-slate-950/80 hover:bg-slate-900 text-white p-2 rounded-full transition-colors backdrop-blur-md z-10 shadow-md border border-slate-700 cursor-pointer"
             aria-label="Fechar">
             <X class="w-5 h-5" />
           </button>
 
-          <!-- Badge do Restaurante sobre a foto (iFood Style) -->
+          <!-- Badge do Restaurante -->
           <div
-            class="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-100 text-[11px]">
+            class="absolute bottom-3 left-3 bg-slate-950/90 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-700 text-[11px]">
             <img v-if="tenant.logo" :src="tenant.logo" class="w-4 h-4 rounded-full object-cover" />
-            <span class="font-bold text-slate-800 truncate max-w-[130px]">{{ tenant.name }}</span>
-            <span class="text-slate-300">•</span>
-            <span class="flex items-center gap-0.5 font-bold text-slate-900">
+            <span class="font-bold text-white truncate max-w-[130px]">{{ tenant.name }}</span>
+            <span class="text-slate-600">•</span>
+            <span class="flex items-center gap-0.5 font-bold text-amber-400">
               <Star class="w-3 h-3 fill-amber-400 text-amber-400" />
               {{ tenant.reviews ? tenant.reviews.score.toFixed(1) : '4.9' }}
             </span>
           </div>
         </div>
 
-        <!-- Conteúdo com Rolagem Ampla -->
+        <!-- Conteúdo do Modal -->
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-5">
           <!-- Título, Descrição e Preço -->
           <div class="space-y-1.5">
-            <h3 class="text-xl font-extrabold text-slate-900 leading-tight">{{ selectedProduct.name }}</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">{{ selectedProduct.description }}</p>
+            <h3 class="text-xl font-extrabold text-white leading-tight">{{ selectedProduct.name }}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">{{ selectedProduct.description }}</p>
             <div class="flex items-center justify-between pt-1">
-              <span class="text-xs font-semibold text-slate-400">Serve até 1 ou 2 pessoas</span>
-              <span class="text-xl font-black text-slate-900">
+              <span class="text-xs font-semibold text-slate-500">Serve até 1 ou 2 pessoas</span>
+              <span class="text-xl font-black text-emerald-400">
                 {{ formatCurrency(selectedProduct.price) }}
               </span>
             </div>
           </div>
 
-          <!-- Grupos de Opcionais (Cabeçalho iFood Style) -->
+          <!-- Grupos de Opcionais -->
           <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2">
-            <!-- Faixa de Destaque do Grupo (iFood Style) -->
+            <!-- Faixa de Destaque -->
             <div
-              class="bg-slate-50 border-y border-slate-100/80 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
+              class="bg-slate-950 border-y border-slate-800 px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between">
               <div>
-                <h4 class="font-bold text-xs sm:text-sm text-slate-900">{{ group.title }}</h4>
-                <p class="text-[11px] text-slate-500 font-medium">
+                <h4 class="font-bold text-xs sm:text-sm text-white">{{ group.title }}</h4>
+                <p class="text-[11px] text-slate-400 font-medium">
                   {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
                 </p>
               </div>
 
-              <!-- Badge Obrigatório / Opcional -->
               <span v-if="group.required"
-                class="bg-slate-900 text-white text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+                class="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
                 OBRIGATÓRIO
               </span>
               <span v-else
-                class="bg-slate-200/80 text-slate-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
+                class="bg-slate-800 text-slate-400 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
                 OPCIONAL
               </span>
             </div>
@@ -289,48 +283,48 @@
             <!-- Lista de Opções -->
             <div class="space-y-2 pt-1">
               <label v-for="option in group.options" :key="option.id"
-                class="flex items-center justify-between p-3 rounded-2xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors"
-                :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-50/40 shadow-2xs' : ''">
+                class="flex items-center justify-between p-3 rounded-2xl border border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-colors"
+                :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-950/30' : ''">
                 <div class="flex flex-col pr-3">
-                  <span class="text-xs sm:text-sm font-medium text-slate-800">{{ option.name }}</span>
-                  <span v-if="option.price > 0" class="text-xs font-bold text-emerald-700 mt-0.5">
+                  <span class="text-xs sm:text-sm font-medium text-slate-200">{{ option.name }}</span>
+                  <span v-if="option.price > 0" class="text-xs font-bold text-emerald-400 mt-0.5">
                     + {{ formatCurrency(option.price) }}
                   </span>
                 </div>
 
                 <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id"
                   :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
-                  class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 shrink-0 cursor-pointer" />
+                  class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-400 bg-slate-950 border-slate-700 shrink-0 cursor-pointer" />
               </label>
             </div>
           </div>
 
           <!-- Observação -->
-          <div class="pt-3 border-t border-slate-100">
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Alguma observação?</label>
+          <div class="pt-3 border-t border-slate-800">
+            <label class="block text-xs font-bold text-slate-300 mb-1.5">Alguma observação?</label>
             <textarea v-model="productObservation" rows="2"
               placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
-              class="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none bg-slate-50/50"></textarea>
+              class="w-full text-xs p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none placeholder:text-slate-600"></textarea>
           </div>
         </div>
 
         <!-- Footer do Modal -->
-        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white flex items-center gap-3 shrink-0 shadow-lg">
-          <div class="flex items-center border border-slate-200 rounded-2xl p-1 shrink-0 bg-slate-50">
+        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900 flex items-center gap-3 shrink-0">
+          <div class="flex items-center border border-slate-800 rounded-2xl p-1 shrink-0 bg-slate-950">
             <button @click="productQuantity > 1 ? productQuantity-- : null"
-              class="p-2 text-slate-600 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
+              class="p-2 text-slate-400 hover:text-white disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
               :disabled="productQuantity <= 1">
               <Minus class="w-4 h-4" />
             </button>
-            <span class="w-8 text-center font-extrabold text-sm text-slate-900">{{ productQuantity }}</span>
+            <span class="w-8 text-center font-extrabold text-sm text-white">{{ productQuantity }}</span>
             <button @click="productQuantity++"
-              class="p-2 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform cursor-pointer">
+              class="p-2 text-slate-400 hover:text-white active:scale-95 transition-transform cursor-pointer">
               <Plus class="w-4 h-4" />
             </button>
           </div>
 
           <button @click="addToCart" :disabled="!isProductConfigValid"
-            class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white py-3.5 px-4 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-between cursor-pointer">
+            class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 text-slate-950 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer">
             <span>Adicionar</span>
             <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
           </button>
@@ -338,18 +332,18 @@
       </div>
     </div>
 
-    <!-- 8. Barra Fixa Inferior com Resumo da Sacola -->
+    <!-- 8. Barra Fixa Inferior da Sacola -->
     <div v-if="cart.items.length > 0"
-      class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-floating z-40">
+      class="fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 shadow-2xl z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
-          <span class="text-xs text-slate-500 block">
+          <span class="text-xs text-slate-400 block">
             {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
           </span>
-          <span class="text-lg font-extrabold text-slate-900">{{ formatCurrency(cartSubtotal) }}</span>
+          <span class="text-lg font-black text-emerald-400">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true"
-          class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold px-5 py-3 rounded-2xl shadow-md flex items-center gap-2 transition-all text-xs cursor-pointer">
+          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 transition-all text-xs cursor-pointer">
           <ShoppingCart class="w-4 h-4" />
           <span>Ver Sacola</span>
         </button>
@@ -358,17 +352,17 @@
 
     <!-- 9. Drawer de Finalização do Carrinho -->
     <div v-if="isCartDrawerOpen"
-      class="fixed inset-0 z-50 bg-white sm:bg-slate-900/60 sm:backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="isCartDrawerOpen = false">
       <div
-        class="bg-white w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:shadow-floating"
+        class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
         @click.stop>
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <ShoppingCart class="w-5 h-5 text-emerald-600" />
-            <h3 class="font-bold text-base text-slate-900">Sua Sacola</h3>
+            <ShoppingCart class="w-5 h-5 text-emerald-400" />
+            <h3 class="font-bold text-base text-white">Sua Sacola</h3>
           </div>
-          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+          <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-white cursor-pointer">
             <X class="w-5 h-5" />
           </button>
         </div>
@@ -377,26 +371,26 @@
           <!-- Itens -->
           <div class="space-y-2.5">
             <div v-for="(item, index) in cart.items" :key="index"
-              class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-start justify-between gap-2">
+              class="p-3.5 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-start justify-between gap-2">
               <div class="flex-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="font-bold text-emerald-700">{{ item.quantity }}x</span>
-                  <span class="font-bold text-slate-900">{{ item.product.name }}</span>
+                  <span class="font-bold text-emerald-400">{{ item.quantity }}x</span>
+                  <span class="font-bold text-white">{{ item.product.name }}</span>
                 </div>
-                <div v-if="item.selectedOptions.length" class="text-[11px] text-slate-500 mt-0.5 space-y-0.5">
+                <div v-if="item.selectedOptions.length" class="text-[11px] text-slate-400 mt-1 space-y-0.5">
                   <p v-for="opt in item.selectedOptions" :key="opt.id">
                     + {{ opt.name }} {{ opt.price > 0 ? `(${formatCurrency(opt.price)})` : '' }}
                   </p>
                 </div>
-                <p v-if="item.observation" class="text-[11px] text-slate-400 italic mt-0.5">
+                <p v-if="item.observation" class="text-[11px] text-slate-500 italic mt-1">
                   Obs: "{{ item.observation }}"
                 </p>
-                <span class="font-bold text-xs text-slate-900 mt-1 block">
+                <span class="font-bold text-xs text-emerald-400 mt-2 block">
                   {{ formatCurrency(item.unitPrice * item.quantity) }}
                 </span>
               </div>
 
-              <button @click="removeCartItem(index)" class="text-red-500 hover:text-red-700 p-1 cursor-pointer"
+              <button @click="removeCartItem(index)" class="text-red-400 hover:text-red-300 p-1 cursor-pointer"
                 title="Remover item">
                 <Trash2 class="w-4 h-4" />
               </button>
@@ -404,16 +398,16 @@
           </div>
 
           <!-- Tipo de Pedido -->
-          <div class="border-t border-slate-100 pt-3">
-            <label class="block font-bold text-slate-800 mb-1.5">Tipo de Pedido:</label>
+          <div class="border-t border-slate-800 pt-3">
+            <label class="block font-bold text-slate-300 mb-1.5">Tipo de Pedido:</label>
             <div class="grid grid-cols-2 gap-2">
               <button @click="checkoutData.deliveryType = 'delivery'"
-                :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
+                :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛵 Entrega (Delivery)
               </button>
               <button @click="checkoutData.deliveryType = 'pickup'"
-                :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-100 text-slate-700 font-medium'"
+                :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛍️ Retirada no Balcão
               </button>
@@ -421,46 +415,46 @@
           </div>
 
           <!-- Dados do Cliente -->
-          <div class="border-t border-slate-100 pt-3 space-y-2.5">
+          <div class="border-t border-slate-800 pt-3 space-y-2.5">
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Seu Nome *</label>
+              <label class="block font-bold text-slate-300 mb-1">Seu Nome *</label>
               <input v-model="checkoutData.customerName" type="text" placeholder="Ex: João da Silva"
-                class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
             </div>
 
             <div v-if="checkoutData.deliveryType === 'delivery'" class="space-y-2">
               <div class="grid grid-cols-3 gap-2">
                 <div class="col-span-2">
-                  <label class="block font-bold text-slate-700 mb-1">Rua / Logradouro *</label>
+                  <label class="block font-bold text-slate-300 mb-1">Rua / Logradouro *</label>
                   <input v-model="checkoutData.address.street" type="text" placeholder="Ex: Av. Brasil"
-                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
-                  <label class="block font-bold text-slate-700 mb-1">Número *</label>
+                  <label class="block font-bold text-slate-300 mb-1">Número *</label>
                   <input v-model="checkoutData.address.number" type="text" placeholder="123"
-                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-2">
                 <div>
-                  <label class="block font-bold text-slate-700 mb-1">Bairro *</label>
+                  <label class="block font-bold text-slate-300 mb-1">Bairro *</label>
                   <input v-model="checkoutData.address.neighborhood" type="text" placeholder="Centro"
-                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
-                  <label class="block font-bold text-slate-700 mb-1">Complemento</label>
+                  <label class="block font-bold text-slate-300 mb-1">Complemento</label>
                   <input v-model="checkoutData.address.complement" type="text" placeholder="Apto 42"
-                    class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
             </div>
 
             <!-- Pagamento -->
             <div class="pt-1">
-              <label class="block font-bold text-slate-700 mb-1">Forma de Pagamento *</label>
+              <label class="block font-bold text-slate-300 mb-1">Forma de Pagamento *</label>
               <select v-model="checkoutData.paymentMethod"
-                class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white font-medium">
+                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
                 <option value="Pix">Pix (Chave informada no pedido)</option>
                 <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
                 <option value="Cartão de Débito">Cartão de Débito (na entrega)</option>
@@ -468,36 +462,36 @@
               </select>
 
               <div v-if="checkoutData.paymentMethod === 'Dinheiro'" class="mt-2">
-                <label class="block font-bold text-slate-700 mb-1">Precisa de troco para quanto?</label>
+                <label class="block font-bold text-slate-300 mb-1">Precisa de troco para quanto?</label>
                 <input v-model.number="checkoutData.changeFor" type="number" placeholder="Ex: 50 ou 100"
-                  class="w-full p-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                  class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
               </div>
             </div>
           </div>
 
           <!-- Totalização -->
-          <div class="border-t border-slate-100 pt-3 space-y-1 text-xs">
-            <div class="flex justify-between text-slate-600">
+          <div class="border-t border-slate-800 pt-3 space-y-1 text-xs">
+            <div class="flex justify-between text-slate-400">
               <span>Subtotal:</span>
               <span>{{ formatCurrency(cartSubtotal) }}</span>
             </div>
-            <div v-if="checkoutData.deliveryType === 'delivery'" class="flex justify-between text-slate-600">
+            <div v-if="checkoutData.deliveryType === 'delivery'" class="flex justify-between text-slate-400">
               <span>Taxa de Entrega:</span>
               <span>{{ formatCurrency(tenant.deliveryFee || 0) }}</span>
             </div>
-            <div class="flex justify-between font-extrabold text-sm text-slate-900 pt-1.5 border-t border-slate-100">
+            <div class="flex justify-between font-black text-sm text-white pt-1.5 border-t border-slate-800">
               <span>Total:</span>
-              <span class="text-emerald-600">{{ formatCurrency(cartFinalTotal) }}</span>
+              <span class="text-emerald-400">{{ formatCurrency(cartFinalTotal) }}</span>
             </div>
           </div>
         </div>
 
         <!-- Botão WhatsApp -->
-        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-100 bg-white">
+        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 text-xs transition-all cursor-pointer">
+            class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-40 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-xs transition-all cursor-pointer">
             <span>Enviar Pedido pelo WhatsApp</span>
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 fill-slate-950" viewBox="0 0 24 24">
               <path
                 d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
             </svg>
@@ -506,11 +500,10 @@
       </div>
     </div>
 
-    <!-- 10. Modal de Avaliações da Loja (iFood Style) -->
+    <!-- 10. Modais da Loja -->
     <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :is-open="isReviewsOpen"
       @close="isReviewsOpen = false" />
 
-    <!-- 11. Modal de Informações da Loja -->
     <StoreInfoModal :tenant="tenant" :is-open="isInfoOpen" @close="isInfoOpen = false" />
   </div>
 </template>
@@ -527,6 +520,7 @@ import {
   Minus,
   Trash2,
   Star,
+  Info,
   ArrowLeft,
   Flame,
   ChevronLeft,
@@ -534,8 +528,6 @@ import {
 } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
-import StoreReviewsModal from '~/components/StoreReviewsModal.vue'
-import StoreInfoModal from '~/components/StoreInfoModal.vue'
 
 const route = useRoute()
 const slug = (route.params.slug as string) || 'hamburgueria-x'
@@ -574,7 +566,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 3. Estado de Avaliações
+// 3. Estados dos Modais
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 
@@ -609,7 +601,7 @@ const checkoutData = ref({
   }
 })
 
-// 6. Computeds & Destaques Dinâmicos
+// 6. Destaques Dinâmicos
 const featuredProducts = computed(() => {
   if (!tenant.value) return []
   const all: Product[] = []
@@ -619,7 +611,7 @@ const featuredProducts = computed(() => {
   return all.slice(0, 6)
 })
 
-// Controle de Rolagem do Carrossel com Mouse no Desktop
+// Controle de Rolagem Imune a Linters
 const carouselRef = ref<HTMLElement | null>(null)
 
 function scrollCarousel(direction: 'left' | 'right') {
