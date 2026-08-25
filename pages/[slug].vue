@@ -229,8 +229,8 @@
                 <span class="font-extrabold text-sm" :class="themeClasses.primaryText">
                   {{ formatCurrency(product.price) }}
                 </span>
-                <span v-if="product.optionGroups?.length"
-                  class="text-[10px] px-2 py-0.5 rounded-full font-bold border bg-red-50 text-red-600 border-red-200">
+                <span v-if="product.optionGroups?.length" class="text-[10px] px-2 py-0.5 rounded-full font-bold border"
+                  :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
                   Montar
                 </span>
               </div>
@@ -243,156 +243,9 @@
       </section>
     </main>
 
-    <!-- 7. Modal de Customização do Produto -->
-    <div v-if="selectedProduct"
-      class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
-      @click="closeProductModal">
-      <div role="dialog" aria-modal="true" aria-labelledby="product-modal-title"
-        class="bg-white text-slate-800 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-200 sm:shadow-2xl"
-        @click.stop>
-        <!-- Header da Foto -->
-        <div class="relative h-60 sm:h-52 w-full bg-slate-100 shrink-0">
-          <img v-if="selectedProduct.image" :src="selectedProduct.image" :alt="selectedProduct.name"
-            class="w-full h-full object-cover" />
-
-          <!-- Botão Fechar -->
-          <button @click="closeProductModal"
-            class="absolute top-4 right-4 bg-slate-900/70 hover:bg-slate-900 text-white p-2 rounded-full transition-colors backdrop-blur-md z-10 shadow-md cursor-pointer"
-            aria-label="Fechar modal de montagem do produto">
-            <X class="w-5 h-5" aria-hidden="true" />
-          </button>
-
-          <!-- Badge do Restaurante -->
-          <div
-            class="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-200 text-[11px]">
-            <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="w-4 h-4 rounded-full object-cover" />
-            <span class="font-bold text-slate-900 truncate max-w-[130px]">{{ tenant.name }}</span>
-            <span class="text-slate-300" aria-hidden="true">•</span>
-            <span class="flex items-center gap-0.5 font-bold text-amber-500">
-              <Star class="w-3 h-3 fill-amber-400 text-amber-400" aria-hidden="true" />
-              {{ tenant.reviews ? tenant.reviews.score.toFixed(1) : '4.9' }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Conteúdo do Modal -->
-        <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-5">
-          <!-- Título, Descrição e Preço -->
-          <div class="space-y-1.5">
-            <h3 id="product-modal-title" class="text-xl font-extrabold text-slate-900 leading-tight">{{
-              selectedProduct.name }}</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">{{ selectedProduct.description }}</p>
-            <div class="flex items-center justify-between pt-1">
-              <span class="text-xs font-semibold text-slate-400">Serve até 1 ou 2 pessoas</span>
-              <span class="text-xl font-black" :class="themeClasses.primaryText">
-                {{ formatCurrency(selectedProduct.price) }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Grupos de Opcionais com Feedback Visual -->
-          <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2" role="group"
-            :aria-labelledby="`group-title-${group.id}`" :aria-invalid="group.required && !isGroupValid(group)">
-            <div class="border-y px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between transition-colors"
-              :class="group.required && !isGroupValid(group) ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200'">
-              <div>
-                <h4 :id="`group-title-${group.id}`" class="font-bold text-xs sm:text-sm text-slate-900">
-                  {{ group.title }}
-                </h4>
-                <p class="text-[11px] font-medium"
-                  :class="group.required && !isGroupValid(group) ? 'text-amber-800' : 'text-slate-500'">
-                  {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
-                  <span v-if="getSelectedCountInGroup(group.id) > 0" class="font-bold ml-1"
-                    :class="themeClasses.primaryText">
-                    ({{ getSelectedCountInGroup(group.id) }}/{{ group.max }} selecionado{{
-                      getSelectedCountInGroup(group.id) > 1 ? 's' : '' }})
-                  </span>
-                </p>
-              </div>
-
-              <!-- Badges Dinâmicos -->
-              <span v-if="group.required && isGroupValid(group)"
-                class="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 flex items-center gap-1 bg-emerald-50 text-emerald-700 border-emerald-200">
-                <Check class="w-2.5 h-2.5" aria-hidden="true" />
-                CONCLUÍDO
-              </span>
-              <span v-else-if="group.required && !isGroupValid(group)"
-                class="bg-amber-100 text-amber-800 border border-amber-300 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 animate-pulse">
-                OBRIGATÓRIO
-              </span>
-              <span v-else
-                class="bg-slate-200/80 text-slate-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider shrink-0">
-                OPCIONAL
-              </span>
-            </div>
-
-            <!-- Lista de Opções -->
-            <div class="space-y-2 pt-1">
-              <label v-for="option in group.options" :key="option.id"
-                class="flex items-center justify-between p-3 rounded-2xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition-colors"
-                :class="isOptionSelected(group.id, option.id) ? 'border-red-500 bg-red-50/40' : ''">
-                <div class="flex flex-col pr-3">
-                  <span class="text-xs sm:text-sm font-medium text-slate-800">{{ option.name }}</span>
-                  <span v-if="option.price > 0" class="text-xs font-bold mt-0.5" :class="themeClasses.primaryText">
-                    + {{ formatCurrency(option.price) }}
-                  </span>
-                </div>
-
-                <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id" :aria-required="group.required"
-                  :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
-                  class="w-5 h-5 rounded border-slate-300 shrink-0 cursor-pointer accent-red-600" />
-              </label>
-            </div>
-          </div>
-
-          <!-- Observação -->
-          <div class="pt-3 border-t border-slate-200">
-            <label for="product-observation-input" class="block text-xs font-bold text-slate-700 mb-1.5">Alguma
-              observação?</label>
-            <textarea id="product-observation-input" v-model="productObservation" rows="2"
-              placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
-              class="w-full text-xs p-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none placeholder:text-slate-400"></textarea>
-          </div>
-        </div>
-
-        <!-- Footer do Modal com Mensagem de Aviso se Incompleto -->
-        <div class="p-4 pb-6 sm:pb-4 border-t border-slate-200 bg-white flex flex-col gap-2 shrink-0">
-          <div class="flex items-center gap-3 w-full">
-            <div class="flex items-center border border-slate-200 rounded-2xl p-1 shrink-0 bg-slate-100" role="group"
-              aria-label="Controle de quantidade">
-              <button @click="productQuantity > 1 ? productQuantity-- : null"
-                class="p-2 text-slate-500 hover:text-slate-900 disabled:opacity-30 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Diminuir quantidade" :disabled="productQuantity <= 1">
-                <Minus class="w-4 h-4" aria-hidden="true" />
-              </button>
-              <span class="w-8 text-center font-extrabold text-sm text-slate-900" aria-live="polite">{{ productQuantity
-              }}</span>
-              <button @click="productQuantity++"
-                class="p-2 text-slate-500 hover:text-slate-900 active:scale-95 transition-transform cursor-pointer"
-                aria-label="Aumentar quantidade">
-                <Plus class="w-4 h-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            <button @click="addToCart" :disabled="!isProductConfigValid"
-              :aria-label="`Adicionar ${productQuantity} item ao carrinho por ${formatCurrency(calculateProductTotal() * productQuantity)}`"
-              class="flex-1 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-between cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              :class="themeClasses.buttonPrimary">
-              <span>Adicionar</span>
-              <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
-            </button>
-          </div>
-
-          <!-- Mensagem Explicativa Contextual -->
-          <p v-if="!isProductConfigValid"
-            class="text-[11px] text-amber-700 font-semibold text-center flex items-center justify-center gap-1.5 pt-1 animate-in fade-in duration-200"
-            role="alert">
-            <AlertCircle class="w-3.5 h-3.5 text-amber-600 shrink-0" aria-hidden="true" />
-            <span>Selecione as opções obrigatórias para poder adicionar</span>
-          </p>
-        </div>
-      </div>
-    </div>
+    <!-- 7. Componente Modular de Customização do Produto -->
+    <ProductCustomizerModal :product="selectedProduct" :tenant="tenant" :is-open="!!selectedProduct"
+      @close="closeProductModal" @add-to-cart="handleAddProductToCart" />
 
     <!-- 8. Barra Fixa Inferior da Sacola -->
     <div v-if="cart.items.length > 0" role="region" aria-label="Resumo da sacola de compras"
@@ -538,7 +391,7 @@
                   quanto?</label>
                 <input id="checkout-change" v-model.number="checkoutData.changeFor" type="number"
                   placeholder="Ex: 50 ou 100"
-                  class="w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                  class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
               </div>
             </div>
           </div>
@@ -607,7 +460,7 @@ import {
   Check,
   AlertCircle
 } from 'lucide-vue-next'
-import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
+import type { Tenant, Product, Option } from '~/types/tenant'
 import { TenantSchema } from '~/types/tenant'
 
 const route = useRoute()
@@ -744,22 +597,24 @@ onUnmounted(() => {
   }
 })
 
-// 5. Estado de Customização do Produto
-const selectedOptions = ref<Map<string, Option[]>>(new Map())
-const productObservation = ref('')
-const productQuantity = ref(1)
-
-// Helpers de Validação Visual de Opcionais
-function isGroupValid(group: OptionGroup): boolean {
-  const selected = selectedOptions.value.get(group.id) || []
-  if (group.required) {
-    return selected.length >= (group.min || 1)
-  }
-  return true
+// 5. Modal de Produto & Carrinho
+function openProductModal(product: Product) {
+  if (!product.available) return
+  selectedProduct.value = product
 }
 
-function getSelectedCountInGroup(groupId: string): number {
-  return (selectedOptions.value.get(groupId) || []).length
+function closeProductModal() {
+  selectedProduct.value = null
+}
+
+function handleAddProductToCart(payload: {
+  product: Product
+  quantity: number
+  selectedOptions: Option[]
+  observation: string
+  unitPrice: number
+}) {
+  cart.value.items.push(payload)
 }
 
 // 6. Estado do Carrinho
@@ -844,17 +699,6 @@ const cartFinalTotal = computed(() => {
   return cartSubtotal.value + fee
 })
 
-const isProductConfigValid = computed(() => {
-  if (!selectedProduct.value) return false
-  for (const group of selectedProduct.value.optionGroups || []) {
-    const selected = selectedOptions.value.get(group.id) || []
-    if (group.required && selected.length < (group.min || 1)) {
-      return false
-    }
-  }
-  return true
-})
-
 const isCheckoutValid = computed(() => {
   if (!checkoutData.value.customerName.trim()) return false
   if (checkoutData.value.deliveryType === 'delivery') {
@@ -875,75 +719,6 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// 9. Modal do Produto
-function openProductModal(product: Product) {
-  if (!product.available) return
-  selectedProduct.value = product
-  selectedOptions.value = new Map()
-  productObservation.value = ''
-  productQuantity.value = 1
-
-  product.optionGroups?.forEach(group => {
-    const firstOption = group.options.at(0)
-    if (group.required && group.max === 1 && firstOption) {
-      selectedOptions.value.set(group.id, [firstOption])
-    }
-  })
-}
-
-function closeProductModal() {
-  selectedProduct.value = null
-  selectedOptions.value = new Map()
-}
-
-function isOptionSelected(groupId: string, optionId: string): boolean {
-  const options = selectedOptions.value.get(groupId) || []
-  return options.some(o => o.id === optionId)
-}
-
-function toggleOption(group: OptionGroup, option: Option) {
-  const current = selectedOptions.value.get(group.id) || []
-  const exists = current.some(o => o.id === option.id)
-
-  if (group.max === 1) {
-    selectedOptions.value.set(group.id, [option])
-  } else {
-    if (exists) {
-      selectedOptions.value.set(group.id, current.filter(o => o.id !== option.id))
-    } else if (current.length < group.max) {
-      selectedOptions.value.set(group.id, [...current, option])
-    }
-  }
-}
-
-function calculateProductTotal(): number {
-  if (!selectedProduct.value) return 0
-  let total = selectedProduct.value.price
-  selectedOptions.value.forEach(options => {
-    options.forEach(opt => {
-      total += opt.price
-    })
-  })
-  return total
-}
-
-function addToCart() {
-  if (!selectedProduct.value || !isProductConfigValid.value) return
-
-  const allSelectedOptions: Option[] = []
-  selectedOptions.value.forEach(opts => allSelectedOptions.push(...opts))
-
-  cart.value.items.push({
-    product: selectedProduct.value,
-    quantity: productQuantity.value,
-    selectedOptions: allSelectedOptions,
-    observation: productObservation.value.trim(),
-    unitPrice: calculateProductTotal()
-  })
-
-  closeProductModal()
-}
-
 function removeCartItem(index: number) {
   cart.value.items.splice(index, 1)
   if (cart.value.items.length === 0) {
@@ -951,7 +726,7 @@ function removeCartItem(index: number) {
   }
 }
 
-// 10. Despacho WhatsApp
+// 9. Despacho WhatsApp
 function sendWhatsAppOrder() {
   if (!tenant.value || !isCheckoutValid.value) return
 
