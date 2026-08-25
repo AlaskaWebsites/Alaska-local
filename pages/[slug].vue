@@ -299,7 +299,7 @@ import {
   Share2,
   Check
 } from 'lucide-vue-next'
-import type { Product, Option } from '~/types/tenant'
+import type { Product, CartItem } from '~/types'
 
 // 1. Carregamento Seguro e Resolução SSR do Tenant
 const { tenant } = await useTenant()
@@ -339,24 +339,10 @@ function closeProductModal() {
   selectedProduct.value = null
 }
 
-// 7. Estado do Carrinho
-interface CartItemState {
-  product: Product
-  quantity: number
-  selectedOptions: Option[]
-  observation: string
-  unitPrice: number
-}
+// 7. Estado do Carrinho (Tipagem Centralizada via CartItem)
+const cart = ref<{ items: CartItem[] }>({ items: [] })
 
-const cart = ref<{ items: CartItemState[] }>({ items: [] })
-
-function handleAddProductToCart(payload: {
-  product: Product
-  quantity: number
-  selectedOptions: Option[]
-  observation: string
-  unitPrice: number
-}) {
+function handleAddProductToCart(payload: CartItem) {
   cart.value.items.push(payload)
 }
 
