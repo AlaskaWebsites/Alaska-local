@@ -1,66 +1,76 @@
-# **Diretrizes Absolutas de Arquitetura e Código para Alaska Local**
+# Regras Globais de Arquitetura, Engenharia e IA — Alaska Local
 
-Você é um Arquiteto de Software Sênior especializado em TypeScript, NestJS 11, Nuxt 3 e Clean Architecture.
-
-Sua missão é gerar código estrito, seguro e modular para a plataforma Alaska Local. Você DEVE seguir as regras abaixo em TODAS as interações, autocompletes e gerações de código.
+Este documento estabelece as **diretrizes inegociáveis** para o desenvolvimento no projeto Alaska Local. Qualquer inteligência artificial, agente de código (Cursor, Claude, Copilot, Gemini Spark) ou desenvolvedor humano **DEVE** seguir estritamente estas convenções.
 
 ---
 
-## **1. Conhecimento Base e Contexto (ADRs)**
+## 🎯 1. Filosofia Central e Visão de Negócio
 
-* SEMPRE leia e respeite as decisões arquiteturais documentadas na pasta `docs/adrs/`.
-* Se a sua sugestão de código violar qualquer regra do `001-fase1-fundacao-arquitetural.md` ou `002-arquitetura-nestjs-validacao-zod.md`, aborte a geração e avise o desenvolvedor.
-* Respeite a estratégia de evolução por estágios definida no plano de negócios: **Estágio 1 (Front Estático Nuxt 3)**, **Estágio 2 (Backend NestJS + Supabase)**, **Estágio 3 (Micro-SaaS Completo)**.
+1. **One Codebase, Infinite Domains**:
+   * O Alaska Local atende tanto o segmento **Alaska Menu** (food service, lanches, adegas, delivery) quanto o **Alaska Hub** (barbearias, clínicas, serviços locais).
+   * Uma única base de código Nuxt 3 / NestJS alimenta infinitos domínios próprios e subdomínios, resolvidos dinamicamente por tenant.
 
----
+2. **Mobile-First & Conversão Extrema**:
+   * O usuário final acessa 95% das vezes via smartphone após escanear QR Code na mesa ou clicar no link da bio do Instagram.
+   * O carregamento deve ser instantâneo (< 100ms), sem spinners pesados e sem fricção de login para visualização de cardápio/serviços.
 
-## **2. Padrões de Arquitetura (Clean Architecture & Front-End)**
-
-* **Proibido MVC no Backend:** Nunca gere Controllers que acessem Bancos de Dados ou ORMs diretamente.
-* **Pureza do Domínio (Estágio 2):** A pasta `src/core/` (Domain e Application) é sagrada. É estritamente PROIBIDO importar `@nestjs/common`, `@nestjs/core`, bibliotecas de banco de dados, ou usar o decorador `@Injectable()` dentro de `src/core/`.
-* **Injeção de Dependência:** Use interfaces (Ports) para comunicação de saída. Injete implementações reais através da pasta `src/infrastructure/` usando `Symbol` e `useFactory`.
-* **Front-end Nuxt 3 na Raiz:** Todas as pastas do front-end (`pages/`, `components/`, `composables/`, `data/`, `types/`, `utils/`, `tests/`) residem diretamente na raiz do projeto (sem pasta `src/`).
-* **Multi-tenancy:** Respeite a arquitetura *One Codebase, Infinite Domains*. O middleware do Nuxt 3 (`server/middleware/tenant.ts`) identifica o tenant pelo cabeçalho `host`.
+3. **Despacho Direto via WhatsApp**:
+   * No Estágio 1, a finalização do pedido é estruturada e enviada diretamente para o WhatsApp oficial do lojista (`wa.me/55...`), formatada com quebras de linha claras, emojis intuitivos e resumo financeiro.
 
 ---
 
-## **3. Qualidade, Tecnologias & Política Estrita de Testes**
+## 🏛️ 2. Regras Estritas de Engenharia e Clean Architecture
 
-* **Validação:** Use EXCLUSIVAMENTE **Zod** para validação de dados e variáveis de ambiente. Proibido sugerir `class-validator` ou `Joi`.
-* **🧪 Política de Testes Unitários (Unit-First):**
-  - **Foco Exclusivo em Testes Unitários:** Por hora, o projeto adota estritamente testes unitários rápidos e isolados com **Vitest** (sem complexidade ou sobrecarga de testes E2E no Estágio 1).
-  - **Cobertura Obrigatória do Core de Negócio:** Qualquer funcionalidade nova, regra de cálculo ou alteração que toque no core (cálculos de subtotal/frete no carrinho, mutações de estado, gerador de payload do WhatsApp, schemas Zod e cálculos de horários de funcionamento) **DEVE obrigatoriamente** ser acompanhada do respectivo teste unitário em `tests/units/*.test.ts`.
-  - **Pragmatismo sem Burocracia:** Ajustes puramente visuais de UI (Tailwind CSS, classes cosméticas, ícones, textos estáticos de layout) **NÃO exigem** testes unitários.
-* **Mensageria (Estágios 2+):** Ao lidar com filas, use a configuração para BullMQ conectada ao Redis com persistência AOF e política `noeviction`.
-* **Frontend Mobile-First:** Para o Nuxt 3, use Tailwind CSS com tokens de design Slate/Emerald, abas de categoria fixas (`CategoryTabs.vue`) e ícones de `lucide-vue-next`.
-* **Carregamento de Dados:** Em `pages/[slug].vue`, utilize `import.meta.glob('~/data/*.json', { eager: true })` para garantir compatibilidade com SSR na Vercel.
+### 2.1. Tipagem Centralizada e Barrel Export (`types/`)
+* **REGRA DE OURO**: **NUNCA** declare interfaces TypeScript redundantes ou tipos anônimos soltos dentro de componentes Vue ou páginas.
+* Todas as entidades, schemas Zod e interfaces de domínio pertencem à pasta **`types/`** e devem ser exportadas pelo *barrel file* **`types/index.ts`**.
+  * Use `CartItem` para itens na sacola.
+  * Use `CheckoutFormData` para o formulário de finalização.
+  * Use `Tenant`, `Product`, `OptionGroup`, `Option`, `Category`, `StoreReviews`, `TenantTheme`.
 
----
+### 2.2. Desacoplamento e Responsabilidade Única (SRP)
+* Componentes de páginas (`pages/*.vue`) atuam exclusivamente como **orquestradores de layout e contexto**.
+* Toda lógica de negócio, chamadas assíncronas, manipulação de estado e cálculos de data/horário pertencem a **Composables** (`composables/*.ts`) ou **Utilitários** (`utils/*.ts`).
+* Modais e Drawers devem ser desacoplados em componentes dedicados sob `components/`, utilizando `<Teleport to="body">` e isolando seu próprio estado visual.
 
-## **4. Contexto de Negócio (Alaska Local)**
-
-* **Proposta de Valor:** Plataforma *Done-for-You* para lojistas locais (hamburguerias, pizzarias, adegas, cafeterias, barbearias, clínicas) com presença no Google Maps, vitrine mobile própria e pedidos no WhatsApp sem taxas por transação.
-* **Submódulos:** *Alaska Menu* (alimentação, adegas e delivery) e *Alaska Hub* (prestadores de serviços e saúde).
-* **Estratégia de Domínios:** 
-  - Demonstração: `alaska-websites.vercel.app/[slug]`
-  - Cliente Padrão: `[slug].alaska.app`
-  - Domínio Próprio: domínio customizado via CNAME
-* **Integrações:** WhatsApp (URL Scheme `wa.me/55...`), Google Maps (SEO local), Asaas (Pix D+0 e recorrência).
+### 2.3. Blindagem com Zod Fail-Fast
+* Qualquer dado externo (JSONs locais em `data/`, payloads HTTP de requisições, variáveis de ambiente) **DEVE** ser validado com Zod (`.parse()` ou `.safeParse()`) antes de ser consumido pelo restante da aplicação.
+* Falhas de validação devem interromper o fluxo de forma expressiva e rastreável, evitando estados inconsistentes em tempo de execução.
 
 ---
 
-## **5. Estilo de Comunicação**
+## ♿ 3. Acessibilidade W3C e Usabilidade (WCAG)
 
-* Responda de forma direta e técnica, como um Engenheiro Staff.
-* Se você não souber como implementar algo no NestJS 11 ou Nuxt 3, declare abertamente e consulte a documentação oficial em vez de inventar métodos obsoletos.
-* Considere sempre o estágio atual do projeto (**Estágio 1**). Não implemente recursos do Estágio 2 ou 3 antes do fechamento das primeiras 5 vendas pagantes.
+Todo componente interativo, modal ou drawer **DEVE** atender aos seguintes requisitos de acessibilidade:
+1. **Atributos ARIA Semânticos**:
+   * Modais e Drawers: `role="dialog"`, `aria-modal="true"` e `aria-labelledby="<id-do-titulo>"`.
+   * Abas e Categorias: `role="tablist"`, `role="tab"`, `:aria-selected="isSelected"`.
+   * Botões de Ação: `aria-label` claro e descritivo com contexto (ex: `aria-label="Remover X-Bacon da sacola"`).
+2. **Controle de Foco e Teclado**:
+   * Ao abrir um modal, o foco inicial deve ser direcionado para o elemento primário de interação (ex: input `#checkout-name` com `nameInputRef` e `nextTick`).
+   * A tecla `Escape` (`ESC`) deve fechar o modal aberto automaticamente.
+3. **Bloqueio de Rolagem de Fundo**:
+   * Sempre utilizar o composable `useBodyScrollLock(isOpen)` em modais para impedir que o usuário role a página de fundo enquanto o diálogo estiver ativo.
 
 ---
 
-## **6. 🛡️ Diretrizes de Tipagem Estrita e TypeScript**
+## 🎨 4. Sistema Dinâmico de Temas e Design Tokens (`useTenantTheme`)
 
-1. **Proibido o uso de `any`:** Se o dado for de fonte externa, trate como `unknown` e valide através do Zod.
-2. **Zod como Única Fonte da Verdade (SSOT):** Sempre extraia os tipos com `z.infer<typeof Schema>` para sincronização automática.
-3. **Uso de Defaults no Zod:** Use `.default()` ou `.nullish().default('')` para campos opcionais previsíveis, evitando poluição de `undefined` no Vue.
-4. **Tipagem Explícita em Reducers:** Sempre tipe o acumulador em `.reduce((acc: number, item) => ...)`.
-5. **Validação Fail-Fast:** Toda entrada de dados deve ser validada com `Schema.parse()` imediatamente na fronteira.
+* O projeto conta com 4 identidades cromáticas por nicho de mercado:
+  * 🍔 `food`: Vermelho vibrante (`red-600`), padrão de apetite iFood.
+  * ✂️ `barber`: Âmbar Vintage (`amber-500`) com texto escuro nos botões de CTA.
+  * 🦷 `health`: Teal Clínico (`teal-600`) para serviços de saúde e estética.
+  * 🍷 `drinks`: Roxo / Violeta Neon (`purple-600`) para conveniência e vida noturna.
+* **Proibido hardcodar cores de destaque**: Use sempre os tokens de `themeClasses` (`primaryText`, `primaryBg`, `buttonPrimary`, `primaryBorder`, `badgeBg`, `badgeText`, `focusRing`, `glowEffect`, `categoryIndicator`).
+
+---
+
+## 🧪 5. Regras para Testes Automatizados no Vitest
+
+1. **Execução Contínua**:
+   * Antes de commitar qualquer alteração, **SEMPRE** execute `npx vitest run` (ou `npm test`) para garantir 100% de aprovação nas 13 suítes de teste.
+2. **Tolerância a Espaços em Formatações de Moeda**:
+   * O formatador nativo `Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })` emite o caractere Unicode `\u00A0` (espaço inquebrável) entre o símbolo `R$` e o valor numérico.
+   * Asserções no Vitest não devem quebrar por diferença de espaço ASCII vs Unicode; valide substrings semânticas ou use helpers de sanitização.
+3. **Mocks Estritos via Schemas**:
+   * Crie mocks de `Tenant`, `Product` e `CartItem` através do `TenantSchema.parse(...)` para garantir que o TypeScript e o Zod validem a integridade dos dados de teste.
