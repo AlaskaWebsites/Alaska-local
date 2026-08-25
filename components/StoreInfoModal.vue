@@ -90,18 +90,18 @@ const formatOpeningHours = computed(() => {
 <template>
   <Teleport to="body">
     <div v-if="isOpen"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+      class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex flex-col sm:items-center sm:justify-center p-0 sm:p-4 animate-in fade-in duration-200"
       @click="emit('close')">
       <div role="dialog" aria-modal="true" aria-labelledby="info-modal-title"
-        class="bg-slate-900 text-slate-100 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-800 sm:shadow-2xl"
+        class="bg-white text-slate-800 w-full h-full sm:h-auto sm:max-h-[88vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-200 sm:shadow-2xl"
         @click.stop>
         <!-- Header do Modal (Fixo no Topo) -->
-        <div class="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between shrink-0">
-          <h2 id="info-modal-title" class="text-lg font-extrabold text-white">
+        <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between shrink-0">
+          <h2 id="info-modal-title" class="text-lg font-extrabold text-slate-900">
             Informações da Loja
           </h2>
           <button @click="emit('close')"
-            class="rounded-full p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+            class="rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer"
             aria-label="Fechar informações da loja">
             <X class="h-5 w-5" aria-hidden="true" />
           </button>
@@ -111,8 +111,8 @@ const formatOpeningHours = computed(() => {
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-6">
           <!-- 1. Identidade e Sobre -->
           <section aria-labelledby="store-identity-title" class="space-y-3">
-            <div class="flex items-center gap-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
-              <div class="h-16 w-16 rounded-2xl border-2 border-slate-700 bg-slate-900 overflow-hidden shrink-0">
+            <div class="flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div class="h-16 w-16 rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shrink-0 shadow-2xs">
                 <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="h-full w-full object-cover" />
                 <div v-else class="h-full w-full flex items-center justify-center font-bold text-lg"
                   :class="themeClasses.primaryText">
@@ -121,10 +121,10 @@ const formatOpeningHours = computed(() => {
               </div>
 
               <div class="min-w-0 flex-1">
-                <h3 id="store-identity-title" class="text-base font-bold text-white truncate">
+                <h3 id="store-identity-title" class="text-base font-bold text-slate-900 truncate">
                   {{ tenant.name }}
                 </h3>
-                <p v-if="tenant.description" class="text-xs text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
+                <p v-if="tenant.description" class="text-xs text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
                   {{ tenant.description }}
                 </p>
                 <div class="flex items-center gap-2 mt-2 text-[11px] font-semibold" :class="themeClasses.primaryText">
@@ -137,75 +137,75 @@ const formatOpeningHours = computed(() => {
 
           <!-- 2. Horários de Atendimento -->
           <section aria-labelledby="store-hours-title">
-            <h3 id="store-hours-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+            <h3 id="store-hours-title" class="text-sm font-bold text-slate-900 mb-2.5 flex items-center gap-2">
               <Clock class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Horário de Funcionamento</span>
             </h3>
 
-            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-300 font-medium">Status no Momento:</span>
+                <span class="text-xs text-slate-600 font-medium">Status no Momento:</span>
                 <span role="status"
-                  :class="isOpenNow ? [themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder] : 'bg-amber-950 text-amber-300 border-amber-800'"
+                  :class="isOpenNow ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'"
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
                   {{ isOpenNow ? '🟢 Aberto agora' : '🕒 Fechado no momento' }}
                 </span>
               </div>
 
-              <div class="flex items-center justify-between border-t border-slate-800/80 pt-2.5 text-xs">
-                <span class="text-slate-400">Atendimento Hoje:</span>
-                <span class="font-bold text-white">{{ formatOpeningHours || 'Consulte no WhatsApp' }}</span>
+              <div class="flex items-center justify-between border-t border-slate-200 pt-2.5 text-xs">
+                <span class="text-slate-500">Atendimento Hoje:</span>
+                <span class="font-bold text-slate-900">{{ formatOpeningHours || 'Consulte no WhatsApp' }}</span>
               </div>
             </div>
           </section>
 
           <!-- 3. Formas de Pagamento -->
           <section aria-labelledby="store-payments-title">
-            <h3 id="store-payments-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+            <h3 id="store-payments-title" class="text-sm font-bold text-slate-900 mb-2.5 flex items-center gap-2">
               <CreditCard class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Formas de Pagamento</span>
             </h3>
 
-            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3 text-xs" role="list">
-              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80" role="listitem">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3 text-xs" role="list">
+              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-200" role="listitem">
                 <div class="space-y-0.5">
-                  <span class="font-bold text-white block">Pix Direto (D+0)</span>
-                  <span class="text-slate-400 text-[11px]">Chave informada automaticamente no fechamento do
+                  <span class="font-bold text-slate-900 block">Pix Direto (D+0)</span>
+                  <span class="text-slate-500 text-[11px]">Chave informada automaticamente no fechamento do
                     pedido</span>
                 </div>
                 <span class="font-bold shrink-0" :class="themeClasses.primaryText">Instantâneo</span>
               </div>
 
-              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80" role="listitem">
+              <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-200" role="listitem">
                 <div class="space-y-0.5">
-                  <span class="font-bold text-white block">Cartões de Crédito & Débito</span>
-                  <span class="text-slate-400 text-[11px]">Visa, Mastercard, Elo na maquininha do entregador</span>
+                  <span class="font-bold text-slate-900 block">Cartões de Crédito & Débito</span>
+                  <span class="text-slate-500 text-[11px]">Visa, Mastercard, Elo na maquininha do entregador</span>
                 </div>
-                <span class="text-slate-400 font-medium shrink-0">Na Entrega</span>
+                <span class="text-slate-500 font-medium shrink-0">Na Entrega</span>
               </div>
 
               <div class="flex items-start justify-between gap-2" role="listitem">
                 <div class="space-y-0.5">
-                  <span class="font-bold text-white block">Dinheiro em Espécie</span>
-                  <span class="text-slate-400 text-[11px]">Com opção de troco no checkout</span>
+                  <span class="font-bold text-slate-900 block">Dinheiro em Espécie</span>
+                  <span class="text-slate-500 text-[11px]">Com opção de troco no checkout</span>
                 </div>
-                <span class="text-slate-400 font-medium shrink-0">Na Entrega</span>
+                <span class="text-slate-500 font-medium shrink-0">Na Entrega</span>
               </div>
             </div>
           </section>
 
           <!-- 4. Endereço e Localização -->
           <section aria-labelledby="store-address-title">
-            <h3 id="store-address-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
+            <h3 id="store-address-title" class="text-sm font-bold text-slate-900 mb-2.5 flex items-center gap-2">
               <MapPin class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Endereço & Entrega</span>
             </h3>
 
-            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4 space-y-3.5 text-xs">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3.5 text-xs">
               <div class="flex items-start justify-between gap-3">
                 <div class="space-y-1">
-                  <span class="font-bold text-white block">Endereço da Loja:</span>
-                  <span class="text-slate-400 leading-relaxed block">
+                  <span class="font-bold text-slate-900 block">Endereço da Loja:</span>
+                  <span class="text-slate-600 leading-relaxed block">
                     {{ tenant.address || 'Atendimento e entrega para a região local.' }}
                   </span>
                 </div>
@@ -213,7 +213,7 @@ const formatOpeningHours = computed(() => {
                 <a v-if="tenant.address"
                   :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tenant.address)}`"
                   target="_blank"
-                  class="shrink-0 p-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center gap-1.5 font-bold"
+                  class="shrink-0 p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 transition-colors flex items-center gap-1.5 font-bold shadow-2xs"
                   :class="themeClasses.primaryText"
                   aria-label="Abrir rota no Google Maps para o endereço do estabelecimento">
                   <Navigation class="w-4 h-4" aria-hidden="true" />
@@ -221,17 +221,17 @@ const formatOpeningHours = computed(() => {
                 </a>
               </div>
 
-              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80">
-                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs">
                   <span class="text-slate-500 text-[11px] block">Taxa de Entrega</span>
                   <span class="font-bold text-xs" :class="themeClasses.primaryText">
                     {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}
                   </span>
                 </div>
 
-                <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="bg-white p-2.5 rounded-xl border border-slate-200 shadow-2xs">
                   <span class="text-slate-500 text-[11px] block">Pedido Mínimo</span>
-                  <span class="font-bold text-white text-xs">
+                  <span class="font-bold text-slate-900 text-xs">
                     {{ tenant.minOrderValue ? formatCurrency(tenant.minOrderValue) : 'Sem valor mínimo' }}
                   </span>
                 </div>

@@ -1,28 +1,22 @@
 <!-- pages/index.vue -->
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
-    <!-- Efeito de Luz Ambiente Suave no Topo -->
-    <div
-      class="absolute top-0 inset-x-0 h-96 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(16,185,129,0.15),transparent)] pointer-events-none"
-      aria-hidden="true">
-    </div>
-
+  <div class="min-h-screen bg-[#f5f5f5] text-slate-800 selection:bg-slate-900 selection:text-white">
     <!-- 1. Header & Hero Showcase -->
-    <header class="relative border-b border-slate-800/80 py-14 px-4 sm:px-6">
+    <header class="bg-white border-b border-slate-200/80 py-12 px-4 sm:px-6">
       <div class="max-w-4xl mx-auto text-center space-y-4">
         <!-- Badge Superior -->
         <div
-          class="inline-flex items-center gap-2 rounded-full bg-emerald-950/80 px-3.5 py-1 text-xs font-bold text-emerald-400 border border-emerald-500/30 shadow-xs backdrop-blur-md">
-          <Sparkles class="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+          class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3.5 py-1 text-xs font-bold text-slate-700 border border-slate-200/80 shadow-xs">
+          <Sparkles class="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
           <span>Vitrines Mobile & Pedidos no WhatsApp</span>
         </div>
 
         <!-- Título Principal -->
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Alaska Local — Demonstrações Ativas
         </h1>
 
-        <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
+        <p class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
           Selecione um dos modelos abaixo para visualizar a experiência do cardápio digital e catálogo mobile-first em
           tempo real.
         </p>
@@ -32,30 +26,30 @@
           aria-label="Filtro de modelos de demonstração">
           <button role="tab" :aria-selected="activeFilter === 'todos'" aria-controls="showcase-grid"
             @click="activeFilter = 'todos'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer',
+              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
               activeFilter === 'todos'
-                ? 'bg-white text-slate-950 font-bold shadow-md'
-                : 'bg-slate-900/90 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800'
+                ? 'bg-slate-900 text-white font-bold shadow-sm'
+                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
             ]">
             Todos os Modelos ({{ tenantsList.length }})
           </button>
 
           <button role="tab" :aria-selected="activeFilter === 'menu'" aria-controls="showcase-grid"
             @click="activeFilter = 'menu'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer',
+              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
               activeFilter === 'menu'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'bg-slate-900/90 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800'
+                ? 'bg-red-600 text-white font-bold shadow-sm shadow-red-600/20'
+                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
             ]">
             🍔 Alimentação & Espetos (Alaska Menu)
           </button>
 
           <button role="tab" :aria-selected="activeFilter === 'hub'" aria-controls="showcase-grid"
             @click="activeFilter = 'hub'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer',
+              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
               activeFilter === 'hub'
-                ? 'bg-purple-500 text-slate-950 font-bold shadow-md shadow-purple-500/20'
-                : 'bg-slate-900/90 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-slate-800'
+                ? 'bg-purple-700 text-white font-bold shadow-sm shadow-purple-700/20'
+                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
             ]">
             ✂️ Serviços & Saúde (Alaska Hub)
           </button>
@@ -64,25 +58,25 @@
     </header>
 
     <!-- 2. Grid de Vitrines / Demonstrações -->
-    <main class="relative max-w-5xl mx-auto px-4 py-12">
+    <main class="max-w-5xl mx-auto px-4 py-12">
       <div id="showcase-grid" role="region" aria-label="Lista de demonstrações de lojas"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink v-for="store in filteredTenants" :key="store.slug" :to="`/${store.slug}`"
           :aria-label="`Acessar demonstração de ${store.name}. ${isHubStore(store.slug) ? 'Serviços e agendamentos' : 'Cardápio e pedidos'}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
-          class="group bg-slate-900/80 rounded-3xl border border-slate-800/90 hover:border-emerald-500/50 hover:bg-slate-900 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-emerald-950/30 active:scale-[0.99]">
+          class="group bg-white rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]">
           <!-- Banner Superior da Loja -->
-          <div class="relative h-36 w-full bg-slate-800 overflow-hidden">
+          <div class="relative h-36 w-full bg-slate-100 overflow-hidden">
             <img v-if="store.banner" :src="store.banner" :alt="`Banner de ${store.name}`"
-              class="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-            <div v-else class="w-full h-full bg-slate-800" aria-hidden="true"></div>
+              class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+            <div v-else class="w-full h-full bg-slate-200" aria-hidden="true"></div>
 
-            <!-- Logo Flutuante sobreposto -->
+            <!-- Logo Sobreposto -->
             <div
-              class="absolute bottom-2.5 left-3.5 h-12 w-12 rounded-2xl border-2 border-slate-800 overflow-hidden bg-slate-900 shadow-md">
+              class="absolute bottom-2.5 left-3.5 h-12 w-12 rounded-xl border-2 border-white overflow-hidden bg-white shadow-sm">
               <img v-if="store.logo" :src="store.logo" :alt="`Logotipo de ${store.name}`"
                 class="w-full h-full object-cover" />
               <div v-else
-                class="w-full h-full flex items-center justify-center bg-slate-800 text-emerald-400 font-bold text-sm"
+                class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-700 font-bold text-sm"
                 aria-hidden="true">
                 {{ store.name.charAt(0) }}
               </div>
@@ -90,10 +84,10 @@
 
             <!-- Tag de Vertical (Menu vs Hub) -->
             <span :class="[
-              'absolute top-3 right-3 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full backdrop-blur-md shadow-sm',
+              'absolute top-3 right-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs backdrop-blur-md',
               isHubStore(store.slug)
-                ? 'bg-purple-950/90 text-purple-300 border border-purple-800/60'
-                : 'bg-emerald-950/90 text-emerald-300 border border-emerald-800/60'
+                ? 'bg-purple-900/90 text-purple-100 border border-purple-700/50'
+                : 'bg-slate-900/85 text-white border border-slate-700/50'
             ]">
               {{ isHubStore(store.slug) ? 'Alaska Hub' : 'Alaska Menu' }}
             </span>
@@ -103,31 +97,32 @@
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div>
               <div class="flex items-center justify-between gap-2">
-                <h2 class="font-bold text-base text-white group-hover:text-emerald-400 transition-colors truncate">
+                <h2 class="font-bold text-base text-slate-900 group-hover:text-red-600 transition-colors truncate">
                   {{ store.name }}
                 </h2>
 
                 <!-- Avaliação em Estrelas -->
                 <div v-if="store.reviews" :aria-label="`Avaliação ${store.reviews.score.toFixed(1)} estrelas`"
-                  class="flex items-center gap-1 text-xs font-bold text-amber-400 shrink-0 bg-slate-950/60 px-2 py-0.5 rounded-md border border-slate-800">
-                  <Star class="w-3.5 h-3.5 fill-amber-400" aria-hidden="true" />
+                  class="flex items-center gap-1 text-xs font-bold text-slate-800 shrink-0 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                  <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                   <span>{{ store.reviews.score.toFixed(1) }}</span>
                 </div>
               </div>
 
-              <p class="text-xs text-slate-400 line-clamp-2 mt-1.5 leading-relaxed">
+              <p class="text-xs text-slate-500 line-clamp-2 mt-1.5 leading-relaxed">
                 {{ store.description || 'Vitrines online, pedidos somados e atendimento direto no WhatsApp.' }}
               </p>
             </div>
 
             <!-- Footer do Card com Botão de Ação -->
             <div
-              class="pt-3.5 border-t border-slate-800/80 flex items-center justify-between text-xs font-semibold text-emerald-400">
-              <span class="text-[11px] text-slate-400">Ver Cardápio / Serviços</span>
-              <span class="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform"
+              class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">
+              <span class="text-[11px] text-slate-400 font-normal">Ver Cardápio / Serviços</span>
+              <span
+                class="inline-flex items-center gap-1 font-bold text-slate-900 group-hover:translate-x-1 transition-transform"
                 aria-hidden="true">
                 Acessar
-                <ChevronRight class="w-3.5 h-3.5" />
+                <ChevronRight class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900" />
               </span>
             </div>
           </div>
