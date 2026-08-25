@@ -1,221 +1,256 @@
 // tests/units/cart-drawer.spec.ts
 import { describe, it, expect } from 'vitest'
-import type { CartItemPayload } from '~/components/CartDrawerModal.vue'
 import { TenantSchema, type Tenant } from '~/types/tenant'
+import type { CartItem, CheckoutFormData } from '~/types/cart'
 
-describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', () => {
-    // Mock de Tenant 100% válido pelo Schema Zod
-    const mockTenant: Tenant = TenantSchema.parse({
-        slug: 'hamburgueria-x',
-        name: 'Hamburgueria X',
-        description: 'Melhores burgers da cidade',
-        logo: 'https://images.unsplash.com/logo.jpg',
-        banner: 'https://images.unsplash.com/banner.jpg',
-        phoneWhatsApp: '11999999999',
-        address: 'Rua das Hamburguerias, 123 - Centro',
-        deliveryFee: 6.5,
-        minOrderValue: 20,
-        theme: 'food',
-        categories: []
-    })
+// 1. Mock Completo de Tenant Válido via Schema Zod
+const mockTenant: Tenant = TenantSchema.parse({
+    slug: 'hamburgueria-x',
+    name: 'Hamburgueria X',
+    description: 'Os melhores smash burgers',
+    logo: 'https://images.unsplash.com/logo.jpg',
+    banner: 'https://images.unsplash.com/banner.jpg',
+    phoneWhatsApp: '11999999999',
+    address: 'Rua dos Burgers, 100 - Jardins',
+    currency: 'R$',
+    deliveryFee: 8.0,
+    minOrderValue: 20.0,
+    theme: 'food',
+    openingHours: {
+        open: '18:00',
+        close: '23:30',
+    },
+    categories: [],
+})
 
-    // 1. Helpers Puros simulando a lógica isolada do CartDrawerModal
-    const calculateSubtotal = (items: CartItemPayload[]): number => {
-        return items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+// 2. Mock de Itens no Carrinho (Tipagem Padronizada CartItem)
+const mockCartItems: CartItem[] = [
+    {
+        product: {
+            id: 'p1',
+            name: 'Smash Duplo Bacon',
+            price: 32.0,
+            available: true,
+            optionGroups: [],
+        },
+        quantity: 2,
+        selectedOptions: [
+            { id: 'opt-bacon', name: 'Bacon Crocante Extra', price: 4.0, maxQuantity: 2 },
+            { id: 'opt-cheese', name: 'Queijo Extra', price: 3.0, maxQuantity: 1 },
+        ],
+        observation: 'Caprichar na maionese verde',
+        unitPrice: 39.0, // 32 + 4 + 3
+    },
+    {
+        product: {
+            id: 'p2',
+            name: 'Batata Rústica Individual',
+            price: 15.0,
+            available: true,
+            optionGroups: [],
+        },
+        quantity: 1,
+        selectedOptions: [],
+        observation: '',
+        unitPrice: 15.0,
+    },
+]
+
+// 3. Funções Puras Extraídas do Componente para Testes Unitários
+function calculateSubtotal(items: CartItem[]): number {
+    return items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+}
+
+function calculateDeliveryFee(deliveryType: 'delivery' | 'pickup', tenantFee?: number): number {
+    return deliveryType === 'delivery' ? tenantFee || 0 : 0
+}
+
+function calculateTotal(items: CartItem[], deliveryType: 'delivery' | 'pickup', tenantFee?: number): number {
+    return calculateSubtotal(items) + calculateDeliveryFee(deliveryType, tenantFee)
+}
+
+function validateCheckout(
+    customerName: string,
+    deliveryType: 'delivery' | 'pickup',
+    address: { street: string; number: string; neighborhood: string }
+): boolean {
+    if (!customerName.trim()) return false
+    if (deliveryType === 'delivery') {
+        return (
+            address.street.trim() !== '' &&
+            address.number.trim() !== '' &&
+            address.neighborhood.trim() !== ''
+        )
     }
+    return true
+}
 
-    const calculateFinalTotal = (
-        subtotal: number,
-        deliveryType: 'delivery' | 'pickup',
-        deliveryFee: number
-    ): number => {
-        const fee = deliveryType === 'delivery' ? deliveryFee : 0
-        return subtotal + fee
-    }
+function formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    }).format(value)
+}
 
-    const validateCheckout = (data: {
-        customerName: string
-        deliveryType: 'delivery' | 'pickup'
-        address: { street: string; number: string; neighborhood: string; complement?: string }
-    }): boolean => {
-        if (!data.customerName.trim()) return false
-        if (data.deliveryType === 'delivery') {
-            return (
-                data.address.street.trim() !== '' &&
-                data.address.number.trim() !== '' &&
-                data.address.neighborhood.trim() !== ''
-            )
-        }
-        return true
-    }
+function buildWhatsAppPayload(
+    tenant: Tenant,
+    items: CartItem[],
+    checkout: CheckoutFormData
+): { message: string; url: string } {
+    const lines: string[] = []
+    lines.push(`🍔 *NOVO PEDIDO - ${tenant.name.toUpperCase()}*`)
+    lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
 
-    const buildWhatsAppPayload = (
-        tenant: Tenant,
-        items: CartItemPayload[],
-        checkout: {
-            customerName: string
-            deliveryType: 'delivery' | 'pickup'
-            paymentMethod: string
-            changeFor?: number | null
-            address: { street: string; number: string; neighborhood: string; complement?: string }
-        }
-    ): { message: string; url: string } => {
-        const formatCurrency = (val: number) =>
-            new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
-
-        const subtotal = calculateSubtotal(items)
-        const fee = checkout.deliveryType === 'delivery' ? tenant.deliveryFee || 0 : 0
-        const total = subtotal + fee
-
-        const lines: string[] = []
-        lines.push(`🍔 *NOVO PEDIDO - ${tenant.name.toUpperCase()}*`)
-        lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-
-        items.forEach((item) => {
-            lines.push(`*${item.quantity}x* ${item.product.name} — *${formatCurrency(item.unitPrice * item.quantity)}*`)
+    items.forEach((item) => {
+        lines.push(`*${item.quantity}x* ${item.product.name} — *${formatCurrency(item.unitPrice * item.quantity)}*`)
+        if (item.selectedOptions && item.selectedOptions.length) {
             item.selectedOptions.forEach((opt) => {
                 const priceStr = opt.price > 0 ? ` (+${formatCurrency(opt.price)})` : ''
                 lines.push(`   └ _${opt.name}${priceStr}_`)
             })
-            if (item.observation) {
-                lines.push(`   └ 💬 _Obs: "${item.observation}"_`)
-            }
-            lines.push('')
-        })
-
-        lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-        lines.push(`Subtotal: ${formatCurrency(subtotal)}`)
-
-        if (checkout.deliveryType === 'delivery') {
-            lines.push(`Taxa de Entrega: ${formatCurrency(fee)}`)
-            lines.push(`*TOTAL: ${formatCurrency(total)}*`)
-            lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-            lines.push(`📍 *DADOS DE ENTREGA:*`)
-            lines.push(`• Nome: ${checkout.customerName}`)
-            lines.push(`• Endereço: ${checkout.address.street}, ${checkout.address.number}`)
-            if (checkout.address.complement) {
-                lines.push(`• Complemento: ${checkout.address.complement}`)
-            }
-            lines.push(`• Bairro: ${checkout.address.neighborhood}`)
-        } else {
-            lines.push(`*TOTAL (RETIRADA): ${formatCurrency(total)}*`)
-            lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-            lines.push(`🛍️ *RETIRADA NO BALCÃO:*`)
-            lines.push(`• Nome: ${checkout.customerName}`)
         }
-
-        lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-        lines.push(`💳 *FORMA DE PAGAMENTO:*`)
-        lines.push(`• ${checkout.paymentMethod}`)
-        if (checkout.paymentMethod === 'Dinheiro' && checkout.changeFor) {
-            lines.push(`• Troco para: ${formatCurrency(checkout.changeFor)}`)
+        if (item.observation) {
+            lines.push(`   └ 💬 _Obs: "${item.observation}"_`)
         }
+        lines.push('')
+    })
 
-        const message = lines.join('\n')
-        const phone = tenant.phoneWhatsApp.replace(/\D/g, '')
-        const url = `https://wa.me/55${phone}?text=${encodeURIComponent(message)}`
+    const subtotal = calculateSubtotal(items)
+    const total = calculateTotal(items, checkout.deliveryType, tenant.deliveryFee)
 
-        return { message, url }
+    lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+    lines.push(`Subtotal: ${formatCurrency(subtotal)}`)
+
+    if (checkout.deliveryType === 'delivery') {
+        lines.push(`Taxa de Entrega: ${formatCurrency(tenant.deliveryFee || 0)}`)
+        lines.push(`*TOTAL: ${formatCurrency(total)}*`)
+        lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+        lines.push(`📍 *DADOS DE ENTREGA:*`)
+        lines.push(`• Nome: ${checkout.customerName}`)
+        lines.push(`• Endereço: ${checkout.address.street}, ${checkout.address.number}`)
+        if (checkout.address.complement) {
+            lines.push(`• Complemento: ${checkout.address.complement}`)
+        }
+        lines.push(`• Bairro: ${checkout.address.neighborhood}`)
+    } else {
+        lines.push(`*TOTAL (RETIRADA): ${formatCurrency(total)}*`)
+        lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+        lines.push(`🛍️ *RETIRADA NO BALCÃO:*`)
+        lines.push(`• Nome: ${checkout.customerName}`)
     }
 
-    // 2. Testes de Cálculos Financeiros
-    describe('Cálculos de Subtotal e Taxas', () => {
-        it('deve calcular o subtotal somando produtos com adicionais e quantidades múltiplas', () => {
-            const items: CartItemPayload[] = [
-                {
-                    product: { id: 'p1', name: 'Burger Duplo', price: 30.0 },
-                    quantity: 2,
-                    selectedOptions: [{ id: 'o1', name: 'Bacon', price: 4.0, maxQuantity: 1 }],
-                    observation: 'Sem picles',
-                    unitPrice: 34.0
-                },
-                {
-                    product: { id: 'p2', name: 'Coca-Cola', price: 6.0 },
-                    quantity: 1,
-                    selectedOptions: [],
-                    observation: '',
-                    unitPrice: 6.0
-                }
-            ]
+    lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+    lines.push(`💳 *FORMA DE PAGAMENTO:*`)
+    lines.push(`• ${checkout.paymentMethod}`)
+    if (checkout.paymentMethod === 'Dinheiro' && checkout.changeFor) {
+        lines.push(`• Troco para: ${formatCurrency(checkout.changeFor)}`)
+    }
 
-            expect(calculateSubtotal(items)).toBe(74.0)
+    const message = lines.join('\n')
+    const phone = tenant.phoneWhatsApp.replace(/\D/g, '')
+    const url = `https://wa.me/55${phone}?text=${encodeURIComponent(message)}`
+
+    return { message, url }
+}
+
+describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', () => {
+    describe('1. Cálculos de Subtotal, Frete e Total', () => {
+        it('deve calcular corretamente o subtotal de múltiplos itens e quantidades com opcionais', () => {
+            // Item 1: (32 + 4 + 3) * 2 = 78.00
+            // Item 2: 15 * 1 = 15.00
+            // Total Subtotal = 93.00
+            const subtotal = calculateSubtotal(mockCartItems)
+            expect(subtotal).toBe(93.0)
         })
 
-        it('deve somar a taxa de entrega no modo delivery e isentar no modo retirada', () => {
-            const subtotal = 74.0
-            const fee = 6.5
+        it('deve aplicar a taxa de entrega quando o pedido for para Delivery', () => {
+            const fee = calculateDeliveryFee('delivery', mockTenant.deliveryFee)
+            expect(fee).toBe(8.0)
 
-            expect(calculateFinalTotal(subtotal, 'delivery', fee)).toBe(80.5)
-            expect(calculateFinalTotal(subtotal, 'pickup', fee)).toBe(74.0)
-        })
-    })
-
-    // 3. Testes de Validação do Formulário de Checkout
-    describe('Validação do Formulário de Checkout (isCheckoutValid)', () => {
-        it('deve rejeitar pedido se o nome do cliente for vazio ou apenas espaços', () => {
-            const invalidData = {
-                customerName: '   ',
-                deliveryType: 'pickup' as const,
-                address: { street: '', number: '', neighborhood: '' }
-            }
-            expect(validateCheckout(invalidData)).toBe(false)
+            const total = calculateTotal(mockCartItems, 'delivery', mockTenant.deliveryFee)
+            expect(total).toBe(101.0) // 93 + 8
         })
 
-        it('deve validar no modo delivery somente se rua, número e bairro estiverem preenchidos', () => {
-            const incompleteDelivery = {
-                customerName: 'Danilo Gozzi',
-                deliveryType: 'delivery' as const,
-                address: { street: 'Av. Paulista', number: '', neighborhood: 'Bela Vista' }
-            }
-            expect(validateCheckout(incompleteDelivery)).toBe(false)
+        it('deve zerar a taxa de entrega quando o pedido for para Retirada no Balcão (pickup)', () => {
+            const fee = calculateDeliveryFee('pickup', mockTenant.deliveryFee)
+            expect(fee).toBe(0)
 
-            const completeDelivery = {
-                customerName: 'Danilo Gozzi',
-                deliveryType: 'delivery' as const,
-                address: { street: 'Av. Paulista', number: '1000', neighborhood: 'Bela Vista' }
-            }
-            expect(validateCheckout(completeDelivery)).toBe(true)
-        })
-
-        it('deve validar no modo retirada (pickup) exigindo apenas o nome do cliente', () => {
-            const validPickup = {
-                customerName: 'Danilo Gozzi',
-                deliveryType: 'pickup' as const,
-                address: { street: '', number: '', neighborhood: '' }
-            }
-            expect(validateCheckout(validPickup)).toBe(true)
+            const total = calculateTotal(mockCartItems, 'pickup', mockTenant.deliveryFee)
+            expect(total).toBe(93.0) // 93 + 0
         })
     })
 
-    // 4. Testes de Despacho e Payload do WhatsApp
-    describe('Geração de Mensagem do WhatsApp', () => {
-        it('deve gerar payload estruturado de delivery com adicionais, endereço e observação', () => {
-            const items: CartItemPayload[] = [
-                {
-                    product: { id: 'p1', name: 'X-Salada Especial', price: 25.0 },
-                    quantity: 1,
-                    selectedOptions: [{ id: 'opt-queijo', name: 'Queijo Extra', price: 3.0, maxQuantity: 1 }],
-                    observation: 'Caprichar na maionese verde',
-                    unitPrice: 28.0
-                }
-            ]
+    describe('2. Validação do Formulário de Checkout', () => {
+        it('deve invalidar se o nome do cliente estiver em branco', () => {
+            const isValid = validateCheckout('', 'pickup', {
+                street: 'Rua A',
+                number: '123',
+                neighborhood: 'Centro',
+            })
+            expect(isValid).toBe(false)
+        })
 
-            const checkout = {
+        it('deve validar pedido de retirada no balcão apenas com o nome preenchido', () => {
+            const isValid = validateCheckout('Danilo Gozzi', 'pickup', {
+                street: '',
+                number: '',
+                neighborhood: '',
+            })
+            expect(isValid).toBe(true)
+        })
+
+        it('deve invalidar pedido de delivery se faltar rua, número ou bairro', () => {
+            const semRua = validateCheckout('Danilo Gozzi', 'delivery', {
+                street: '',
+                number: '123',
+                neighborhood: 'Centro',
+            })
+            const semNumero = validateCheckout('Danilo Gozzi', 'delivery', {
+                street: 'Rua das Flores',
+                number: '',
+                neighborhood: 'Centro',
+            })
+            const semBairro = validateCheckout('Danilo Gozzi', 'delivery', {
+                street: 'Rua das Flores',
+                number: '123',
+                neighborhood: '',
+            })
+
+            expect(semRua).toBe(false)
+            expect(semNumero).toBe(false)
+            expect(semBairro).toBe(false)
+        })
+
+        it('deve validar pedido de delivery com todos os campos obrigatórios preenchidos', () => {
+            const isValid = validateCheckout('Danilo Gozzi', 'delivery', {
+                street: 'Rua das Palmeiras',
+                number: '450',
+                neighborhood: 'Jardins',
+            })
+            expect(isValid).toBe(true)
+        })
+    })
+
+    describe('3. Geração do Payload e Formatação para WhatsApp', () => {
+        it('deve gerar a mensagem formatada para Delivery com dados de entrega e opcionais', () => {
+            const checkout: CheckoutFormData = {
+                deliveryType: 'delivery',
                 customerName: 'Danilo Gozzi',
-                deliveryType: 'delivery' as const,
                 paymentMethod: 'Pix',
+                changeFor: null,
                 address: {
                     street: 'Rua das Palmeiras',
                     number: '450',
                     neighborhood: 'Jardins',
-                    complement: 'Apto 12'
-                }
+                    complement: 'Apto 12',
+                },
             }
 
-            const { message, url } = buildWhatsAppPayload(mockTenant, items, checkout)
+            const { message, url } = buildWhatsAppPayload(mockTenant, mockCartItems, checkout)
 
             expect(message).toContain('🍔 *NOVO PEDIDO - HAMBURGUERIA X*')
-            expect(message).toContain('*1x* X-Salada Especial')
+            expect(message).toContain('*2x* Smash Duplo Bacon')
+            expect(message).toContain('Bacon Crocante Extra')
             expect(message).toContain('Queijo Extra')
             expect(message).toContain('Obs: "Caprichar na maionese verde"')
             expect(message).toContain('📍 *DADOS DE ENTREGA:*')
@@ -228,23 +263,34 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
             expect(url).toContain('https://wa.me/5511999999999?text=')
         })
 
-        it('deve incluir solicitação de troco quando a forma de pagamento for Dinheiro', () => {
-            const items: CartItemPayload[] = [
+        it('deve gerar a mensagem formatada para Retirada no Balcão com troco se for Dinheiro', () => {
+            const items: CartItem[] = [
                 {
-                    product: { id: 'p1', name: 'Combo Smash', price: 35.0 },
+                    product: {
+                        id: 'p1',
+                        name: 'Burger Simples',
+                        price: 25.0,
+                        available: true,
+                        optionGroups: [],
+                    },
                     quantity: 1,
                     selectedOptions: [],
                     observation: '',
-                    unitPrice: 35.0
-                }
+                    unitPrice: 25.0,
+                },
             ]
 
-            const checkout = {
+            const checkout: CheckoutFormData = {
+                deliveryType: 'pickup',
                 customerName: 'Carlos Silva',
-                deliveryType: 'pickup' as const,
                 paymentMethod: 'Dinheiro',
                 changeFor: 50.0,
-                address: { street: '', number: '', neighborhood: '' }
+                address: {
+                    street: '',
+                    number: '',
+                    neighborhood: '',
+                    complement: '',
+                },
             }
 
             const { message } = buildWhatsAppPayload(mockTenant, items, checkout)
@@ -255,24 +301,6 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
             expect(message).toContain('• Dinheiro')
             expect(message).toContain('• Troco para:')
             expect(message).toContain('50')
-        })
-    })
-
-    // 5. Acessibilidade W3C / WCAG
-    describe('Diretrizes de Acessibilidade W3C/WCAG', () => {
-        it('deve respeitar os padrões semânticos de modal de diálogo', () => {
-            const modalSemantics = {
-                role: 'dialog',
-                ariaModal: 'true',
-                ariaLabelledBy: 'cart-drawer-title',
-                closeButtonAriaLabel: 'Fechar sacola',
-                removeItemAriaLabel: (productName: string) => `Remover ${productName} da sacola`
-            }
-
-            expect(modalSemantics.role).toBe('dialog')
-            expect(modalSemantics.ariaModal).toBe('true')
-            expect(modalSemantics.ariaLabelledBy).toBe('cart-drawer-title')
-            expect(modalSemantics.removeItemAriaLabel('X-Burger')).toBe('Remover X-Burger da sacola')
         })
     })
 })
