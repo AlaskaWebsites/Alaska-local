@@ -21,8 +21,8 @@
           tempo real.
         </p>
 
-        <!-- Filtros por Nicho / Vertical (Semântica de Tablist) -->
-        <div class="pt-3 flex flex-wrap justify-center gap-2" role="tablist"
+        <!-- Filtros em Pílulas Segmentadas -->
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-2" role="tablist"
           aria-label="Filtro de modelos de demonstração">
           <button role="tab" :aria-selected="activeFilter === 'todos'" aria-controls="showcase-grid"
             @click="activeFilter = 'todos'" :class="[
@@ -63,7 +63,8 @@
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink v-for="store in filteredTenants" :key="store.slug" :to="`/${store.slug}`"
           :aria-label="`Acessar demonstração de ${store.name}. ${isHubStore(store.slug) ? 'Serviços e agendamentos' : 'Cardápio e pedidos'}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
-          class="group bg-white rounded-2xl border border-slate-200 hover:border-slate-300 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]">
+          class="group bg-white rounded-2xl border border-slate-200 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]"
+          :class="getStoreBorderHover(store.theme)">
           <!-- Banner Superior da Loja -->
           <div class="relative h-36 w-full bg-slate-100 overflow-hidden">
             <img v-if="store.banner" :src="store.banner" :alt="`Banner de ${store.name}`"
@@ -93,11 +94,12 @@
             </span>
           </div>
 
-          <!-- Informações do Estabelecimento -->
+          <!-- Conteúdo e Informações do Card -->
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div>
               <div class="flex items-center justify-between gap-2">
-                <h2 class="font-bold text-base text-slate-900 group-hover:text-red-600 transition-colors truncate">
+                <h2 class="font-bold text-base text-slate-900 transition-colors truncate"
+                  :class="getStoreTitleHover(store.theme)">
                   {{ store.name }}
                 </h2>
 
@@ -135,39 +137,72 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Sparkles, Star, ChevronRight } from 'lucide-vue-next'
-import type { Tenant } from '~/types/tenant'
-
-useSeoMeta({
-  title: 'Alaska Local — Showcase de Demonstrações',
-  description: 'Conheça os modelos interativos de vitrines digitais para comércios locais e prestadores de serviço.',
-  ogTitle: 'Alaska Local — Showcase de Demonstrações',
-  ogDescription: 'Vitrines mobile-first com pedidos no WhatsApp e domínio próprio.',
-})
+import { TenantSchema, type Tenant } from '~/types/tenant'
 
 const activeFilter = ref<'todos' | 'menu' | 'hub'>('todos')
 
-// 1. Carregamento Dinâmico de Todos os Arquivos JSON de data/
-const tenantFiles = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: Tenant }>
-
+// 1. Carregamento de Todos os Arquivos JSON de Tenants
+const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: any }>
 const tenantsList = computed<Tenant[]>(() => {
-  return Object.values(tenantFiles).map((file) => file.default || file)
+  const list: Tenant[] = []
+  Object.values(files).forEach((mod) => {
+    try {
+      const parsed = TenantSchema.parse(mod.default || mod)
+      list.push(parsed)
+    } catch (e) {
+      console.error('Erro ao validar tenant:', e)
+    }
+  })
+  return list
 })
 
-// 2. Identificação de Nicho (Hub para serviços/saúde, Menu para alimentação)
-const hubSlugs = ['barbearia-style', 'clinica-sorriso']
-
 function isHubStore(slug: string): boolean {
-  return hubSlugs.includes(slug)
+  return slug === 'barbearia-style' || slug === 'clinica-sorriso'
 }
 
-// 3. Filtragem Reativa do Showcase
+function getStoreTitleHover(theme?: string): string {
+  switch (theme) {
+    case 'barber':
+      return 'group-hover:text-amber-600'
+    case 'health':
+      return 'group-hover:text-teal-600'
+    case 'drinks':
+      return 'group-hover:text-purple-600'
+    default:
+      return 'group-hover:text-red-600'
+  }
+}
+
+function getStoreBorderHover(theme?: string): string {
+  switch (theme) {
+    case 'barber':
+      return 'hover:border-amber-300'
+    case 'health':
+      return 'hover:border-teal-300'
+    case 'drinks':
+      return 'hover:border-purple-300'
+    default:
+      return 'hover:border-red-300'
+  }
+}
+
 const filteredTenants = computed(() => {
   if (activeFilter.value === 'menu') {
-    return tenantsList.value.filter((store) => !isHubStore(store.slug))
+    return tenantsList.value.filter((t) => !isHubStore(t.slug))
   }
   if (activeFilter.value === 'hub') {
-    return tenantsList.value.filter((store) => isHubStore(store.slug))
+    return tenantsList.value.filter((t) => isHubStore(t.slug))
   }
   return tenantsList.value
+})
+
+useHead({
+  title: 'Alaska Local — Vitrines e Cardápios Digitais',
+  meta: [
+    {
+      name: 'description',
+      content: 'Soluções digitais locais para food service, adegas, delivery e prestadores de serviços.'
+    }
+  ]
 })
 </script>
