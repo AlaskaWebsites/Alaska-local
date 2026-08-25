@@ -154,7 +154,7 @@ function handleAdd() {
                         class="w-full h-full object-cover" />
 
                     <!-- Botão Fechar -->
-                    <button @click="emit('close')\"
+                    <button @click="emit('close')"
                         class="absolute top-4 right-4 bg-slate-900/70 hover:bg-slate-900 text-white p-2 rounded-full transition-colors backdrop-blur-md z-10 shadow-md cursor-pointer"
                         aria-label="Fechar modal de montagem do produto">
                         <X class="w-5 h-5" aria-hidden="true" />
