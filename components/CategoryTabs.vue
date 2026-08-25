@@ -6,7 +6,8 @@
             aria-label="Lista de categorias">
             <a v-for="category in categories" :key="category.id" :href="`#${category.id}`" role="tab"
                 :aria-label="`Navegar até a categoria ${category.name}`"
-                class="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 hover:text-emerald-400 hover:border-emerald-500/40 transition-all cursor-pointer">
+                class="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition-all cursor-pointer"
+                :class="[themeClasses.primaryTextHover, themeClasses.primaryBorderHover]">
                 {{ category.name }}
             </a>
         </div>
@@ -14,9 +15,15 @@
 </template>
 
 <script setup lang="ts">
-import type { Category } from '~/types/tenant'
+import { toRef } from 'vue'
+import { useTenantTheme } from '~/composables/useTenantTheme'
+import type { Category, TenantTheme } from '~/types/tenant'
 
-defineProps<{
+const props = defineProps<{
     categories: Category[]
+    theme?: TenantTheme
 }>()
+
+// Tema Dinâmico para o Hover das Abas
+const { themeClasses } = useTenantTheme(toRef(props, 'theme'))
 </script>

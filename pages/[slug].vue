@@ -200,7 +200,7 @@
     </section>
 
     <!-- 5. Barra Fixa de Categorias -->
-    <CategoryTabs :categories="tenant.categories" class="mt-8" />
+    <CategoryTabs :categories="tenant.categories" :theme="tenant.theme" class="mt-8" />
 
     <!-- 6. Catálogo Completo de Produtos -->
     <main class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo de produtos">
@@ -581,7 +581,7 @@
     </div>
 
     <!-- 10. Modais da Loja -->
-    <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :is-open="isReviewsOpen"
+    <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :theme="tenant.theme" :is-open="isReviewsOpen"
       @close="isReviewsOpen = false" />
 
     <StoreInfoModal :tenant="tenant" :is-open="isInfoOpen" @close="isInfoOpen = false" />

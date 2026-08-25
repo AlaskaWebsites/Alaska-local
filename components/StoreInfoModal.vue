@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed, toRef, onMounted, onUnmounted } from "vue";
 import { useBodyScrollLock } from "~/composables/useBodyScrollLock";
+import { useTenantTheme } from "~/composables/useTenantTheme";
 import {
   X,
   MapPin,
@@ -26,10 +27,13 @@ const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-// 1. Trava de Rolagem de Fundo (Body Scroll Lock)
+// 1. Tema Dinâmico por Segmento
+const { themeClasses } = useTenantTheme(toRef(props, "tenant"));
+
+// 2. Trava de Rolagem de Fundo (Body Scroll Lock)
 useBodyScrollLock(toRef(props, "isOpen"));
 
-// 2. Fechamento com Tecla ESC no Desktop
+// 3. Fechamento com Tecla ESC no Desktop
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === "Escape" && props.isOpen) {
     emit("close");
@@ -110,7 +114,8 @@ const formatOpeningHours = computed(() => {
             <div class="flex items-center gap-3.5 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
               <div class="h-16 w-16 rounded-2xl border-2 border-slate-700 bg-slate-900 overflow-hidden shrink-0">
                 <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="h-full w-full object-cover" />
-                <div v-else class="h-full w-full flex items-center justify-center text-emerald-400 font-bold text-lg">
+                <div v-else class="h-full w-full flex items-center justify-center font-bold text-lg"
+                  :class="themeClasses.primaryText">
                   {{ tenant.name.charAt(0) }}
                 </div>
               </div>
@@ -122,7 +127,7 @@ const formatOpeningHours = computed(() => {
                 <p v-if="tenant.description" class="text-xs text-slate-400 mt-0.5 line-clamp-2 leading-relaxed">
                   {{ tenant.description }}
                 </p>
-                <div class="flex items-center gap-2 mt-2 text-[11px] text-emerald-400 font-semibold">
+                <div class="flex items-center gap-2 mt-2 text-[11px] font-semibold" :class="themeClasses.primaryText">
                   <ShieldCheck class="w-3.5 h-3.5" aria-hidden="true" />
                   <span>Estabelecimento Verificado no Alaska Local</span>
                 </div>
@@ -133,7 +138,7 @@ const formatOpeningHours = computed(() => {
           <!-- 2. Horários de Atendimento -->
           <section aria-labelledby="store-hours-title">
             <h3 id="store-hours-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <Clock class="w-4 h-4 text-emerald-400" aria-hidden="true" />
+              <Clock class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Horário de Funcionamento</span>
             </h3>
 
@@ -141,7 +146,7 @@ const formatOpeningHours = computed(() => {
               <div class="flex items-center justify-between">
                 <span class="text-xs text-slate-300 font-medium">Status no Momento:</span>
                 <span role="status"
-                  :class="isOpenNow ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : 'bg-amber-950 text-amber-300 border-amber-800'"
+                  :class="isOpenNow ? [themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder] : 'bg-amber-950 text-amber-300 border-amber-800'"
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
                   {{ isOpenNow ? '🟢 Aberto agora' : '🕒 Fechado no momento' }}
                 </span>
@@ -157,7 +162,7 @@ const formatOpeningHours = computed(() => {
           <!-- 3. Formas de Pagamento -->
           <section aria-labelledby="store-payments-title">
             <h3 id="store-payments-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <CreditCard class="w-4 h-4 text-emerald-400" aria-hidden="true" />
+              <CreditCard class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Formas de Pagamento</span>
             </h3>
 
@@ -168,7 +173,7 @@ const formatOpeningHours = computed(() => {
                   <span class="text-slate-400 text-[11px]">Chave informada automaticamente no fechamento do
                     pedido</span>
                 </div>
-                <span class="text-emerald-400 font-bold shrink-0">Instantâneo</span>
+                <span class="font-bold shrink-0" :class="themeClasses.primaryText">Instantâneo</span>
               </div>
 
               <div class="flex items-start justify-between gap-2 pb-2.5 border-b border-slate-800/80" role="listitem">
@@ -192,7 +197,7 @@ const formatOpeningHours = computed(() => {
           <!-- 4. Endereço e Localização -->
           <section aria-labelledby="store-address-title">
             <h3 id="store-address-title" class="text-sm font-bold text-slate-300 mb-2.5 flex items-center gap-2">
-              <MapPin class="w-4 h-4 text-emerald-400" aria-hidden="true" />
+              <MapPin class="w-4 h-4" :class="themeClasses.primaryText" aria-hidden="true" />
               <span>Endereço & Entrega</span>
             </h3>
 
@@ -208,7 +213,8 @@ const formatOpeningHours = computed(() => {
                 <a v-if="tenant.address"
                   :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tenant.address)}`"
                   target="_blank"
-                  class="shrink-0 p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-emerald-400 hover:bg-slate-800 transition-colors flex items-center gap-1.5 font-bold"
+                  class="shrink-0 p-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:bg-slate-800 transition-colors flex items-center gap-1.5 font-bold"
+                  :class="themeClasses.primaryText"
                   aria-label="Abrir rota no Google Maps para o endereço do estabelecimento">
                   <Navigation class="w-4 h-4" aria-hidden="true" />
                   <span class="text-[11px]">Rotas</span>
@@ -218,7 +224,7 @@ const formatOpeningHours = computed(() => {
               <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/80">
                 <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
                   <span class="text-slate-500 text-[11px] block">Taxa de Entrega</span>
-                  <span class="font-bold text-emerald-400 text-xs">
+                  <span class="font-bold text-xs" :class="themeClasses.primaryText">
                     {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}
                   </span>
                 </div>

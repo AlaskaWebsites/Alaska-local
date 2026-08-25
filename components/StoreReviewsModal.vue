@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { ref, computed, toRef, onMounted, onUnmounted } from "vue";
 import { useBodyScrollLock } from "~/composables/useBodyScrollLock";
+import { useTenantTheme } from "~/composables/useTenantTheme";
 import {
   Star,
   X,
@@ -11,21 +12,25 @@ import {
   ChevronRight,
   Sparkles,
 } from "lucide-vue-next";
-import type { StoreReviews } from "~/types/tenant";
+import type { StoreReviews, TenantTheme } from "~/types/tenant";
 
 const props = defineProps<{
   reviews: StoreReviews;
   isOpen: boolean;
+  theme?: TenantTheme;
 }>();
 
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
 
-// 1. Trava de Rolagem de Fundo (Body Scroll Lock)
+// 1. Tema Dinâmico por Segmento
+const { themeClasses } = useTenantTheme(toRef(props, "theme"));
+
+// 2. Trava de Rolagem de Fundo (Body Scroll Lock)
 useBodyScrollLock(toRef(props, "isOpen"));
 
-// 2. Fechamento com Tecla ESC no Desktop
+// 3. Fechamento com Tecla ESC no Desktop
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === "Escape" && props.isOpen) {
     emit("close");
@@ -108,13 +113,13 @@ const displayedComments = computed(() => {
                 {{ reviews.serviceQuality.description }}
               </p>
 
-              <!-- Barra Segmentada de Níveis -->
+              <!-- Barra Segmentada de Níveis Dinâmica -->
               <div class="mt-4 grid grid-cols-5 gap-1.5" role="progressbar"
                 :aria-valuenow="reviews.serviceQuality.level" aria-valuemin="1" aria-valuemax="5"
                 :aria-label="`Nível de serviço: ${reviews.serviceQuality.level} de 5`">
                 <div v-for="lvl in 5" :key="lvl" :class="[
                   'h-2 rounded-full transition-all',
-                  lvl <= reviews.serviceQuality.level ? 'bg-emerald-500 shadow-xs shadow-emerald-500/30' : 'bg-slate-800',
+                  lvl <= reviews.serviceQuality.level ? [themeClasses.primaryBg, 'shadow-xs'] : 'bg-slate-800',
                 ]" />
               </div>
 
@@ -128,13 +133,13 @@ const displayedComments = computed(() => {
                 </span>
               </div>
 
-              <!-- Badges de Desempenho -->
+              <!-- Badges de Desempenho Dinâmicos -->
               <div class="mt-5 grid grid-cols-3 gap-2 border-t border-slate-800/80 pt-4 text-center">
                 <div class="flex flex-col items-center">
-                  <div
-                    class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-400"
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full border"
+                    :class="[themeClasses.badgeBg, themeClasses.badgeBorder, themeClasses.primaryText]"
                     aria-hidden="true">
-                    <Star class="h-4 w-4 fill-emerald-400" />
+                    <Star class="h-4 w-4 fill-current" />
                   </div>
                   <span class="mt-2 text-[11px] font-medium text-slate-300 leading-tight">
                     Avaliações excelentes
@@ -153,8 +158,8 @@ const displayedComments = computed(() => {
                 </div>
 
                 <div class="flex flex-col items-center">
-                  <div
-                    class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-400"
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full border"
+                    :class="[themeClasses.badgeBg, themeClasses.badgeBorder, themeClasses.primaryText]"
                     aria-hidden="true">
                     <FileCheck2 class="h-4 w-4" />
                   </div>
@@ -190,7 +195,7 @@ const displayedComments = computed(() => {
                 <span class="text-xs text-slate-500 font-medium">{{ reviews.totalReviews }} avaliações</span>
               </div>
 
-              <!-- Barras Horizontais de Distribuição -->
+              <!-- Barras Horizontais de Distribuição Dinâmicas -->
               <div class="flex-1 space-y-1.5" role="group" aria-label="Distribuição de estrelas">
                 <div v-for="star in starLevels" :key="star" class="flex items-center gap-2 text-xs text-slate-400">
                   <span class="w-3 text-right font-medium" aria-hidden="true">{{ star }}</span>
@@ -198,7 +203,7 @@ const displayedComments = computed(() => {
                   <div class="h-1.5 flex-1 rounded-full bg-slate-800 overflow-hidden" role="progressbar"
                     :aria-valuenow="getDistributionPercentage(star)" aria-valuemin="0" aria-valuemax="100"
                     :aria-label="`${star} estrelas: ${getDistributionPercentage(star)}%`">
-                    <div class="h-full bg-emerald-500 rounded-full transition-all duration-300"
+                    <div class="h-full rounded-full transition-all duration-300" :class="themeClasses.primaryBg"
                       :style="`inline-size: ${getDistributionPercentage(star)}%`" />
                   </div>
                 </div>
@@ -212,24 +217,20 @@ const displayedComments = computed(() => {
               Comentários
             </h3>
 
-            <!-- Filtros em Pílula -->
+            <!-- Filtros em Pílula Dinâmicos -->
             <div class="flex gap-2 mb-4" role="tablist" aria-label="Filtro de comentários">
               <button role="tab" :aria-selected="activeFilter === 'todos'" aria-controls="reviews-comments-list"
-                @click="activeFilter = 'todos'" :class="[
-                  'rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-                  activeFilter === 'todos'
-                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
-                    : 'border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200',
-                ]">
+                @click="activeFilter = 'todos'"
+                class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer" :class="activeFilter === 'todos'
+                  ? [themeClasses.buttonPrimary, 'shadow-sm']
+                  : 'border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
                 Comentários
               </button>
               <button role="tab" :aria-selected="activeFilter === 'recentes'" aria-controls="reviews-comments-list"
-                @click="activeFilter = 'recentes'" :class="[
-                  'rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-                  activeFilter === 'recentes'
-                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
-                    : 'border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200',
-                ]">
+                @click="activeFilter = 'recentes'"
+                class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer" :class="activeFilter === 'recentes'
+                  ? [themeClasses.buttonPrimary, 'shadow-sm']
+                  : 'border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
                 Recentes
               </button>
             </div>
