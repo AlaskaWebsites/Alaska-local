@@ -9,6 +9,7 @@
   "currency": "R$",
   "deliveryFee": 0,
   "minOrderValue": 0,
+  "theme": "barber",
   "openingHours": {
     "open": "09:00",
     "close": "19:00"
