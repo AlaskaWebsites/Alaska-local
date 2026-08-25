@@ -1,12 +1,12 @@
 <!-- pages/[slug].vue -->
 <template>
-  <div v-if="tenant"
-    class="min-h-screen bg-slate-950 text-slate-100 pb-36 selection:bg-emerald-500 selection:text-slate-950">
+  <div v-if="tenant" class="min-h-screen bg-slate-950 text-slate-100 pb-36" :class="themeClasses.selectionClass">
 
     <!-- Toast Feedback de Link Copiado -->
     <div v-if="isCopied" role="status" aria-live="polite"
-      class="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-slate-950 px-4 py-2 rounded-full font-black text-xs shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-300 border border-emerald-400">
-      <Check class="w-4 h-4 text-slate-950" aria-hidden="true" />
+      class="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full font-black text-xs shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-4 duration-300 border"
+      :class="[themeClasses.primaryBg, 'text-white', themeClasses.primaryBorder]">
+      <Check class="w-4 h-4 text-white" aria-hidden="true" />
       <span>Link do cardápio copiado!</span>
     </div>
 
@@ -28,7 +28,8 @@
         class="absolute top-4 right-4 bg-slate-950/70 hover:bg-slate-900 text-white p-2.5 rounded-full backdrop-blur-md border border-slate-700/60 transition-all z-10 shadow-lg cursor-pointer flex items-center justify-center"
         :aria-label="isCopied ? 'Link copiado para a área de transferência' : 'Compartilhar cardápio da loja'"
         :title="isCopied ? 'Link copiado!' : 'Compartilhar'">
-        <Check v-if="isCopied" class="w-5 h-5 text-emerald-400 animate-in zoom-in-50 duration-200" aria-hidden="true" />
+        <Check v-if="isCopied" class="w-5 h-5 animate-in zoom-in-50 duration-200" :class="themeClasses.primaryText"
+          aria-hidden="true" />
         <Share2 v-else class="w-5 h-5 text-white" aria-hidden="true" />
       </button>
     </div>
@@ -42,9 +43,8 @@
           class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-slate-800 shadow-xl overflow-hidden bg-slate-950">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logotipo de ${tenant.name}`"
             class="w-full h-full object-cover" />
-          <div v-else
-            class="w-full h-full bg-slate-800 flex items-center justify-center text-emerald-400 font-bold text-xl"
-            aria-hidden="true">
+          <div v-else class="w-full h-full bg-slate-800 flex items-center justify-center font-bold text-xl"
+            :class="themeClasses.primaryText" aria-hidden="true">
             {{ tenant.name.charAt(0) }}
           </div>
         </div>
@@ -63,7 +63,7 @@
 
             <!-- Status Aberto/Fechado -->
             <span role="status"
-              :class="isOpen ? 'bg-emerald-950/90 text-emerald-300 border-emerald-800/60' : 'bg-amber-950/90 text-amber-300 border-amber-800/60'"
+              :class="isOpen ? [themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder] : 'bg-amber-950/90 text-amber-300 border-amber-800/60'"
               class="inline-flex items-center self-center sm:self-auto px-3 py-1 rounded-full text-xs font-bold border shrink-0 backdrop-blur-xs">
               {{ isOpen ? '🟢 Aberto agora' : '🕒 Fechado' }}
             </span>
@@ -119,8 +119,9 @@
 
             <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
               aria-label="Abrir conversa no WhatsApp com o estabelecimento para tirar dúvidas"
-              class="inline-flex items-center justify-center gap-1.5 text-emerald-400 font-bold hover:underline">
-              <Phone class="w-3.5 h-3.5" aria-hidden="true" />
+              class="inline-flex items-center justify-center gap-1.5 font-bold hover:underline"
+              :class="themeClasses.primaryText">
+              <Phone class="w-3.5 h-3.5" />
               <span>Dúvidas no WhatsApp</span>
             </a>
           </div>
@@ -131,13 +132,14 @@
     <!-- 3. Banner de Vantagem / Promoção -->
     <div class="max-w-4xl mx-auto px-4 mt-5">
       <div
-        class="bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-emerald-950/70 border border-emerald-500/30 rounded-2xl p-3.5 flex items-center justify-between text-xs text-emerald-300 font-medium shadow-sm">
-        <div class="flex items-center gap-2.5">
+        class="bg-slate-900/90 border rounded-2xl p-3.5 flex items-center justify-between text-xs font-medium shadow-sm"
+        :class="themeClasses.primaryBorder">
+        <div class="flex items-center gap-2.5 text-slate-200">
           <span class="text-base" aria-hidden="true">🛵</span>
           <span>Peça pelo canal oficial com <strong>preço original de balcão</strong> e sem taxas extras!</span>
         </div>
-        <span class="text-emerald-400 font-bold shrink-0 text-[11px] hidden sm:inline" aria-hidden="true">Aproveite
-          ›</span>
+        <span class="font-bold shrink-0 text-[11px] hidden sm:inline" :class="themeClasses.primaryText"
+          aria-hidden="true">Aproveite ›</span>
       </div>
     </div>
 
@@ -173,7 +175,8 @@
       <div ref="carouselRef" tabindex="0" role="region" aria-label="Carrossel de produtos em destaque"
         class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 focus:outline-none">
         <article v-for="product in featuredProducts" :key="product.id" @click="openProductModal(product)"
-          class="shrink-0 w-40 sm:w-48 bg-slate-900 rounded-2xl p-3 border border-slate-800/90 shadow-md active:scale-[0.98] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850 flex flex-col justify-between group"
+          class="shrink-0 w-40 sm:w-48 bg-slate-900 rounded-2xl p-3 border border-slate-800/90 shadow-md active:scale-[0.98] transition-all cursor-pointer hover:bg-slate-850 flex flex-col justify-between group"
+          :class="themeClasses.primaryBorderHover"
           :aria-label="`${product.name}, por ${formatCurrency(product.price)}`">
           <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden bg-slate-800 mb-2.5">
             <img v-if="product.image" :src="product.image" :alt="product.name"
@@ -185,7 +188,7 @@
           </div>
 
           <div class="space-y-1">
-            <span class="font-extrabold text-sm text-emerald-400 block">
+            <span class="font-extrabold text-sm block" :class="themeClasses.primaryText">
               {{ formatCurrency(product.price) }}
             </span>
             <h3 class="font-bold text-xs text-white line-clamp-2 leading-tight">
@@ -204,14 +207,15 @@
       <section v-for="category in tenant.categories" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
         :aria-labelledby="`cat-title-${category.id}`">
         <div class="flex items-center gap-2">
-          <span class="w-1.5 h-4 bg-emerald-500 rounded-full" aria-hidden="true"></span>
+          <span class="w-1.5 h-4 rounded-full" :class="themeClasses.categoryIndicator" aria-hidden="true"></span>
           <h2 :id="`cat-title-${category.id}`" class="text-base font-bold text-white tracking-tight">{{ category.name }}
           </h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <article v-for="product in category.products" :key="product.id" @click="openProductModal(product)"
-            class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/90 shadow-md flex items-center justify-between gap-3.5 active:scale-[0.99] transition-all cursor-pointer hover:border-emerald-500/40 hover:bg-slate-850"
+            class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800/90 shadow-md flex items-center justify-between gap-3.5 active:scale-[0.99] transition-all cursor-pointer hover:bg-slate-850"
+            :class="themeClasses.primaryBorderHover"
             :aria-label="`${product.name}, por ${formatCurrency(product.price)}`">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2">
@@ -224,11 +228,11 @@
               <p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">{{ product.description }}</p>
 
               <div class="flex items-center gap-2 mt-3">
-                <span class="font-extrabold text-sm text-emerald-400">
+                <span class="font-extrabold text-sm" :class="themeClasses.primaryText">
                   {{ formatCurrency(product.price) }}
                 </span>
-                <span v-if="product.optionGroups?.length"
-                  class="text-[10px] text-emerald-300 bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full font-bold">
+                <span v-if="product.optionGroups?.length" class="text-[10px] px-2 py-0.5 rounded-full font-bold border"
+                  :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
                   Montar
                 </span>
               </div>
@@ -282,13 +286,13 @@
             <p class="text-xs text-slate-400 leading-relaxed">{{ selectedProduct.description }}</p>
             <div class="flex items-center justify-between pt-1">
               <span class="text-xs font-semibold text-slate-500">Serve até 1 ou 2 pessoas</span>
-              <span class="text-xl font-black text-emerald-400">
+              <span class="text-xl font-black" :class="themeClasses.primaryText">
                 {{ formatCurrency(selectedProduct.price) }}
               </span>
             </div>
           </div>
 
-          <!-- Grupos de Opcionais com Feedback Visual de Obrigatórios -->
+          <!-- Grupos de Opcionais com Feedback Visual -->
           <div v-for="group in selectedProduct.optionGroups" :key="group.id" class="space-y-2.5 pt-2" role="group"
             :aria-labelledby="`group-title-${group.id}`" :aria-invalid="group.required && !isGroupValid(group)">
             <div class="border-y px-4 py-2.5 -mx-4 sm:-mx-5 flex items-center justify-between transition-colors"
@@ -300,7 +304,8 @@
                 <p class="text-[11px] font-medium"
                   :class="group.required && !isGroupValid(group) ? 'text-amber-400' : 'text-slate-400'">
                   {{ group.max === 1 ? 'Escolha 1 opção' : `Escolha até ${group.max} opções` }}
-                  <span v-if="getSelectedCountInGroup(group.id) > 0" class="text-emerald-400 font-bold ml-1">
+                  <span v-if="getSelectedCountInGroup(group.id) > 0" class="font-bold ml-1"
+                    :class="themeClasses.primaryText">
                     ({{ getSelectedCountInGroup(group.id) }}/{{ group.max }} selecionado{{
                       getSelectedCountInGroup(group.id) > 1 ? 's' : '' }})
                   </span>
@@ -309,8 +314,9 @@
 
               <!-- Badges Dinâmicos -->
               <span v-if="group.required && isGroupValid(group)"
-                class="bg-emerald-950 text-emerald-300 border border-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 flex items-center gap-1">
-                <Check class="w-2.5 h-2.5 text-emerald-400" aria-hidden="true" />
+                class="border text-[9px] font-extrabold px-2 py-0.5 rounded uppercase tracking-wider shrink-0 flex items-center gap-1"
+                :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
+                <Check class="w-2.5 h-2.5" aria-hidden="true" />
                 CONCLUÍDO
               </span>
               <span v-else-if="group.required && !isGroupValid(group)"
@@ -327,17 +333,18 @@
             <div class="space-y-2 pt-1">
               <label v-for="option in group.options" :key="option.id"
                 class="flex items-center justify-between p-3 rounded-2xl border border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-colors"
-                :class="isOptionSelected(group.id, option.id) ? 'border-emerald-500 bg-emerald-950/30' : ''">
+                :class="isOptionSelected(group.id, option.id) ? [themeClasses.primaryBorder, themeClasses.badgeBg] : ''">
                 <div class="flex flex-col pr-3">
                   <span class="text-xs sm:text-sm font-medium text-slate-200">{{ option.name }}</span>
-                  <span v-if="option.price > 0" class="text-xs font-bold text-emerald-400 mt-0.5">
+                  <span v-if="option.price > 0" class="text-xs font-bold mt-0.5" :class="themeClasses.primaryText">
                     + {{ formatCurrency(option.price) }}
                   </span>
                 </div>
 
                 <input :type="group.max === 1 ? 'radio' : 'checkbox'" :name="group.id" :aria-required="group.required"
                   :checked="isOptionSelected(group.id, option.id)" @change="toggleOption(group, option)"
-                  class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-400 bg-slate-950 border-slate-700 shrink-0 cursor-pointer" />
+                  class="w-5 h-5 rounded bg-slate-950 border-slate-700 shrink-0 cursor-pointer"
+                  :class="themeClasses.primaryText" />
               </label>
             </div>
           </div>
@@ -348,7 +355,7 @@
               observação?</label>
             <textarea id="product-observation-input" v-model="productObservation" rows="2"
               placeholder="Ex: Ponto da carne bem passado, tirar a cebola, etc."
-              class="w-full text-xs p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none placeholder:text-slate-600"></textarea>
+              class="w-full text-xs p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none placeholder:text-slate-600"></textarea>
           </div>
         </div>
 
@@ -373,7 +380,8 @@
 
             <button @click="addToCart" :disabled="!isProductConfigValid"
               :aria-label="`Adicionar ${productQuantity} item ao carrinho por ${formatCurrency(calculateProductTotal() * productQuantity)}`"
-              class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer">
+              class="flex-1 py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm shadow-lg transition-all flex items-center justify-between cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              :class="themeClasses.buttonPrimary">
               <span>Adicionar</span>
               <span class="font-extrabold">{{ formatCurrency(calculateProductTotal() * productQuantity) }}</span>
             </button>
@@ -398,11 +406,12 @@
           <span class="text-xs text-slate-400 block" aria-live="polite">
             {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
           </span>
-          <span class="text-lg font-black text-emerald-400">{{ formatCurrency(cartSubtotal) }}</span>
+          <span class="text-lg font-black" :class="themeClasses.primaryText">{{ formatCurrency(cartSubtotal) }}</span>
         </div>
         <button @click="isCartDrawerOpen = true" aria-haspopup="dialog" :aria-expanded="isCartDrawerOpen"
           :aria-label="`Ver sacola com ${totalItemsCount} ${totalItemsCount === 1 ? 'item' : 'itens'} no total de ${formatCurrency(cartSubtotal)}`"
-          class="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 transition-all text-xs cursor-pointer">
+          class="font-black px-5 py-3 rounded-2xl shadow-lg flex items-center gap-2 transition-all text-xs cursor-pointer"
+          :class="themeClasses.buttonPrimary">
           <ShoppingCart class="w-4 h-4" aria-hidden="true" />
           <span>Ver Sacola</span>
         </button>
@@ -418,7 +427,7 @@
         @click.stop>
         <div class="p-4 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <ShoppingCart class="w-5 h-5 text-emerald-400" aria-hidden="true" />
+            <ShoppingCart class="w-5 h-5" :class="themeClasses.primaryText" aria-hidden="true" />
             <h3 id="cart-drawer-title" class="font-bold text-base text-white">Sua Sacola</h3>
           </div>
           <button @click="isCartDrawerOpen = false" class="text-slate-400 hover:text-white cursor-pointer"
@@ -434,7 +443,7 @@
               class="p-3.5 bg-slate-950/80 rounded-2xl border border-slate-800 flex items-start justify-between gap-2">
               <div class="flex-1">
                 <div class="flex items-center gap-1.5">
-                  <span class="font-bold text-emerald-400">{{ item.quantity }}x</span>
+                  <span class="font-bold" :class="themeClasses.primaryText">{{ item.quantity }}x</span>
                   <span class="font-bold text-white">{{ item.product.name }}</span>
                 </div>
                 <div v-if="item.selectedOptions.length" class="text-[11px] text-slate-400 mt-1 space-y-0.5">
@@ -445,7 +454,7 @@
                 <p v-if="item.observation" class="text-[11px] text-slate-500 italic mt-1">
                   Obs: "{{ item.observation }}"
                 </p>
-                <span class="font-bold text-xs text-emerald-400 mt-2 block">
+                <span class="font-bold text-xs mt-2 block" :class="themeClasses.primaryText">
                   {{ formatCurrency(item.unitPrice * item.quantity) }}
                 </span>
               </div>
@@ -463,13 +472,13 @@
             <div class="grid grid-cols-2 gap-2">
               <button @click="checkoutData.deliveryType = 'delivery'"
                 :aria-pressed="checkoutData.deliveryType === 'delivery'"
-                :class="checkoutData.deliveryType === 'delivery' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
+                :class="checkoutData.deliveryType === 'delivery' ? [themeClasses.primaryBg, 'text-white font-black'] : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛵 Entrega (Delivery)
               </button>
               <button @click="checkoutData.deliveryType = 'pickup'"
                 :aria-pressed="checkoutData.deliveryType === 'pickup'"
-                :class="checkoutData.deliveryType === 'pickup' ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
+                :class="checkoutData.deliveryType === 'pickup' ? [themeClasses.primaryBg, 'text-white font-black'] : 'bg-slate-800 text-slate-300 font-medium hover:bg-slate-750'"
                 class="py-2.5 rounded-2xl transition-colors cursor-pointer">
                 🛍️ Retirada no Balcão
               </button>
@@ -482,7 +491,7 @@
               <label for="checkout-name" class="block font-bold text-slate-300 mb-1">Seu Nome *</label>
               <input id="checkout-name" ref="nameInputRef" v-model="checkoutData.customerName" type="text"
                 placeholder="Ex: João da Silva" required
-                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
             </div>
 
             <div v-if="checkoutData.deliveryType === 'delivery'" class="space-y-2">
@@ -491,13 +500,13 @@
                   <label for="checkout-street" class="block font-bold text-slate-300 mb-1">Rua / Logradouro *</label>
                   <input id="checkout-street" v-model="checkoutData.address.street" type="text"
                     placeholder="Ex: Av. Brasil" required
-                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
                   <label for="checkout-number" class="block font-bold text-slate-300 mb-1">Número *</label>
                   <input id="checkout-number" v-model="checkoutData.address.number" type="text" placeholder="123"
                     required
-                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
 
@@ -506,13 +515,13 @@
                   <label for="checkout-neighborhood" class="block font-bold text-slate-300 mb-1">Bairro *</label>
                   <input id="checkout-neighborhood" v-model="checkoutData.address.neighborhood" type="text"
                     placeholder="Centro" required
-                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
                 <div>
                   <label for="checkout-complement" class="block font-bold text-slate-300 mb-1">Complemento</label>
                   <input id="checkout-complement" v-model="checkoutData.address.complement" type="text"
                     placeholder="Apto 42"
-                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
                 </div>
               </div>
             </div>
@@ -521,7 +530,7 @@
             <div class="pt-1">
               <label for="checkout-payment" class="block font-bold text-slate-300 mb-1">Forma de Pagamento *</label>
               <select id="checkout-payment" v-model="checkoutData.paymentMethod"
-                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+                class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none font-medium">
                 <option value="Pix">Pix (Chave informada no pedido)</option>
                 <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
                 <option value="Cartão de Débito">Cartão de Débito (na entrega)</option>
@@ -533,7 +542,7 @@
                   quanto?</label>
                 <input id="checkout-change" v-model.number="checkoutData.changeFor" type="number"
                   placeholder="Ex: 50 ou 100"
-                  class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none placeholder:text-slate-600" />
+                  class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-950 text-slate-200 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-600" />
               </div>
             </div>
           </div>
@@ -550,7 +559,7 @@
             </div>
             <div class="flex justify-between font-black text-sm text-white pt-1.5 border-t border-slate-800">
               <span>Total:</span>
-              <span class="text-emerald-400">{{ formatCurrency(cartFinalTotal) }}</span>
+              <span :class="themeClasses.primaryText">{{ formatCurrency(cartFinalTotal) }}</span>
             </div>
           </div>
         </div>
@@ -559,9 +568,10 @@
         <div class="p-4 pb-6 sm:pb-4 border-t border-slate-800 bg-slate-900">
           <button @click="sendWhatsAppOrder" :disabled="!isCheckoutValid"
             aria-label="Enviar pedido formatado para o WhatsApp do estabelecimento"
-            class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-40 text-slate-950 font-black py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-xs transition-all cursor-pointer">
+            class="w-full font-black py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 text-xs transition-all cursor-pointer disabled:opacity-40"
+            :class="themeClasses.buttonPrimary">
             <span>Enviar Pedido pelo WhatsApp</span>
-            <svg class="w-4 h-4 fill-slate-950" viewBox="0 0 24 24" aria-hidden="true">
+            <svg class="w-4 h-4 fill-white" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z" />
             </svg>
@@ -581,6 +591,7 @@
 <script setup lang="ts">
 import { ref, computed, toRef, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
+import { useTenantTheme } from '~/composables/useTenantTheme'
 import {
   Phone,
   MapPin,
@@ -629,7 +640,10 @@ const { data: tenant } = await useAsyncData(`tenant-${slug}`, async () => {
   }
 })
 
-// 2. SEO & OpenGraph Dinâmico
+// 2. Tema Dinâmico por Segmento
+const { themeClasses } = useTenantTheme(tenant)
+
+// 3. SEO & OpenGraph Dinâmico
 useSeoMeta({
   title: () => tenant.value ? `${tenant.value.name} — Cardápio Digital & Pedidos` : 'Alaska Local',
   description: () => tenant.value?.description || 'Faça seu pedido online de forma rápida pelo WhatsApp.',
@@ -640,7 +654,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 3. Estados dos Modais & Compartilhamento
+// 4. Estados dos Modais & Compartilhamento
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
@@ -734,7 +748,7 @@ onUnmounted(() => {
   }
 })
 
-// 4. Estado de Customização do Produto
+// 5. Estado de Customização do Produto
 const selectedOptions = ref<Map<string, Option[]>>(new Map())
 const productObservation = ref('')
 const productQuantity = ref(1)
@@ -752,7 +766,7 @@ function getSelectedCountInGroup(groupId: string): number {
   return (selectedOptions.value.get(groupId) || []).length
 }
 
-// 5. Estado do Carrinho
+// 6. Estado do Carrinho
 interface CartItemState {
   product: Product
   quantity: number
@@ -776,7 +790,7 @@ const checkoutData = ref({
   }
 })
 
-// 6. Destaques Dinâmicos
+// 7. Destaques Dinâmicos
 const featuredProducts = computed(() => {
   if (!tenant.value) return []
   const all: Product[] = []
@@ -857,7 +871,7 @@ const isCheckoutValid = computed(() => {
   return true
 })
 
-// 7. Formatação
+// 8. Formatação
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -865,7 +879,7 @@ function formatCurrency(value: number): string {
   }).format(value)
 }
 
-// 8. Modal do Produto
+// 9. Modal do Produto
 function openProductModal(product: Product) {
   if (!product.available) return
   selectedProduct.value = product
@@ -941,7 +955,7 @@ function removeCartItem(index: number) {
   }
 }
 
-// 9. Despacho WhatsApp
+// 10. Despacho WhatsApp
 function sendWhatsAppOrder() {
   if (!tenant.value || !isCheckoutValid.value) return
 

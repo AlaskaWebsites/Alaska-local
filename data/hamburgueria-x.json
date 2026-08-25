@@ -9,10 +9,15 @@
   "currency": "R$",
   "deliveryFee": 5.00,
   "minOrderValue": 20.00,
+  "theme": "food",
   "category": "Lanches",
   "distance": "0,4 km",
   "priceRange": "$$",
-  "paymentMethods": ["Pix", "Cartão de Crédito", "Dinheiro"],
+  "paymentMethods": [
+    "Pix",
+    "Cartão de Crédito",
+    "Dinheiro"
+  ],
   "openingHours": {
     "open": "18:00",
     "close": "23:30"

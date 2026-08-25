@@ -80,7 +80,10 @@ export const StoreReviewsSchema = z.object({
   comments: z.array(ReviewItemSchema),
 })
 
-// 6. Schema Central do Estabelecimento (Tenant)
+// 6. Tema e Identidade Cromática por Segmento
+export const TenantThemeSchema = z.enum(['food', 'barber', 'health', 'drinks']).default('food')
+
+// 7. Schema Central do Estabelecimento (Tenant)
 export const TenantSchema = z.object({
   slug: z.string(),
   name: z.string(),
@@ -92,6 +95,7 @@ export const TenantSchema = z.object({
   currency: z.string().default('R$'),
   deliveryFee: z.number().default(0),
   minOrderValue: z.number().default(0),
+  theme: TenantThemeSchema.optional().default('food'), // 👈 Novo campo de tema integrado
   openingHours: OpeningHoursSchema.optional(),
   categories: z.array(CategorySchema),
   reviews: StoreReviewsSchema.optional(),
@@ -112,4 +116,5 @@ export type ReviewItem = z.infer<typeof ReviewItemSchema>
 export type ServiceBadge = z.infer<typeof ServiceBadgeSchema>
 export type ServiceQuality = z.infer<typeof ServiceQualitySchema>
 export type StoreReviews = z.infer<typeof StoreReviewsSchema>
+export type TenantTheme = z.infer<typeof TenantThemeSchema>
 export type Tenant = z.infer<typeof TenantSchema>
