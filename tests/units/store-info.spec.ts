@@ -1,9 +1,8 @@
-// tests/unit/store-info.spec.ts
+// tests/units/store-info.spec.ts
 import { describe, it, expect } from 'vitest'
 import { TenantSchema } from '~/types/tenant'
 
 describe('Lógica de Horários de Funcionamento (StoreInfoModal)', () => {
-    // Helper com fallback seguro usando .at() para evitar erros de índice
     const parseTimeToMinutes = (timeStr: string): number => {
         const parts = timeStr.split(':')
         const h = parseInt(parts.at(0) || '0', 10)
@@ -56,7 +55,7 @@ describe('Sanidade Global de Todos os Arquivos JSON (data/*.json)', () => {
         >
 
         const fileEntries = Object.entries(jsonFiles)
-        expect(fileEntries.length).toBeGreaterThanOrEqual(8)
+        expect(fileEntries.length).toBeGreaterThanOrEqual(7) // 👈 7 lojas cadastradas
 
         fileEntries.forEach(([path, content]) => {
             const data = content.default || content

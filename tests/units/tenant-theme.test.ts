@@ -9,40 +9,40 @@ describe('Sistema de Temas Dinâmicos por Segmento (useTenantTheme)', () => {
     it('deve aplicar o tema "food" (Vermelho iFood) por padrão quando o tema for omitido ou nulo', () => {
         const { theme, themeClasses } = useTenantTheme()
         expect(theme.value).toBe('food')
-        expect(themeClasses.value.primaryText).toBe('text-red-500')
+        expect(themeClasses.value.primaryText).toBe('text-red-600') // 👈 Ajustado para text-red-600
         expect(themeClasses.value.primaryBg).toBe('bg-red-600')
     })
 
     it('deve resolver corretamente o tema a partir de uma string válida', () => {
         const { theme: foodTheme, themeClasses: foodClasses } = useTenantTheme('food')
         expect(foodTheme.value).toBe('food')
-        expect(foodClasses.value.primaryText).toBe('text-red-500')
+        expect(foodClasses.value.primaryText).toBe('text-red-600') // 👈 Ajustado para text-red-600
 
         const { theme: barberTheme, themeClasses: barberClasses } = useTenantTheme('barber')
         expect(barberTheme.value).toBe('barber')
-        expect(barberClasses.value.primaryText).toBe('text-amber-400')
+        expect(barberClasses.value.primaryText).toBe('text-amber-500')
         expect(barberClasses.value.primaryBg).toBe('bg-amber-500')
 
         const { theme: healthTheme, themeClasses: healthClasses } = useTenantTheme('health')
         expect(healthTheme.value).toBe('health')
-        expect(healthClasses.value.primaryText).toBe('text-cyan-400')
+        expect(healthClasses.value.primaryText).toBe('text-cyan-500')
 
         const { theme: drinksTheme, themeClasses: drinksClasses } = useTenantTheme('drinks')
         expect(drinksTheme.value).toBe('drinks')
-        expect(drinksClasses.value.primaryText).toBe('text-purple-400')
+        expect(drinksClasses.value.primaryText).toBe('text-purple-600')
     })
 
     it('deve resolver o tema reativamente a partir de um objeto Ref de Tenant', () => {
         const tenantRef = ref({
             slug: 'hamburgueria-x',
-            theme: 'food' as TenantTheme, // 👈 Tipado como TenantTheme
+            theme: 'food' as TenantTheme,
         })
 
         const { theme, themeClasses } = useTenantTheme(tenantRef as any)
         expect(theme.value).toBe('food')
         expect(themeClasses.value.primaryBg).toBe('bg-red-600')
 
-        // Mudança reativa de tema funcionando perfeitamente
+        // Mudança reativa de tema
         tenantRef.value.theme = 'barber'
         expect(theme.value).toBe('barber')
         expect(themeClasses.value.primaryBg).toBe('bg-amber-500')

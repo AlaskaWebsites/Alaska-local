@@ -1,5 +1,5 @@
 // composables/useBodyScrollLock.ts
-import { watch, onUnmounted, type Ref } from 'vue'
+import { watch, onUnmounted, getCurrentInstance, type Ref } from 'vue'
 
 export function useBodyScrollLock(isLocked: Ref<boolean>) {
     const lock = () => {
@@ -26,7 +26,9 @@ export function useBodyScrollLock(isLocked: Ref<boolean>) {
         { immediate: true }
     )
 
-    onUnmounted(() => {
-        unlock()
-    })
+    if (getCurrentInstance()) {
+        onUnmounted(() => {
+            unlock()
+        })
+    }
 }
