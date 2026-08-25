@@ -250,7 +250,7 @@ function sendWhatsAppOrder() {
                             <label for="checkout-name" class="block font-bold text-slate-700 mb-1">Seu Nome *</label>
                             <input id="checkout-name" ref="nameInputRef" v-model="checkoutData.customerName" type="text"
                                 placeholder="Ex: João da Silva" required
-                                class="w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                         </div>
 
                         <div v-if="checkoutData.deliveryType === 'delivery'" class="space-y-2">
@@ -260,14 +260,14 @@ function sendWhatsAppOrder() {
                                         Logradouro *</label>
                                     <input id="checkout-street" v-model="checkoutData.address.street" type="text"
                                         placeholder="Ex: Av. Brasil" required
-                                        class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                        :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                                 </div>
                                 <div>
                                     <label for="checkout-number" class="block font-bold text-slate-700 mb-1">Número
                                         *</label>
                                     <input id="checkout-number" v-model="checkoutData.address.number" type="text"
                                         placeholder="123" required
-                                        class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                        :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                                 </div>
                             </div>
 
@@ -277,14 +277,14 @@ function sendWhatsAppOrder() {
                                         class="block font-bold text-slate-700 mb-1">Bairro *</label>
                                     <input id="checkout-neighborhood" v-model="checkoutData.address.neighborhood"
                                         type="text" placeholder="Centro" required
-                                        class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                        :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                                 </div>
                                 <div>
                                     <label for="checkout-complement"
                                         class="block font-bold text-slate-700 mb-1">Complemento</label>
                                     <input id="checkout-complement" v-model="checkoutData.address.complement"
                                         type="text" placeholder="Apto 42"
-                                        class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                        :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                                 </div>
                             </div>
                         </div>
@@ -294,7 +294,7 @@ function sendWhatsAppOrder() {
                             <label for="checkout-payment" class="block font-bold text-slate-700 mb-1">Forma de Pagamento
                                 *</label>
                             <select id="checkout-payment" v-model="checkoutData.paymentMethod"
-                                class="w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none font-medium">
+                                :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none font-medium', themeClasses.focusRing]">
                                 <option value="Pix">Pix (Chave informada no pedido)</option>
                                 <option value="Cartão de Crédito">Cartão de Crédito (na entrega)</option>
                                 <option value="Cartão de Débito">Cartão de Débito (na entrega)</option>
@@ -307,7 +307,7 @@ function sendWhatsAppOrder() {
                                 </label>
                                 <input id="checkout-change" v-model.number="checkoutData.changeFor" type="number"
                                     placeholder="Ex: 50 ou 100"
-                                    class="w-full p-2.5 rounded-2xl border border-slate-800 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none placeholder:text-slate-400" />
+                                    :class="['w-full p-2.5 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:outline-none placeholder:text-slate-400', themeClasses.focusRing]" />
                             </div>
                         </div>
                     </div>
