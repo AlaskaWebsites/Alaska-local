@@ -3,27 +3,14 @@
 import { ref, computed, toRef, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
+import { formatCurrency } from '~/utils/formatters'
 import { ShoppingCart, X, Trash2 } from 'lucide-vue-next'
-import type { Tenant, Option } from '~/types/tenant'
-
-export interface CartItemPayload {
-    product: {
-        id: string
-        name: string
-        price: number
-        image?: string
-        description?: string
-    }
-    quantity: number
-    selectedOptions: Option[]
-    observation: string
-    unitPrice: number
-}
+import type { Tenant, CartItem, CheckoutFormData } from '~/types'
 
 const props = defineProps<{
     isOpen: boolean
     tenant: Tenant
-    items: CartItemPayload[]
+    items: CartItem[]
 }>()
 
 const emit = defineEmits<{
@@ -71,11 +58,11 @@ watch(
 )
 
 // 4. Estado Interno do Checkout
-const checkoutData = ref({
-    deliveryType: 'delivery' as 'delivery' | 'pickup',
+const checkoutData = ref<CheckoutFormData>({
+    deliveryType: 'delivery',
     customerName: '',
     paymentMethod: 'Pix',
-    changeFor: null as number | null,
+    changeFor: null,
     address: {
         street: '',
         number: '',
@@ -85,13 +72,6 @@ const checkoutData = ref({
 })
 
 // 5. Cálculos Financeiros
-function formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-    }).format(value)
-}
-
 const cartSubtotal = computed(() => {
     return props.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
 })
@@ -126,10 +106,12 @@ function sendWhatsAppOrder() {
 
     props.items.forEach((item) => {
         lines.push(`*${item.quantity}x* ${item.product.name} — *${formatCurrency(item.unitPrice * item.quantity)}*`)
-        item.selectedOptions.forEach((opt) => {
-            const priceStr = opt.price > 0 ? ` (+${formatCurrency(opt.price)})` : ''
-            lines.push(`   └ _${opt.name}${priceStr}_`)
-        })
+        if (item.selectedOptions && item.selectedOptions.length > 0) {
+            item.selectedOptions.forEach((opt) => {
+                const priceStr = opt.price > 0 ? ` (+${formatCurrency(opt.price)})` : ''
+                lines.push(`   └ _${opt.name}${priceStr}_`)
+            })
+        }
         if (item.observation) {
             lines.push(`   └ 💬 _Obs: "${item.observation}"_`)
         }
@@ -203,7 +185,7 @@ function sendWhatsAppOrder() {
                                     }}x</span>
                                     <span class="font-bold text-slate-900">{{ item.product.name }}</span>
                                 </div>
-                                <div v-if="item.selectedOptions.length"
+                                <div v-if="item.selectedOptions && item.selectedOptions.length"
                                     class="text-[11px] text-slate-500 mt-1 space-y-0.5">
                                     <p v-for="opt in item.selectedOptions" :key="opt.id">
                                         + {{ opt.name }} {{ opt.price > 0 ? `(${formatCurrency(opt.price)})` : '' }}
