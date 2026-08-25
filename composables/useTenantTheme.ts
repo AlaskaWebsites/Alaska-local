@@ -53,7 +53,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         categoryIndicator: 'bg-red-600',
     },
 
-    // ✂️ 2. Barbearia & Estética (Âmbar Vintage & Ouro)
+    // ✂️ 2. Barbearia, Salões & Serviços (Âmbar Vintage & Ouro)
     barber: {
         primaryText: 'text-amber-500',
         primaryTextHover: 'hover:text-amber-400',
@@ -67,28 +67,28 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         badgeBg: 'bg-amber-50',
         badgeText: 'text-amber-800',
         badgeBorder: 'border-amber-200',
-        glowEffect: 'bg-',
+        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(245,158,11,0.15),transparent)]',
         selectionClass: 'selection:bg-amber-500 selection:text-slate-950',
         categoryIndicator: 'bg-amber-500',
     },
 
-    // 🦷 3. Saúde & Clínicas (Ciano & Teal Confiança)
+    // 🦷 3. Saúde, Odonto & Clínicas (Teal Médico & Verde-Água Confiança)
     health: {
-        primaryText: 'text-cyan-500',
-        primaryTextHover: 'hover:text-cyan-400',
-        primaryBg: 'bg-cyan-500',
-        primaryBgHover: 'hover:bg-cyan-400',
-        buttonPrimary: 'bg-cyan-500 hover:bg-cyan-400 active:scale-[0.98] text-slate-950 font-black',
-        primaryBorder: 'border-cyan-500',
-        primaryBorderHover: 'hover:border-cyan-500',
-        accentClass: 'accent-cyan-500',
-        selectedOptionClass: 'border-cyan-500 bg-cyan-50/60',
-        badgeBg: 'bg-cyan-50',
-        badgeText: 'text-cyan-800',
-        badgeBorder: 'border-cyan-200',
-        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(6,182,212,0.15),transparent)]',
-        selectionClass: 'selection:bg-cyan-500 selection:text-slate-950',
-        categoryIndicator: 'bg-cyan-500',
+        primaryText: 'text-teal-600',
+        primaryTextHover: 'hover:text-teal-500',
+        primaryBg: 'bg-teal-600',
+        primaryBgHover: 'hover:bg-teal-500',
+        buttonPrimary: 'bg-teal-600 hover:bg-teal-500 active:scale-[0.98] text-white font-bold',
+        primaryBorder: 'border-teal-500',
+        primaryBorderHover: 'hover:border-teal-500',
+        accentClass: 'accent-teal-600',
+        selectedOptionClass: 'border-teal-500 bg-teal-50/60',
+        badgeBg: 'bg-teal-50',
+        badgeText: 'text-teal-800',
+        badgeBorder: 'border-teal-200',
+        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(13,148,136,0.15),transparent)]',
+        selectionClass: 'selection:bg-teal-600 selection:text-white',
+        categoryIndicator: 'bg-teal-600',
     },
 
     // 🍷 4. Adegas & Distribuidoras (Roxo & Violeta Neon)
