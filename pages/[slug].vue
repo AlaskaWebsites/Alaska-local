@@ -281,7 +281,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useTenant } from '~/composables/useTenant'
 import { useTenantTheme } from '~/composables/useTenantTheme'
+import { useOpeningHours } from '~/composables/useOpeningHours'
+import { useShare } from '~/composables/useShare'
+import { formatCurrency } from '~/utils/formatters'
 import {
   Phone,
   MapPin,
@@ -295,39 +299,21 @@ import {
   Share2,
   Check
 } from 'lucide-vue-next'
-import type { Tenant, Product, Option } from '~/types/tenant'
-import { TenantSchema } from '~/types/tenant'
+import type { Product, Option } from '~/types/tenant'
 
-const route = useRoute()
-const slug = (route.params.slug as string) || 'hamburgueria-x'
-
-// 1. Carregamento Seguro e Compatível com SSR
-const { data: tenant } = await useAsyncData(`tenant-${slug}`, async () => {
-  try {
-    const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: any }>
-    const fileKeys = Object.keys(files)
-
-    const matchedKey = fileKeys.find(key => key.endsWith(`/${slug}.json`))
-    if (matchedKey && files[matchedKey]) {
-      return TenantSchema.parse(files[matchedKey].default)
-    }
-
-    const fallbackKey = fileKeys.find(key => key.includes('hamburgueria-x.json')) || fileKeys[0]
-    if (fallbackKey && files[fallbackKey]) {
-      return TenantSchema.parse(files[fallbackKey].default)
-    }
-
-    throw new Error('Nenhum arquivo de demonstração encontrado.')
-  } catch (err) {
-    console.error(`Erro ao carregar tenant [${slug}]:`, err)
-    throw createError({ statusCode: 404, statusMessage: 'Estabelecimento não encontrado' })
-  }
-})
+// 1. Carregamento Seguro e Resolução SSR do Tenant
+const { tenant } = await useTenant()
 
 // 2. Tema Dinâmico por Segmento
 const { themeClasses } = useTenantTheme(tenant)
 
-// 3. SEO & OpenGraph Dinâmico
+// 3. Horário de Funcionamento (Aberto / Fechado)
+const { isOpen } = useOpeningHours(tenant)
+
+// 4. Compartilhamento e Toast
+const { isCopied, shareStore } = useShare(tenant)
+
+// 5. SEO & OpenGraph Dinâmico
 useSeoMeta({
   title: () => tenant.value ? `${tenant.value.name} — Cardápio Digital & Pedidos` : 'Alaska Local',
   description: () => tenant.value?.description || 'Faça seu pedido online de forma rápida pelo WhatsApp.',
@@ -338,49 +324,12 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 4. Estados dos Modais & Compartilhamento
+// 6. Estados de Modais
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
 const isCartDrawerOpen = ref(false)
-const isCopied = ref(false)
 
-// Botão de Compartilhar
-const shareStore = async () => {
-  if (!import.meta.client || !tenant.value) return
-
-  const shareUrl =
-    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? `https://alaskalocal.vercel.app/${tenant.value.slug}`
-      : window.location.href
-
-  const shareData = {
-    title: tenant.value.name,
-    text: tenant.value.description || `Confira o cardápio e faça seu pedido na ${tenant.value.name}!`,
-    url: shareUrl,
-  }
-
-  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-    try {
-      await navigator.share(shareData)
-      return
-    } catch (err: any) {
-      if (err.name === 'AbortError') return
-    }
-  }
-
-  try {
-    await navigator.clipboard.writeText(shareUrl)
-    isCopied.value = true
-    setTimeout(() => {
-      isCopied.value = false
-    }, 2500)
-  } catch (err) {
-    console.error('Erro ao copiar link:', err)
-  }
-}
-
-// 5. Modal de Produto & Carrinho
 function openProductModal(product: Product) {
   if (!product.available) return
   selectedProduct.value = product
@@ -390,6 +339,7 @@ function closeProductModal() {
   selectedProduct.value = null
 }
 
+// 7. Estado do Carrinho
 interface CartItemState {
   product: Product
   quantity: number
@@ -417,7 +367,15 @@ function removeCartItem(index: number) {
   }
 }
 
-// 6. Destaques Dinâmicos
+const totalItemsCount = computed(() => {
+  return cart.value.items.reduce((acc, item) => acc + item.quantity, 0)
+})
+
+const cartSubtotal = computed(() => {
+  return cart.value.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+})
+
+// 8. Destaques Dinâmicos
 const featuredProducts = computed(() => {
   if (!tenant.value) return []
   const all: Product[] = []
@@ -427,7 +385,7 @@ const featuredProducts = computed(() => {
   return all.slice(0, 6)
 })
 
-// Controle de Rolagem
+// 9. Controle de Rolagem Horizontal
 const carouselRef = ref<HTMLElement | null>(null)
 
 function scrollCarousel(direction: 'left' | 'right') {
@@ -435,45 +393,5 @@ function scrollCarousel(direction: 'left' | 'right') {
   const scrollAmount = 350
   const delta = direction === 'left' ? -scrollAmount : scrollAmount
   carouselRef.value.scrollLeft += delta
-}
-
-function parseTimeToMinutes(timeStr?: string): number {
-  if (!timeStr) return 0
-  const parts = timeStr.split(':')
-  const hours = parseInt(parts.at(0) || '0', 10)
-  const minutes = parseInt(parts.at(1) || '0', 10)
-  return hours * 60 + minutes
-}
-
-const isOpen = computed(() => {
-  const hours = tenant.value?.openingHours
-  if (!hours?.open || !hours?.close) return true
-
-  const now = new Date()
-  const currentMinutes = now.getHours() * 60 + now.getMinutes()
-
-  const openMin = parseTimeToMinutes(hours.open)
-  const closeMin = parseTimeToMinutes(hours.close)
-
-  if (closeMin >= openMin) {
-    return currentMinutes >= openMin && currentMinutes <= closeMin
-  }
-
-  return currentMinutes >= openMin || currentMinutes <= closeMin
-})
-
-const totalItemsCount = computed(() => {
-  return cart.value.items.reduce((acc, item) => acc + item.quantity, 0)
-})
-
-const cartSubtotal = computed(() => {
-  return cart.value.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
-})
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value)
 }
 </script>
