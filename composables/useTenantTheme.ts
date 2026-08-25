@@ -19,6 +19,7 @@ export interface ThemeColors {
     // Checkbox e Opção Selecionada no Modal
     accentClass: string
     selectedOptionClass: string
+    focusRing: string
 
     // Badges e Tags
     badgeBg: string
@@ -45,6 +46,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         primaryBorderHover: 'hover:border-red-500',
         accentClass: 'accent-red-600',
         selectedOptionClass: 'border-red-500 bg-red-50/60',
+        focusRing: 'focus:ring-2 focus:ring-red-500 focus:border-red-500',
         badgeBg: 'bg-red-50',
         badgeText: 'text-red-700',
         badgeBorder: 'border-red-200',
@@ -64,6 +66,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         primaryBorderHover: 'hover:border-amber-500',
         accentClass: 'accent-amber-500',
         selectedOptionClass: 'border-amber-500 bg-amber-50/60',
+        focusRing: 'focus:ring-2 focus:ring-amber-500 focus:border-amber-500',
         badgeBg: 'bg-amber-50',
         badgeText: 'text-amber-800',
         badgeBorder: 'border-amber-200',
@@ -83,6 +86,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         primaryBorderHover: 'hover:border-teal-500',
         accentClass: 'accent-teal-600',
         selectedOptionClass: 'border-teal-500 bg-teal-50/60',
+        focusRing: 'focus:ring-2 focus:ring-teal-500 focus:border-teal-500',
         badgeBg: 'bg-teal-50',
         badgeText: 'text-teal-800',
         badgeBorder: 'border-teal-200',
@@ -102,6 +106,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         primaryBorderHover: 'hover:border-purple-500',
         accentClass: 'accent-purple-600',
         selectedOptionClass: 'border-purple-500 bg-purple-50/60',
+        focusRing: 'focus:ring-2 focus:ring-purple-500 focus:border-purple-500',
         badgeBg: 'bg-purple-50',
         badgeText: 'text-purple-800',
         badgeBorder: 'border-purple-200',
