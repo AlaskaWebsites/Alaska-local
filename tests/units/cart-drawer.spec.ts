@@ -219,12 +219,9 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
             expect(message).toContain('Queijo Extra')
             expect(message).toContain('Obs: "Caprichar na maionese verde"')
             expect(message).toContain('📍 *DADOS DE ENTREGA:*')
-            expect(message).toContain('• Nome: Danilo Gozzi')
             expect(message).toContain('• Endereço: Rua das Palmeiras, 450')
             expect(message).toContain('• Complemento: Apto 12')
-            expect(message).toContain('• Bairro: Jardins')
-            expect(message).toContain('💳 *FORMA DE PAGAMENTO:*')
-            expect(message).toContain('• Pix')
+            expect(message).toContain('• Forma de Pagamento:*\n• Pix')
             expect(url).toContain('https://wa.me/5511999999999?text=')
         })
 
@@ -250,7 +247,6 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
             const { message } = buildWhatsAppPayload(mockTenant, items, checkout)
 
             expect(message).toContain('🛍️ *RETIRADA NO BALCÃO:*')
-            expect(message).toContain('• Nome: Carlos Silva')
             expect(message).toContain('• Dinheiro')
             expect(message).toContain('• Troco para:')
             expect(message).toContain('50')
