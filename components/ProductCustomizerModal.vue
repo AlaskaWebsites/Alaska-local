@@ -3,8 +3,9 @@
 import { ref, computed, toRef, watch, onMounted, onUnmounted } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
+import { formatCurrency } from '~/utils/formatters'
 import { X, Star, Plus, Minus, Check, AlertCircle } from 'lucide-vue-next'
-import type { Tenant, Product, OptionGroup, Option } from '~/types/tenant'
+import type { Tenant, Product, OptionGroup, Option, CartItem } from '~/types'
 
 const props = defineProps<{
     product: Product | null
@@ -14,13 +15,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void
-    (e: 'add-to-cart', payload: {
-        product: Product
-        quantity: number
-        selectedOptions: Option[]
-        observation: string
-        unitPrice: number
-    }): void
+    (e: 'add-to-cart', payload: CartItem): void
 }>()
 
 // 1. Tema Dinâmico
@@ -128,13 +123,6 @@ const isProductConfigValid = computed(() => {
     return true
 })
 
-function formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-    }).format(value)
-}
-
 function handleAdd() {
     if (!props.product || !isProductConfigValid.value) return
 
@@ -166,7 +154,7 @@ function handleAdd() {
                         class="w-full h-full object-cover" />
 
                     <!-- Botão Fechar -->
-                    <button @click="emit('close')"
+                    <button @click="emit('close')\"
                         class="absolute top-4 right-4 bg-slate-900/70 hover:bg-slate-900 text-white p-2 rounded-full transition-colors backdrop-blur-md z-10 shadow-md cursor-pointer"
                         aria-label="Fechar modal de montagem do produto">
                         <X class="w-5 h-5" aria-hidden="true" />
@@ -180,7 +168,7 @@ function handleAdd() {
                         <span class="font-bold text-slate-900 truncate max-w-[130px]">{{ tenant.name }}</span>
                         <span class="text-slate-300" aria-hidden="true">•</span>
                         <span class="flex items-center gap-0.5 font-bold text-amber-500">
-                            <Star class="w-3 h-3 fill-amber-400 text-amber-400" aria-hidden="true" />
+                            <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                             {{ tenant.reviews ? tenant.reviews.score.toFixed(1) : '4.9' }}
                         </span>
                     </div>
@@ -269,7 +257,7 @@ function handleAdd() {
                         </label>
                         <textarea id="product-observation-input" v-model="productObservation" rows="2"
                             placeholder="Ex: Sem gelo, copos descartáveis extras, etc."
-                            class="w-full text-xs p-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 resize-none placeholder:text-slate-400"></textarea>
+                            :class="['w-full text-xs p-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-800 focus:outline-none resize-none placeholder:text-slate-400', themeClasses.focusRing]"></textarea>
                     </div>
                 </div>
 
