@@ -9,6 +9,16 @@
     "currency": "R$",
     "deliveryFee": 6.00,
     "minOrderValue": 25.00,
+    "theme": "food",
+    "category": "Espetos & Jantinhas",
+    "distance": "0,8 km",
+    "priceRange": "$$",
+    "paymentMethods": [
+        "Pix",
+        "Cartão de Crédito",
+        "Cartão de Débito",
+        "Dinheiro"
+    ],
     "openingHours": {
         "open": "18:00",
         "close": "23:45"
