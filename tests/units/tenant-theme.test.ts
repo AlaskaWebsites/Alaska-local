@@ -9,14 +9,14 @@ describe('Sistema de Temas Dinâmicos por Segmento (useTenantTheme)', () => {
     it('deve aplicar o tema "food" (Vermelho iFood) por padrão quando o tema for omitido ou nulo', () => {
         const { theme, themeClasses } = useTenantTheme()
         expect(theme.value).toBe('food')
-        expect(themeClasses.value.primaryText).toBe('text-red-600') // 👈 Ajustado para text-red-600
+        expect(themeClasses.value.primaryText).toBe('text-red-600')
         expect(themeClasses.value.primaryBg).toBe('bg-red-600')
     })
 
     it('deve resolver corretamente o tema a partir de uma string válida', () => {
         const { theme: foodTheme, themeClasses: foodClasses } = useTenantTheme('food')
         expect(foodTheme.value).toBe('food')
-        expect(foodClasses.value.primaryText).toBe('text-red-600') // 👈 Ajustado para text-red-600
+        expect(foodClasses.value.primaryText).toBe('text-red-600')
 
         const { theme: barberTheme, themeClasses: barberClasses } = useTenantTheme('barber')
         expect(barberTheme.value).toBe('barber')
@@ -25,7 +25,8 @@ describe('Sistema de Temas Dinâmicos por Segmento (useTenantTheme)', () => {
 
         const { theme: healthTheme, themeClasses: healthClasses } = useTenantTheme('health')
         expect(healthTheme.value).toBe('health')
-        expect(healthClasses.value.primaryText).toBe('text-cyan-500')
+        expect(healthClasses.value.primaryText).toBe('text-teal-600')
+        expect(healthClasses.value.primaryBg).toBe('bg-teal-600')
 
         const { theme: drinksTheme, themeClasses: drinksClasses } = useTenantTheme('drinks')
         expect(drinksTheme.value).toBe('drinks')
