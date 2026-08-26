@@ -34,13 +34,13 @@
       </button>
     </div>
 
-    <!-- 2. Card Flutuante de Identidade do Restaurante -->
-    <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20 w-full">
+    <!-- 2. Card Flutuante de Identidade do Estabelecimento -->
+    <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
       <div
-        class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full max-w-full min-w-0 overflow-hidden">
-        <!-- Logo Circular -->
+        class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
+        <!-- Logo Circular Flutuante -->
         <div
-          class="relative -mt-12 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
+          class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logotipo de ${tenant.name}`"
             class="w-full h-full object-cover" />
           <div v-else class="w-full h-full bg-slate-100 flex items-center justify-center font-bold text-xl"
@@ -71,7 +71,7 @@
 
           <!-- Linha de Metadados -->
           <div
-            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-2.5 text-xs text-slate-500 pt-1 min-w-0">
+            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-3 text-xs text-slate-500 pt-1 min-w-0">
             <!-- Selo de Avaliações -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true" aria-haspopup="dialog"
               :aria-expanded="isReviewsOpen"
