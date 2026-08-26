@@ -2,18 +2,18 @@
 <template>
     <nav aria-label="Categorias do cardápio"
         class="sticky top-0 z-30 w-full bg-[#f5f5f5]/95 backdrop-blur-md border-b border-slate-200/80 py-2.5">
-        <div class="max-w-4xl mx-auto px-4 relative flex items-center">
+        <div class="max-w-4xl mx-auto px-4 flex items-center gap-2">
             
-            <!-- Botão Scroll Esquerda (Desktop) -->
+            <!-- Botão Scroll Esquerda (Desktop) - Alinhado ao lado, sem sobrepor as abas -->
             <button v-if="canScrollLeft" @click="scroll('left')"
-                class="hidden sm:flex absolute left-2 z-20 p-1.5 rounded-full bg-white text-slate-700 shadow-md border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer items-center justify-center -ml-2 active:scale-95"
+                class="hidden sm:flex shrink-0 p-1.5 rounded-full bg-white text-slate-700 shadow-sm border border-slate-200 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer items-center justify-center active:scale-95"
                 aria-label="Rolar categorias para a esquerda" title="Categorias anteriores">
                 <ChevronLeft class="w-4 h-4" aria-hidden="true" />
             </button>
 
-            <!-- Container Rolável das Abas -->
+            <!-- Container Rolável das Abas (flex-1 min-w-0 evita sobreposição) -->
             <div ref="tabsContainerRef" @scroll="checkScroll" @wheel="handleWheel"
-                class="w-full flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5"
+                class="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5"
                 role="tablist" aria-label="Lista de categorias">
                 <a v-for="category in categories" :key="category.id" :href="`#${category.id}`" role="tab"
                     :aria-label="`Navegar até a categoria ${category.name}`"
@@ -23,9 +23,9 @@
                 </a>
             </div>
 
-            <!-- Botão Scroll Direita (Desktop) -->
+            <!-- Botão Scroll Direita (Desktop) - Alinhado ao lado, sem sobrepor as abas -->
             <button v-if="canScrollRight" @click="scroll('right')"
-                class="hidden sm:flex absolute right-2 z-20 p-1.5 rounded-full bg-white text-slate-700 shadow-md border border-slate-200 hover:bg-slate-50 transition-all cursor-pointer items-center justify-center -mr-2 active:scale-95"
+                class="hidden sm:flex shrink-0 p-1.5 rounded-full bg-white text-slate-700 shadow-sm border border-slate-200 hover:bg-slate-100 hover:text-slate-900 transition-all cursor-pointer items-center justify-center active:scale-95"
                 aria-label="Rolar categorias para a direita" title="Mais categorias">
                 <ChevronRight class="w-4 h-4" aria-hidden="true" />
             </button>
