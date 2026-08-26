@@ -2,6 +2,7 @@
 import { computed, isRef, type Ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
+import { triggerHaptic } from './useHaptic'
 import type { CartItem, DeliveryType, PaymentMethod, Address, Tenant } from '~/types'
 
 /**
@@ -26,6 +27,8 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
     })
 
     function addItem(item: CartItem) {
+        // Feedback tátil sutil no mobile ao adicionar item à sacola
+        triggerHaptic(30)
         items.value.push(item)
     }
 
@@ -107,17 +110,11 @@ export const useCartStore = defineStore('cart', {
 
     actions: {
         addItem(item: CartItem) {
+            triggerHaptic(30)
             this.items.push(item)
         },
         removeItem(index: number) {
             this.items.splice(index, 1)
-        },
-        updateQuantity(index: number, quantity: number) {
-            if (quantity <= 0) {
-                this.removeItem(index)
-            } else {
-                this.items[index].quantity = quantity
-            }
         },
         clearCart() {
             this.items = []
