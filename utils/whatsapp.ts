@@ -1,58 +1,75 @@
 // utils/whatsapp.ts
-import type { CartState } from '../types/cart'
-import type { Tenant } from '../types/tenant'
+import type { Tenant, CartItem, CheckoutFormData } from '~/types'
+import { formatCurrency } from './formatters'
 
-export function generateWhatsAppOrderUrl(tenant: Tenant, cart: CartState): string {
-  const lines: string[] = []
+export interface WhatsAppOrderPayload {
+    tenant: Tenant
+    items: CartItem[]
+    formData: CheckoutFormData
+}
 
-  lines.push(`🍔 *NOVO PEDIDO - ${tenant.name.toUpperCase()}*`)
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+export function formatWhatsAppOrderMessage({ tenant, items, formData }: WhatsAppOrderPayload): string {
+    const isDelivery = formData.deliveryType === 'delivery'
+    const deliveryFee = isDelivery ? tenant.deliveryFee || 0 : 0
+    const subtotal = items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+    const total = subtotal + deliveryFee
 
-  // Itens do Pedido
-  cart.items.forEach((item, index) => {
-    lines.push(`*${item.quantity}x* ${item.product.name} — *R$ ${(item.unitPrice * item.quantity).toFixed(2)}*`)
-    
-    if (item.selectedOptions && item.selectedOptions.length > 0) {
-      item.selectedOptions.forEach(opt => {
-        const optPrice = opt.price > 0 ? ` (+R$ ${opt.price.toFixed(2)})` : ''
-        lines.push(`   └ _${opt.name}${optPrice}_`)
-      })
+    let message = `*NOVO PEDIDO - ${tenant.name.toUpperCase()}*\n\n`
+
+    message += `*Cliente:* ${formData.customerName}\n`
+    if (formData.customerPhone) {
+        message += `*Contato:* ${formData.customerPhone}\n`
     }
-    
-    if (item.observation) {
-      lines.push(`   └ 💬 Obs: "${item.observation}"`)
+    message += `*Tipo:* ${isDelivery ? '🛵 Entrega' : '🏪 Retirada no Balcão'}\n`
+
+    if (isDelivery) {
+        let addrStr = `${formData.address.street}, Nº ${formData.address.number}`
+        if (formData.address.complement) {
+            addrStr += ` (${formData.address.complement})`
+        }
+        addrStr += ` - Bairro ${formData.address.neighborhood}`
+        if (formData.address.cep) {
+            addrStr += ` - CEP: ${formData.address.cep}`
+        }
+        message += `*Endereço:* ${addrStr}\n`
     }
-    lines.push('')
-  })
 
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`Subtotal: R$ ${cart.subtotal.toFixed(2)}`)
+    message += `*Pagamento:* ${formData.paymentMethod}\n`
+    if (formData.paymentMethod === 'Dinheiro' && formData.changeFor) {
+        message += `*Troco para:* ${formatCurrency(formData.changeFor)}\n`
+    }
 
-  if (cart.deliveryType === 'delivery') {
-    lines.push(`Taxa de Entrega: R$ ${cart.deliveryFee.toFixed(2)}`)
-    lines.push(`*TOTAL: R$ ${cart.total.toFixed(2)}*`)
-    lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-    lines.push(`📍 *DADOS DE ENTREGA:*`)
-    lines.push(`• Nome: ${cart.customerName}`)
-    lines.push(`• Endereço: ${cart.address.street}, ${cart.address.number}`)
-    if (cart.address.complement) lines.push(`• Compl: ${cart.address.complement}`)
-    lines.push(`• Bairro: ${cart.address.neighborhood}`)
-  } else {
-    lines.push(`*TOTAL (RETIRADA): R$ ${cart.total.toFixed(2)}*`)
-    lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-    lines.push(`🛍️ *RETIRADA NO BALCÃO:*`)
-    lines.push(`• Nome do Cliente: ${cart.customerName}`)
-  }
+    if (formData.notes) {
+        message += `*Observações:* ${formData.notes}\n`
+    }
 
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`💳 *FORMA DE PAGAMENTO:*`)
-  lines.push(`• ${cart.paymentMethod}`)
-  if (cart.changeFor) {
-    lines.push(`• Troco para: R$ ${cart.changeFor.toFixed(2)}`)
-  }
+    message += `\n*ITENS DO PEDIDO:*\n`
+    items.forEach((item, index) => {
+        message += `\n${index + 1}. *${item.quantity}x ${item.product.name}* - ${formatCurrency(item.unitPrice * item.quantity)}\n`
+        if (item.options && item.options.length > 0) {
+            item.options.forEach((opt) => {
+                message += `   + ${opt.name}${opt.price > 0 ? ` (${formatCurrency(opt.price)})` : ''}\n`
+            })
+        }
+        if (item.notes) {
+            message += `   _Obs: ${item.notes}_\n`
+        }
+    })
 
-  const message = lines.join('\n')
-  const phone = tenant.phoneWhatsApp.replace(/\D/g, '')
+    message += `\n----------------------------\n`
+    message += `*Subtotal:* ${formatCurrency(subtotal)}\n`
+    if (isDelivery) {
+        message += `*Taxa de Entrega:* ${deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Grátis'}\n`
+    }
+    message += `*TOTAL DO PEDIDO:* ${formatCurrency(total)}\n`
+    message += `----------------------------`
 
-  return `https://wa.me/55${phone}?text=${encodeURIComponent(message)}`
+    return message
+}
+
+export function generateWhatsAppOrderUrl(payload: WhatsAppOrderPayload): string {
+    const phone = payload.tenant.phoneWhatsApp.replace(/\D/g, '')
+    const cleanPhone = phone.startsWith('55') ? phone : `55${phone}`
+    const message = formatWhatsAppOrderMessage(payload)
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
 }
