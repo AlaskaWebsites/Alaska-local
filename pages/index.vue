@@ -51,7 +51,7 @@
                 ? 'bg-purple-700 text-white font-bold shadow-sm shadow-purple-700/20'
                 : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
             ]">
-            ✂️ Serviços, Semijoias & Saúde (Alaska Hub)
+            ✂️ Moda, Serviços & Saúde (Alaska Hub)
           </button>
         </div>
       </div>
@@ -157,7 +157,12 @@ const tenantsList = computed<Tenant[]>(() => {
 })
 
 function isHubStore(slug: string): boolean {
-  return slug === 'barbearia-style' || slug === 'clinica-sorriso' || slug === 'karine-finardi'
+  return (
+    slug === 'barbearia-style' ||
+    slug === 'clinica-sorriso' ||
+    slug === 'karine-finardi' ||
+    slug === 'bella-donna'
+  )
 }
 
 function getStoreTitleHover(theme?: string): string {
@@ -201,7 +206,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'Soluções digitais locais para food service, semijoias, adegas, delivery e prestadores de serviços.'
+      content: 'Soluções digitais locais para food service, moda feminina, semijoias, adegas, delivery e prestadores de serviços.'
     }
   ]
 })

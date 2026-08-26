@@ -7,6 +7,7 @@ function getSlugByCustomDomain(host: string): string {
     'pizzariadoze.com.br': 'pizzariadoze',
     'hamburgueria-x.com.br': 'hamburgueria-x',
     'karinefinardi.com.br': 'karine-finardi',
+    'belladonna.com.br': 'bella-donna',
     'barbeariastyle.com.br': 'barbearia-style',
     'clinicasorriso.com.br': 'clinica-sorriso'
   }
