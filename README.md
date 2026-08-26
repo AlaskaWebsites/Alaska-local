@@ -1,6 +1,6 @@
 # 🏔️ Alaska Local — Vitrines Digitais Mobile-First para Negócios Locais
 
-> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas, semijoias e serviços), com cardápio/catálogo interativo, avaliações estilo iFood e despacho formatado direto para o WhatsApp.
+> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas, semijoias, boutiques e serviços), com cardápio/catálogo interativo, avaliações estilo iFood e despacho formatado direto para o WhatsApp.
 
 [![Nuxt 3](https://img.shields.io/badge/Nuxt-3.15+-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com/)
 [![Vue 3](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
@@ -14,7 +14,7 @@
 ## 📱 Verticais de Negócio
 
 * 🍔 **Alaska Menu**: Experiência visual rica inspirada no iFood para food service (hamburguerias, pizzarias, adegas 24h, espetarias e cafeterias), com seleção de adicionais, observações e cálculo de taxa de entrega.
-* ✂️ **Alaska Hub**: Páginas institucionais de alta conversão para prestadores de serviços, semijoias femininas e presentes, barbearias com escolha de profissionais e clínicas com agendamento direto.
+* ✂️ **Alaska Hub**: Páginas institucionais de alta conversão para boutiques de moda feminina, semijoias e presentes, barbearias com escolha de profissionais e clínicas com agendamento direto.
 
 ---
 
@@ -22,6 +22,7 @@
 
 | Estabelecimento | Segmento | Tema Visual | Rota |
 | :--- | :--- | :--- | :--- |
+| **Bella Donna Boutique** | Moda Feminina & Alfaiataria | `drinks` (Violeta & Rosa Chic) | [`/bella-donna`](https://alaskalocal.vercel.app/bella-donna) |
 | **Karine Finardi** | Semijoias & Revenda | `barber` (Âmbar / Ouro 18k) | [`/karine-finardi`](https://alaskalocal.vercel.app/karine-finardi) |
 | **Hamburgueria X** | Burgers Artesanais | `food` (Vermelho iFood) | [`/hamburgueria-x`](https://alaskalocal.vercel.app/hamburgueria-x) |
 | **Adega & Distribuidora Prime** | Bebidas & 24h | `drinks` (Roxo Neon) | [`/adega-prime`](https://alaskalocal.vercel.app/adega-prime) |
@@ -64,15 +65,3 @@ npm run dev
 # 4. Executar os testes automatizados
 npx vitest run
 ```
-
----
-
-## 📖 Documentação do Projeto
-
-* 🗺️ [Roadmap Arquitetural e Estratégico](docs/architecture/roadmap.md)
-* 📜 [ADR 001: Fundação Arquitetural](docs/adrs/001-fase1-fundacao-arquitetural.md)
-* 📜 [ADR 002: Arquitetura NestJS e Validação Zod](docs/adrs/002-arquitetura-nestjs-validacao-zod.md)
-* 📜 [ADR 003: Desacoplamento de Modais e Acessibilidade](docs/adrs/003-desacoplamento-composables-modais-acessibilidade.md)
-* 💼 [Plano Comercial e de Negócios](docs/commercial/PLANO_DE_NEGOCIO.md.md)
-* 🤖 [Regras Globais para LLMs e Agentes de IA](docs/prompts/regras-globais-ia.md)
-* 🤖 [Harness e Guia de Agentes (AGENTS.md)](AGENTS.md)
