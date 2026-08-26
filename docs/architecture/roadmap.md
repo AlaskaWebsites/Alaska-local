@@ -12,6 +12,7 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
 │ • One Codebase, Infinite Domains              │
 │ • Validação Zod Fail-Fast & Temas Dinâmicos  │
 │ • Busca em Tempo Real & Normalização          │
+│ • Persistência de Sacola com LocalStorage     │
 │ • Modais Modulares, Composables & A11y W3C    │
 │ • 14 Suítes Vitest (100% dos testes OK)       │
 └───────────────────────┬───────────────────────┘
@@ -60,6 +61,10 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
   - Filtragem instantânea insensível a acentos (`normalizeSearchText`) e minúsculas/maiúsculas.
   - Componente de busca acessível `components/ProductSearchInput.vue` com botão de limpeza e contagem de resultados.
   - Feedback visual e estado vazio amigável quando nenhum item for encontrado.
+- [x] **Persistência da Sacola e Perfil com LocalStorage (`composables/useCart.ts`)**:
+  - Composable `useCart` multi-tenant que isola chaves de armazenamento por tenant slug (`alaska_cart_<slug>`) usando `useLocalStorage` do VueUse.
+  - Preserva a sacola do cliente mesmo após fechar a aba ou recarregar a página.
+  - Persistência dos dados de contato/endereço em `alaska_checkout_profile` no `CartDrawerModal.vue` para recompra sem atrito.
 - [x] **Desacoplamento e Modularização de Componentes**:
   - `components/CategoryTabs.vue`: Navegação em abas horizontais com controles de seta desktop e scroll por roda do mouse.
   - `components/ProductCustomizerModal.vue`: Modal de adicionais, regras de min/max, cálculo de preço em tempo real.
@@ -76,7 +81,7 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
   - Suporte completo a leitores de tela com `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `role="search"`, `aria-expanded` e `aria-pressed`.
   - Foco automático com `nameInputRef` e fechamento universal na tecla `Escape` (`ESC`).
 - [x] **Suíte de Testes Automatizados no Vitest**:
-  - 14 arquivos de testes cobrindo busca em tempo real, schemas, temas, middleware de domínios, modais, horários e geração de WhatsApp, com 100% de sucesso.
+  - 14 arquivos de testes cobrindo busca em tempo real, persistência de sacola, schemas, temas, middleware de domínios, modais, horários e geração de WhatsApp, com 100% de sucesso.
 
 ---
 
