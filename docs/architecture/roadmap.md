@@ -12,9 +12,10 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
 │ • One Codebase, Infinite Domains              │
 │ • Validação Zod Fail-Fast & Temas Dinâmicos  │
 │ • Busca em Tempo Real & Normalização          │
+│ • Autopreenchimento de Endereço via CEP (ViaCEP)
 │ • Persistência de Sacola com LocalStorage     │
 │ • Modais Modulares, Composables & A11y W3C    │
-│ • 14 Suítes Vitest (100% dos testes OK)       │
+│ • 15 Suítes Vitest (100% dos testes OK)       │
 └───────────────────────┬───────────────────────┘
                         │
                         ▼
@@ -49,8 +50,8 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
   - Resolução dinâmica de estabelecimentos via subdomínios, domínios próprios e rota slug (`/hamburgueria-x`, `/barbearia-style`, `/clinica-sorriso`, `/adega-prime`, `/karine-finardi`, `/bella-donna`, etc.).
   - Middleware de servidor `server/middleware/tenant.ts` mapeando hosts para slugs.
 - [x] **Blindagem com Schemas Zod (`types/tenant.ts` e `types/cart.ts`)**:
-  - `TenantSchema`, `CategorySchema`, `ProductSchema`, `OptionGroupSchema`, `StoreReviewsSchema`, `TenantThemeSchema`.
-  - Validação fail-fast na leitura de arquivos JSON locais via `import.meta.glob`.
+  - `TenantSchema`, `CategorySchema`, `ProductSchema`, `OptionGroupSchema`, `StoreReviewsSchema`, `TenantThemeSchema`, `ViaCepResponseSchema`.
+  - Validação fail-fast na leitura de arquivos JSON locais via `import.meta.glob` e nas respostas de APIs externas.
 - [x] **Sistema Dinâmico de Temas por Segmento (`composables/useTenantTheme.ts`)**:
   - 🍔 `food`: Vermelho clássico iFood (`red-600`).
   - ✂️ `barber`: Âmbar Dourado Vintage / Ouro 18k (`amber-500`).
@@ -61,6 +62,10 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
   - Filtragem instantânea insensível a acentos (`normalizeSearchText`) e minúsculas/maiúsculas.
   - Componente de busca acessível `components/ProductSearchInput.vue` com botão de limpeza e contagem de resultados.
   - Feedback visual e estado vazio amigável quando nenhum item for encontrado.
+- [x] **Autopreenchimento de Endereço via CEP (`composables/useCep.ts`)**:
+  - Consulta automática e gratuita ao ViaCEP ao digitar 8 números.
+  - Preenchimento instantâneo de Rua, Bairro, Cidade e Estado com máscara visual (`formatCep`).
+  - Transição de foco inteligente para o campo de número da residência.
 - [x] **Persistência da Sacola e Perfil com LocalStorage (`composables/useCart.ts`)**:
   - Composable `useCart` multi-tenant que isola chaves de armazenamento por tenant slug (`alaska_cart_<slug>`) usando `useLocalStorage` do VueUse.
   - Preserva a sacola do cliente mesmo após fechar a aba ou recarregar a página.
@@ -76,12 +81,12 @@ Este documento define a evolução técnica e arquitetural do ecossistema **Alas
   - `composables/useOpeningHours.ts`: Cálculo de loja aberta/fechada suportando viradas de meia-noite (ex: 18h às 03h).
   - `composables/useShare.ts`: Compartilhamento nativo via Web Share API com fallback para cópia na área de transferência.
   - `composables/useBodyScrollLock.ts`: Trava de rolagem de body SSR-safe com guard `getCurrentInstance()`.
-  - `utils/formatters.ts`: Formatação de moedas (`formatCurrency`) e telefones (`formatPhone`).
+  - `utils/formatters.ts`: Formatação de moedas (`formatCurrency`), telefones (`formatPhone`) e CEPs (`formatCep`).
 - [x] **Acessibilidade W3C / WCAG (Hardness & Compliance)**:
   - Suporte completo a leitores de tela com `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `role="search"`, `aria-expanded` e `aria-pressed`.
   - Foco automático com `nameInputRef` e fechamento universal na tecla `Escape` (`ESC`).
 - [x] **Suíte de Testes Automatizados no Vitest**:
-  - 14 arquivos de testes cobrindo busca em tempo real, persistência de sacola, schemas, temas, middleware de domínios, modais, horários e geração de WhatsApp, com 100% de sucesso.
+  - 15 arquivos de testes cobrindo busca em tempo real, consulta de CEP, persistência de sacola, schemas Zod, temas, middleware de domínios, modais, horários e geração de WhatsApp, com 100% de sucesso.
 
 ---
 
