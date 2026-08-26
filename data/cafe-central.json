@@ -2,7 +2,7 @@
   "slug": "cafe-central",
   "name": "Café Central",
   "description": "O melhor café da cidade, ambiente acolhedor e doces artesanais.",
-  "logo": "/tenants/cafe-central/logo.png",
+  "logo": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=200&h=200&fit=crop&q=80",
   "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11988887777",
   "address": "Rua do Café, 123 - Centro",

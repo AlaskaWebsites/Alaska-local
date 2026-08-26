@@ -2,7 +2,7 @@
   "slug": "hamburgueria-x",
   "name": "Hamburgueria X",
   "description": "Burgers artesanais grelhados na brasa, smashs crocantes e porções exclusivas.",
-  "logo": "/tenants/hamburgueria-x/logo.png",
+  "logo": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&h=200&fit=crop&q=80",
   "banner": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11999999999",
   "address": "Rua das Hamburguerias, 123 - Centro",
