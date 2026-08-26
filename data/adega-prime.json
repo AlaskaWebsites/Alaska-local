@@ -2,7 +2,7 @@
     "slug": "adega-prime",
     "name": "Adega & Distribuidora Prime",
     "description": "Cervejas trincando, combos de destilados, gelos de sabor, carvão e conveniência com entrega rápida.",
-    "logo": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=200&h=200&fit=crop&q=80",
+    "logo": "/tenants/adega-prime/logo.png",
     "banner": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1200&h=400&fit=crop&q=80",
     "phoneWhatsApp": "11988889999",
     "address": "Av. Brasil, 850 - Centro",
@@ -35,30 +35,10 @@
                             "min": 1,
                             "max": 2,
                             "options": [
-                                {
-                                    "id": "gelo-maracuja",
-                                    "name": "Gelo de Maracujá",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "gelo-morango",
-                                    "name": "Gelo de Morango",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "gelo-coco",
-                                    "name": "Gelo de Coco Tradicional",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "gelo-maca-verde",
-                                    "name": "Gelo de Maçã Verde",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                }
+                                { "id": "gelo-maracuja", "name": "Gelo de Maracujá", "price": 0, "maxQuantity": 2 },
+                                { "id": "gelo-morango", "name": "Gelo de Morango", "price": 0, "maxQuantity": 2 },
+                                { "id": "gelo-coco", "name": "Gelo de Coco Tradicional", "price": 0, "maxQuantity": 2 },
+                                { "id": "gelo-maca-verde", "name": "Gelo de Maçã Verde", "price": 0, "maxQuantity": 2 }
                             ]
                         }
                     ]
@@ -78,24 +58,9 @@
                             "min": 1,
                             "max": 1,
                             "options": [
-                                {
-                                    "id": "rb-tradicional",
-                                    "name": "4x Red Bull Tradicional",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "rb-tropical",
-                                    "name": "4x Red Bull Tropical Edition",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "rb-melancia",
-                                    "name": "4x Red Bull Melancia",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                }
+                                { "id": "rb-tradicional", "name": "4x Red Bull Tradicional", "price": 0, "maxQuantity": 1 },
+                                { "id": "rb-tropical", "name": "4x Red Bull Tropical Edition", "price": 0, "maxQuantity": 1 },
+                                { "id": "rb-melancia", "name": "4x Red Bull Melancia", "price": 0, "maxQuantity": 1 }
                             ]
                         },
                         {
@@ -105,12 +70,7 @@
                             "min": 0,
                             "max": 3,
                             "options": [
-                                {
-                                    "id": "gelo-coco-extra",
-                                    "name": "Gelo de Coco Coco Leve (Unidade)",
-                                    "price": 4.50,
-                                    "maxQuantity": 3
-                                }
+                                { "id": "gelo-coco-extra", "name": "Gelo de Coco Coco Leve (Unidade)", "price": 4.50, "maxQuantity": 3 }
                             ]
                         }
                     ]
@@ -146,18 +106,8 @@
                             "min": 1,
                             "max": 1,
                             "options": [
-                                {
-                                    "id": "gelada",
-                                    "name": "Super Gelada (Pronta para Beber)",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "ambiente",
-                                    "name": "Temperatura Ambiente (Fechada)",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                }
+                                { "id": "gelada", "name": "Super Gelada (Pronta para Beber)", "price": 0, "maxQuantity": 1 },
+                                { "id": "ambiente", "name": "Temperatura Ambiente (Fechada)", "price": 0, "maxQuantity": 1 }
                             ]
                         }
                     ]
@@ -240,70 +190,45 @@
             ]
         }
     ],
-  "reviews": {
-    "score": 4.6,
-    "totalReviews": 156,
-    "serviceQuality": {
-      "level": 3,
-      "experienceLabel": "Entrega rápida noturna",
-      "description": "Com base nos pedidos dos últimos 3 meses, a adega oferece cervejas trincando e combos com entrega 24h.",
-      "badges": [
-        {
-          "icon": "star",
-          "label": "Cervejas geladas",
-          "status": "success"
+    "reviews": {
+        "score": 4.6,
+        "totalReviews": 156,
+        "serviceQuality": {
+            "level": 3,
+            "experienceLabel": "Entrega rápida noturna",
+            "description": "Com base nos pedidos dos últimos 3 meses, a adega oferece cervejas trincando e combos com entrega 24h.",
+            "badges": [
+                { "icon": "star", "label": "Cervejas geladas", "status": "success" },
+                { "icon": "chat-alert", "label": "Atendimento madrugada", "status": "success" },
+                { "icon": "check-doc", "label": "Combos completos", "status": "warning" }
+            ]
         },
-        {
-          "icon": "chat-alert",
-          "label": "Atendimento madrugada",
-          "status": "success"
-        },
-        {
-          "icon": "check-doc",
-          "label": "Combos completos",
-          "status": "warning"
-        }
-      ]
-    },
-    "distribution": {
-      "5": 78,
-      "4": 14,
-      "3": 5,
-      "2": 2,
-      "1": 1
-    },
-    "comments": [
-      {
-        "id": "rev-1",
-        "author": "Felipe G.",
-        "rating": 5,
-        "date": "Há 2 dias",
-        "comment": "Kit Gin Tanqueray show! As tônicas Schweppes e os gelos de maracujá e morango deixaram o drink perfeito. Entrega super rápida mesmo sendo madrugada.",
-        "itemsOrdered": [
-          "1x Kit Gin Tanqueray 750ml + 4 Tônicas + Gelo de Sabor"
+        "distribution": { "5": 78, "4": 14, "3": 5, "2": 2, "1": 1 },
+        "comments": [
+            {
+                "id": "rev-1",
+                "author": "Felipe G.",
+                "rating": 5,
+                "date": "Há 2 dias",
+                "comment": "Kit Gin Tanqueray show! As tônicas Schweppes e os gelos de maracujá e morango deixaram o drink perfeito. Entrega super rápida mesmo sendo madrugada.",
+                "itemsOrdered": ["1x Kit Gin Tanqueray 750ml + 4 Tônicas + Gelo de Sabor"]
+            },
+            {
+                "id": "rev-2",
+                "author": "Bruno Henrique",
+                "rating": 5,
+                "date": "Há 5 dias",
+                "comment": "Pack Heineken realmente trincando! Pediu super gelada e veio perfeita para o churrasco. Carvão de acendimento rápido funcionou muito bem.",
+                "itemsOrdered": ["1x Pack Cerveja Heineken 350ml (12 Latas)", "2x Carvão Vegetal Eucalipto 3kg"]
+            },
+            {
+                "id": "rev-3",
+                "author": "Lucas Mendes",
+                "rating": 4,
+                "date": "Há 1 semana",
+                "comment": "Kit Whisky Red Label completo com energéticos. Só faltou um copo a mais no kit, mas o produto veio certinho e gelado.",
+                "itemsOrdered": ["1x Kit Whisky Red Label 1L + 4 Energéticos Red Bull"]
+            }
         ]
-      },
-      {
-        "id": "rev-2",
-        "author": "Bruno Henrique",
-        "rating": 5,
-        "date": "Há 5 dias",
-        "comment": "Pack Heineken realmente trincando! Pediu super gelada e veio perfeita para o churrasco. Carvão de acendimento rápido funcionou muito bem.",
-        "itemsOrdered": [
-          "1x Pack Cerveja Heineken 350ml (12 Latas)",
-          "2x Carvão Vegetal Eucalipto 3kg"
-        ]
-      },
-      {
-        "id": "rev-3",
-        "author": "Lucas Mendes",
-        "rating": 4,
-        "date": "Há 1 semana",
-        "comment": "Kit Whisky Red Label completo com energéticos. Só faltou um copo a mais no kit, mas o produto veio certinho e gelado.",
-        "itemsOrdered": [
-          "1x Kit Whisky Red Label 1L + 4 Energéticos Red Bull"
-        ]
-      }
-    ]
-  }
+    }
 }

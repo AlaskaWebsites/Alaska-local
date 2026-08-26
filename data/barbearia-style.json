@@ -2,7 +2,7 @@
   "slug": "barbearia-style",
   "name": "Barbearia Style",
   "description": "Cortes modernos, barba com toalha quente, pigmentação e estética masculina.",
-  "logo": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200&h=200&fit=crop&q=80",
+  "logo": "/tenants/barbearia-style/logo.png",
   "banner": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11977776666",
   "address": "Rua das Barbearias, 456 - Centro",
@@ -96,30 +96,12 @@
       "experienceLabel": "Cortes impecáveis",
       "description": "Com base nos atendimentos dos últimos 3 meses, a barbearia oferece cortes modernos com barboterapia relaxante.",
       "badges": [
-        {
-          "icon": "star",
-          "label": "Profissionais qualificados",
-          "status": "success"
-        },
-        {
-          "icon": "chat-alert",
-          "label": "Ambiente limpo",
-          "status": "success"
-        },
-        {
-          "icon": "check-doc",
-          "label": "Pontualidade",
-          "status": "success"
-        }
+        { "icon": "star", "label": "Profissionais qualificados", "status": "success" },
+        { "icon": "chat-alert", "label": "Ambiente limpo", "status": "success" },
+        { "icon": "check-doc", "label": "Pontualidade", "status": "success" }
       ]
     },
-    "distribution": {
-      "5": 90,
-      "4": 7,
-      "3": 2,
-      "2": 1,
-      "1": 0
-    },
+    "distribution": { "5": 90, "4": 7, "3": 2, "2": 1, "1": 0 },
     "comments": [
       {
         "id": "rev-1",
@@ -127,10 +109,7 @@
         "rating": 5,
         "date": "Há 1 dia",
         "comment": "Corte degradê navalhado perfeito! O Lucas (Master) tem uma mão incrível, ficou exatamente como eu queria. Barboterapia super relaxante com toalha quente.",
-        "itemsOrdered": [
-          "1x Corte Degradê / Fade Navalhado",
-          "1x Barba Terapia com Toalha Quente"
-        ]
+        "itemsOrdered": ["1x Corte Degradê / Fade Navalhado", "1x Barba Terapia com Toalha Quente"]
       },
       {
         "id": "rev-2",
@@ -138,9 +117,7 @@
         "rating": 5,
         "date": "Há 3 dias",
         "comment": "Combo VIP excelente value! Corte, barba e sobrancelha por um preço justo. O Marcos é especialista em fade e realmente entrega. Ambiente muito organizado.",
-        "itemsOrdered": [
-          "1x Combo VIP: Corte + Barba + Sobrancelha"
-        ]
+        "itemsOrdered": ["1x Combo VIP: Corte + Barba + Sobrancelha"]
       },
       {
         "id": "rev-3",
@@ -148,9 +125,7 @@
         "rating": 4,
         "date": "Há 1 semana",
         "comment": "Pigmentação de barba ficou muito natural, disfarçou bem as falhas. Atendimento atencioso, só tive que esperar um pouco mais que o horário marcado.",
-        "itemsOrdered": [
-          "1x Pigmentação de Barba / Cabelo"
-        ]
+        "itemsOrdered": ["1x Pigmentação de Barba / Cabelo"]
       }
     ]
   }

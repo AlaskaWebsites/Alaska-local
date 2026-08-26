@@ -2,7 +2,7 @@
   "slug": "hamburgueria-x",
   "name": "Hamburgueria X",
   "description": "Burgers artesanais grelhados na brasa, smashs crocantes e porções exclusivas.",
-  "logo": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=200&h=200&fit=crop&q=80",
+  "logo": "/tenants/hamburgueria-x/logo.png",
   "banner": "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11999999999",
   "address": "Rua das Hamburguerias, 123 - Centro",
@@ -24,183 +24,93 @@
   },
   "categories": [
     {
-      "id": "cat-burgers",
-      "name": "Hambúrgueres Artesanais",
+      "id": "burgers-artesanais",
+      "name": "Burgers Artesanais",
       "icon": "burger",
       "products": [
         {
-          "id": "prod-x-burger",
-          "name": "X-Burger Clássico Monster",
-          "description": "Pão brioche selado na manteiga, burger Angus 180g, queijo cheddar duplo derretido e molho especial da casa.",
-          "price": 28.90,
+          "id": "smash-burger-duplo",
+          "name": "Smash Burger Duplo",
+          "description": "Dois smash burgers de 90g (blend Angus), queijo cheddar derretido, cebola prensada e maionese da casa no pão brioche tostado.",
+          "price": 26.90,
           "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
             {
-              "id": "opt-ponto-xburger",
+              "id": "ponto-carne",
               "title": "Ponto da Carne",
               "required": true,
               "min": 1,
               "max": 1,
               "options": [
-                {
-                  "id": "p-ao-ponto",
-                  "name": "Ao Ponto (Rosado e Suculento)",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "p-bem-passado",
-                  "name": "Bem Passado",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "p-mal-passado",
-                  "name": "Mal Passado",
-                  "price": 0,
-                  "maxQuantity": 1
-                }
+                { "id": "ponto-bem-passado", "name": "Bem Passado (Crostinha crocante)", "price": 0, "maxQuantity": 1 },
+                { "id": "ponto-ao-ponto", "name": "Ao Ponto (Suculento)", "price": 0, "maxQuantity": 1 }
               ]
             },
             {
-              "id": "opt-adicionais-xburger",
-              "title": "Turbine seu Burger (Opcional)",
+              "id": "turbinar-burger",
+              "title": "Turbine seu Burger (Opcionais)",
               "required": false,
               "min": 0,
-              "max": 4,
+              "max": 3,
               "options": [
-                {
-                  "id": "add-bacon",
-                  "name": "Bacon Crocante Extra (4 fatias)",
-                  "price": 5.00,
-                  "maxQuantity": 2
-                },
-                {
-                  "id": "add-cheddar",
-                  "name": "Cheddar Cremoso Extra",
-                  "price": 4.50,
-                  "maxQuantity": 2
-                },
-                {
-                  "id": "add-ovo",
-                  "name": "Ovo Frito na Manteiga",
-                  "price": 3.00,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "add-maionese",
-                  "name": "Maionese Verde da Casa (50ml)",
-                  "price": 3.50,
-                  "maxQuantity": 2
-                }
+                { "id": "bacon-crocante", "name": "Bacon Crocante Extra", "price": 4.50, "maxQuantity": 2 },
+                { "id": "queijo-cheddar", "name": "Cheddar Cremoso Extra", "price": 4.00, "maxQuantity": 2 },
+                { "id": "maionese-verde", "name": "Pote Maionese Verde (50ml)", "price": 3.50, "maxQuantity": 3 }
               ]
             }
           ]
         },
         {
-          "id": "prod-x-bacon",
-          "name": "X-Bacon Supremo",
-          "description": "Pão brioche, burger artesanal 180g, muito bacon fatiado crocante, queijo prato, cebola caramelizada e barbecue.",
+          "id": "bacon-artesanal-monster",
+          "name": "Monster Bacon Artesanal",
+          "description": "Burger de 180g grelhado na brasa, generosas fatias de bacon rústico, queijo prato, cebola caramelizada e barbecue artesanal.",
           "price": 34.90,
           "image": "https://images.unsplash.com/photo-1553979459-d2229ba7433b?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
             {
-              "id": "opt-ponto-xbacon",
+              "id": "ponto-carne-monster",
               "title": "Ponto da Carne",
               "required": true,
               "min": 1,
               "max": 1,
               "options": [
-                {
-                  "id": "p-ao-ponto-bacon",
-                  "name": "Ao Ponto (Rosado e Suculento)",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "p-bem-passado-bacon",
-                  "name": "Bem Passado",
-                  "price": 0,
-                  "maxQuantity": 1
-                }
-              ]
-            },
-            {
-              "id": "opt-adicionais-xbacon",
-              "title": "Adicionais Especiais",
-              "required": false,
-              "min": 0,
-              "max": 3,
-              "options": [
-                {
-                  "id": "add-cheddar-bacon",
-                  "name": "Cheddar Cremoso Extra",
-                  "price": 4.50,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "add-maionese-bacon",
-                  "name": "Pote de Maionese Verde (50ml)",
-                  "price": 3.50,
-                  "maxQuantity": 2
-                }
+                { "id": "m-ao-ponto", "name": "Ao Ponto (Rosado)", "price": 0, "maxQuantity": 1 },
+                { "id": "m-bem-passado", "name": "Bem Passado", "price": 0, "maxQuantity": 1 }
               ]
             }
           ]
         },
         {
-          "id": "prod-x-salada",
-          "name": "X-Salada Especial",
-          "description": "Pão brioche, hambúrguer 180g, queijo prato, alface americana fresca, tomate caqui, picles e maionese artesanal.",
-          "price": 26.90,
+          "id": "cheese-salada-classico",
+          "name": "Classic Cheese Salada",
+          "description": "Burger 160g, queijo mussarela, alface americana fresca, tomate caqui, picles artesanal e molho especial.",
+          "price": 28.50,
           "image": "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=500&h=350&fit=crop&q=80",
           "available": true,
-          "optionGroups": [
-            {
-              "id": "opt-ponto-salada",
-              "title": "Ponto da Carne",
-              "required": true,
-              "min": 1,
-              "max": 1,
-              "options": [
-                {
-                  "id": "p-ao-ponto-s",
-                  "name": "Ao Ponto",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "p-bem-passado-s",
-                  "name": "Bem Passado",
-                  "price": 0,
-                  "maxQuantity": 1
-                }
-              ]
-            }
-          ]
+          "optionGroups": []
         }
       ]
     },
     {
-      "id": "cat-porcoes",
+      "id": "porcoes-acompanhamentos",
       "name": "Porções & Acompanhamentos",
       "icon": "fries",
       "products": [
         {
-          "id": "prod-batata-cheddar-bacon",
-          "name": "Batata Frita com Cheddar & Bacon",
-          "description": "Batata frita rústica crocante, coberta com cheddar cremoso e generosas lascas de bacon crocante. Serve até 2 pessoas.",
+          "id": "batata-cheddar-bacon",
+          "name": "Batata Rústica com Cheddar & Bacon",
+          "description": "Porção generosa de batatas rústicas com casca, cobertas com cheddar cremoso e farofa de bacon crocante.",
           "price": 24.00,
           "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
         },
         {
-          "id": "prod-onion-rings",
+          "id": "onion-rings-artesanal",
           "name": "Onion Rings Crocantes (10 un)",
-          "description": "Anéis de cebola empanados e super crocantes, acompanhados de molho barbecue da casa.",
+          "description": "Anéis de cebola empanados com farinha panko super crocante, acompanhados de molho barbecue.",
           "price": 19.90,
           "image": "https://images.unsplash.com/photo-1639024471287-032f66e5f1b6?w=500&h=350&fit=crop&q=80",
           "available": true,
@@ -209,64 +119,25 @@
       ]
     },
     {
-      "id": "cat-bebidas",
-      "name": "Bebidas Geladas",
+      "id": "bebidas-sucos",
+      "name": "Bebidas & Sucos",
       "icon": "drink",
       "products": [
         {
-          "id": "prod-coca-cola",
-          "name": "Coca-Cola Original Lata 350ml",
-          "description": "Refrigerante lata gelado.",
+          "id": "coca-cola-lata",
+          "name": "Coca-Cola Original 350ml",
           "price": 6.50,
           "image": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
         },
         {
-          "id": "prod-guarana-lata",
-          "name": "Guaraná Antarctica Lata 350ml",
-          "description": "Refrigerante lata gelado.",
+          "id": "guarana-antarctica-lata",
+          "name": "Guaraná Antarctica 350ml",
           "price": 6.00,
           "image": "https://images.unsplash.com/photo-1581098365948-6a5a912b7a49?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
-        },
-        {
-          "id": "prod-suco-natural",
-          "name": "Suco Natural da Fruta 500ml",
-          "description": "Suco natural feito na hora (500ml). Escolha o seu sabor favorito.",
-          "price": 8.50,
-          "image": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": [
-            {
-              "id": "opt-sabor-suco",
-              "title": "Escolha o Sabor do Suco",
-              "required": true,
-              "min": 1,
-              "max": 1,
-              "options": [
-                {
-                  "id": "s-laranja",
-                  "name": "Laranja Integral",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "s-limao",
-                  "name": "Limonada Suíça",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "s-maracuja",
-                  "name": "Maracujá",
-                  "price": 1.00,
-                  "maxQuantity": 1
-                }
-              ]
-            }
-          ]
         }
       ]
     }
@@ -277,64 +148,38 @@
     "serviceQuality": {
       "level": 3,
       "experienceLabel": "Experiência excelente",
-      "description": "Com base nos pedidos dos últimos 3 meses, a loja oferece um serviço de alta qualidade e rapidez.",
+      "description": "Com base nos pedidos dos últimos 3 meses, a hamburgueria se destaca por entregar lanches suculentos e atendimento rápido.",
       "badges": [
-        {
-          "icon": "star",
-          "label": "Avaliações excelentes",
-          "status": "success"
-        },
-        {
-          "icon": "chat-alert",
-          "label": "Poucas reclamações",
-          "status": "warning"
-        },
-        {
-          "icon": "check-doc",
-          "label": "Zero ou poucos cancelamentos",
-          "status": "success"
-        }
+        { "icon": "star", "label": "Avaliações excelentes", "status": "success" },
+        { "icon": "chat-alert", "label": "Poucas reclamações", "status": "warning" },
+        { "icon": "check-doc", "label": "Zero ou poucos cancelamentos", "status": "success" }
       ]
     },
-    "distribution": {
-      "5": 88,
-      "4": 8,
-      "3": 2,
-      "2": 1,
-      "1": 1
-    },
+    "distribution": { "5": 88, "4": 8, "3": 2, "2": 1, "1": 1 },
     "comments": [
       {
         "id": "rev-1",
         "author": "Aline M.",
         "rating": 5,
         "date": "Há 2 dias",
-        "comment": "Lanche sensacional! Chegou super rápido e bem quentinho. A carne no ponto perfeito e a maionese da casa é surreal.",
-        "itemsOrdered": [
-          "1x Smash Burger Duplo",
-          "1x Batata Rústica Individual"
-        ]
+        "comment": "Lanche maravilhoso! O blend angus no ponto certo e a maionese verde é espetacular. Chegou muito antes do previsto!",
+        "itemsOrdered": ["1x Smash Burger Duplo", "1x Batata Rústica"]
       },
       {
         "id": "rev-2",
-        "author": "Marcos Vinicius",
+        "author": "Carlos Eduardo",
         "rating": 5,
         "date": "Há 5 dias",
-        "comment": "Melhor hambúrguer da região, atendimento impecável e embalagem bem lacrada.",
-        "itemsOrdered": [
-          "2x Smash Salada",
-          "1x Coca-Cola Zero"
-        ]
+        "comment": "O Monster Bacon é surreal de bom! Bacon muito crocante e pão super macio. Recomendo de olhos fechados.",
+        "itemsOrdered": ["1x Monster Bacon Artesanal", "1x Coca-Cola Original 350ml"]
       },
       {
         "id": "rev-3",
-        "author": "Camila Santana",
+        "author": "Juliana Santos",
         "rating": 4,
         "date": "Há 1 semana",
-        "comment": "Muito saboroso, ingredientes frescos! Só o refrigerante que veio um pouco sem gelo, mas o lanche estava perfeito.",
-        "itemsOrdered": [
-          "1x Bacon Blast Burger"
-        ]
+        "comment": "Muito saboroso e bem embalado. Só a batata que poderia ter vindo um pouquinho mais crocante, mas o lanche compensou 100%.",
+        "itemsOrdered": ["1x Classic Cheese Salada"]
       }
     ]
   }

@@ -2,31 +2,22 @@
   "slug": "restaurante-bella-italia",
   "name": "Bella Italia",
   "description": "Autêntica culinária italiana no coração da cidade.",
-  "logo": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=200&fit=crop",
-  "banner": "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=1200&h=400&fit=crop",
+  "logo": "/tenants/restaurante-bella-italia/logo.png",
+  "banner": "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "5511999999999",
   "address": "Rua da Pizza, 789 - Centro",
   "currency": "R$",
   "deliveryFee": 8.00,
   "minOrderValue": 30.00,
   "theme": "food",
-  "category": "Pizzaria & Italiana",
-  "distance": "1,2 km",
-  "priceRange": "$$$",
-  "paymentMethods": [
-    "Pix",
-    "Cartão de Crédito",
-    "Cartão de Débito",
-    "Dinheiro"
-  ],
   "openingHours": {
     "open": "18:00",
     "close": "23:00"
   },
   "categories": [
     {
-      "id": "cat-pizzas",
-      "name": "Pizzas",
+      "id": "pizzas-tradicionais",
+      "name": "Pizzas Tradicionais",
       "icon": "pizza",
       "products": [
         {
@@ -38,30 +29,14 @@
           "available": true,
           "optionGroups": [
             {
-              "id": "opt-tamanho",
-              "title": "Tamanho",
+              "id": "tamanho-pizza",
+              "title": "Tamanho da Pizza",
               "required": true,
               "min": 1,
               "max": 1,
               "options": [
-                {
-                  "id": "opt-pequena",
-                  "name": "Pequena (30cm)",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "opt-media",
-                  "name": "Média (35cm)",
-                  "price": 10.00,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "opt-grande",
-                  "name": "Grande (40cm)",
-                  "price": 15.00,
-                  "maxQuantity": 1
-                }
+                { "id": "opt-media", "name": "Média (35cm)", "price": 10.00, "maxQuantity": 1 },
+                { "id": "opt-grande", "name": "Grande (40cm)", "price": 15.00, "maxQuantity": 1 }
               ]
             }
           ]
@@ -75,30 +50,14 @@
           "available": true,
           "optionGroups": [
             {
-              "id": "opt-tamanho-calabresa",
-              "title": "Tamanho",
+              "id": "tamanho-calabresa",
+              "title": "Tamanho da Pizza",
               "required": true,
               "min": 1,
               "max": 1,
               "options": [
-                {
-                  "id": "opt-pequena-c",
-                  "name": "Pequena (30cm)",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "opt-media-c",
-                  "name": "Média (35cm)",
-                  "price": 10.00,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "opt-grande-c",
-                  "name": "Grande (40cm)",
-                  "price": 15.00,
-                  "maxQuantity": 1
-                }
+                { "id": "opt-media-c", "name": "Média (35cm)", "price": 10.00, "maxQuantity": 1 },
+                { "id": "opt-grande-c", "name": "Grande (40cm)", "price": 15.00, "maxQuantity": 1 }
               ]
             }
           ]
@@ -106,9 +65,9 @@
       ]
     },
     {
-      "id": "cat-massas",
-      "name": "Massas",
-      "icon": "utensils",
+      "id": "massas-artesanais",
+      "name": "Massas Artesanais",
+      "icon": "pasta",
       "products": [
         {
           "id": "prod-spaghetti",
@@ -139,30 +98,12 @@
       "experienceLabel": "Experiência autêntica",
       "description": "Com base nos pedidos dos últimos 3 meses, a loja oferece culinária italiana tradicional com atendimento atencioso.",
       "badges": [
-        {
-          "icon": "star",
-          "label": "Sabor autêntico",
-          "status": "success"
-        },
-        {
-          "icon": "chat-alert",
-          "label": "Entrega no ponto",
-          "status": "success"
-        },
-        {
-          "icon": "check-doc",
-          "label": "Ingredientes frescos",
-          "status": "success"
-        }
+        { "icon": "star", "label": "Sabor autêntico", "status": "success" },
+        { "icon": "chat-alert", "label": "Entrega no ponto", "status": "success" },
+        { "icon": "check-doc", "label": "Ingredientes frescos", "status": "success" }
       ]
     },
-    "distribution": {
-      "5": 85,
-      "4": 10,
-      "3": 3,
-      "2": 1,
-      "1": 1
-    },
+    "distribution": { "5": 85, "4": 10, "3": 3, "2": 1, "1": 1 },
     "comments": [
       {
         "id": "rev-1",
@@ -170,9 +111,7 @@
         "rating": 5,
         "date": "Há 3 dias",
         "comment": "Pizza Margherita simplesmente perfeita! Massa fina e crocante, molho de tomate caseiro e mussarela de búfala de qualidade. Chegou quentinha.",
-        "itemsOrdered": [
-          "1x Pizza Margherita Média"
-        ]
+        "itemsOrdered": ["1x Pizza Margherita Média"]
       },
       {
         "id": "rev-2",
@@ -180,19 +119,15 @@
         "rating": 5,
         "date": "Há 1 semana",
         "comment": "Spaghetti Carbonara incrível! Cremoso na medida certa, bacon crocante e parmesão generoso. Senti que estava comendo na Itália.",
-        "itemsOrdered": [
-          "1x Spaghetti Carbonara"
-        ]
+        "itemsOrdered": ["1x Spaghetti Carbonara"]
       },
       {
         "id": "rev-3",
         "author": "Carlos Eduardo",
         "rating": 4,
         "date": "Há 2 semanas",
-        "comment": "Lasanha muito saborosa e bem servida. Só a entrega que demorou um pouco mais que o previsto, mas valeu a pena.",
-        "itemsOrdered": [
-          "1x Lasanha à Bolonhesa"
-        ]
+        "comment": "Lasanha à Bolonhesa muito saborosa e bem servida. Só a entrega que demorou um pouco mais que o previsto, mas valeu a pena.",
+        "itemsOrdered": ["1x Lasanha à Bolonhesa"]
       }
     ]
   }

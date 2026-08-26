@@ -2,7 +2,7 @@
   "slug": "cafe-central",
   "name": "Café Central",
   "description": "O melhor café da cidade, ambiente acolhedor e doces artesanais.",
-  "logo": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=200&h=200&fit=crop&q=80",
+  "logo": "/tenants/cafe-central/logo.png",
   "banner": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11988887777",
   "address": "Rua do Café, 123 - Centro",
@@ -10,15 +10,6 @@
   "deliveryFee": 4.00,
   "minOrderValue": 15.00,
   "theme": "food",
-  "category": "Cafeteria & Doces",
-  "distance": "0,6 km",
-  "priceRange": "$$",
-  "paymentMethods": [
-    "Pix",
-    "Cartão de Crédito",
-    "Cartão de Débito",
-    "Dinheiro"
-  ],
   "openingHours": {
     "open": "07:00",
     "close": "20:00"
@@ -53,24 +44,9 @@
               "min": 1,
               "max": 1,
               "options": [
-                {
-                  "id": "leite-integral",
-                  "name": "Leite Integral",
-                  "price": 0,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "leite-aveia",
-                  "name": "Leite de Aveia (Vegano)",
-                  "price": 3.50,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "leite-desnatado",
-                  "name": "Leite Desnatado",
-                  "price": 0,
-                  "maxQuantity": 1
-                }
+                { "id": "leite-integral", "name": "Leite Integral", "price": 0, "maxQuantity": 1 },
+                { "id": "leite-aveia", "name": "Leite de Aveia (Vegano)", "price": 3.50, "maxQuantity": 1 },
+                { "id": "leite-desnatado", "name": "Leite Desnatado", "price": 0, "maxQuantity": 1 }
               ]
             }
           ]
@@ -106,18 +82,8 @@
               "min": 0,
               "max": 1,
               "options": [
-                {
-                  "id": "queijo-presunto",
-                  "name": "Queijo & Presunto Gratinado",
-                  "price": 5.00,
-                  "maxQuantity": 1
-                },
-                {
-                  "id": "nutella",
-                  "name": "Nutella Pura",
-                  "price": 6.00,
-                  "maxQuantity": 1
-                }
+                { "id": "queijo-presunto", "name": "Queijo & Presunto Gratinado", "price": 5.00, "maxQuantity": 1 },
+                { "id": "nutella", "name": "Nutella Pura", "price": 6.00, "maxQuantity": 1 }
               ]
             }
           ]
@@ -151,30 +117,12 @@
       "experienceLabel": "Atendimento acolhedor",
       "description": "Com base nos pedidos dos últimos 3 meses, a cafeteria oferece produtos artesanais com atendimento personalizado.",
       "badges": [
-        {
-          "icon": "star",
-          "label": "Café especial",
-          "status": "success"
-        },
-        {
-          "icon": "chat-alert",
-          "label": "Doces frescos",
-          "status": "success"
-        },
-        {
-          "icon": "check-doc",
-          "label": "Embalagem elegante",
-          "status": "warning"
-        }
+        { "icon": "star", "label": "Café especial", "status": "success" },
+        { "icon": "chat-alert", "label": "Doces frescos", "status": "success" },
+        { "icon": "check-doc", "label": "Embalagem elegante", "status": "warning" }
       ]
     },
-    "distribution": {
-      "5": 82,
-      "4": 12,
-      "3": 4,
-      "2": 1,
-      "1": 1
-    },
+    "distribution": { "5": 82, "4": 12, "3": 4, "2": 1, "1": 1 },
     "comments": [
       {
         "id": "rev-1",
@@ -182,10 +130,7 @@
         "rating": 5,
         "date": "Há 1 dia",
         "comment": "Cappuccino italiano simplesmente perfeito! Crema aveludada, polvilhado de cacau 70% e leite no ponto exato. O croissant com Nutella era divino.",
-        "itemsOrdered": [
-          "1x Cappuccino Italiano Cremoso",
-          "1x Croissant com Nutella"
-        ]
+        "itemsOrdered": ["1x Cappuccino Italiano Cremoso", "1x Croissant com Nutella"]
       },
       {
         "id": "rev-2",
@@ -193,10 +138,7 @@
         "rating": 5,
         "date": "Há 4 dias",
         "comment": "Cheesecake de frutas vermelhas sensacional! Base crocante, recheio cremoso e calda de amoras frescas. Iced Caramel Latte delicioso.",
-        "itemsOrdered": [
-          "1x Cheesecake de Frutas Vermelhas",
-          "1x Iced Caramel Latte"
-        ]
+        "itemsOrdered": ["1x Cheesecake de Frutas Vermelhas", "1x Iced Caramel Latte"]
       },
       {
         "id": "rev-3",
@@ -204,10 +146,7 @@
         "rating": 4,
         "date": "Há 1 semana",
         "comment": "Espresso duplo muito bom, notas florais bem presentes. Pão de queijo da Canastra autêntico e quentinho. Recomendo!",
-        "itemsOrdered": [
-          "2x Espresso Duplo Especial",
-          "1x Pão de Queijo da Canastra"
-        ]
+        "itemsOrdered": ["2x Espresso Duplo Especial", "1x Pão de Queijo da Canastra"]
       }
     ]
   }

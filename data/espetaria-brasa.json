@@ -2,7 +2,7 @@
     "slug": "espetaria-brasa",
     "name": "Espetaria & Jantinha Brasa Nobre",
     "description": "Espetinhos artesanais na brasa, jantinhas completas, acompanhamentos caseiros e cervejas estupidamente geladas.",
-    "logo": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=200&fit=crop&q=80",
+    "logo": "/tenants/espetaria-brasa/logo.png",
     "banner": "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=1200&h=400&fit=crop&q=80",
     "phoneWhatsApp": "11999999999",
     "address": "Av. dos Churrasqueiros, 450 - Centro",
@@ -10,15 +10,6 @@
     "deliveryFee": 6.00,
     "minOrderValue": 25.00,
     "theme": "food",
-    "category": "Espetos & Jantinhas",
-    "distance": "0,8 km",
-    "priceRange": "$$",
-    "paymentMethods": [
-        "Pix",
-        "Cartão de Crédito",
-        "Cartão de Débito",
-        "Dinheiro"
-    ],
     "openingHours": {
         "open": "18:00",
         "close": "23:45"
@@ -44,42 +35,12 @@
                             "min": 1,
                             "max": 1,
                             "options": [
-                                {
-                                    "id": "esp-alcatra",
-                                    "name": "Alcatra Bovina na Brasa",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "esp-frango-bacon",
-                                    "name": "Medalhão de Frango com Bacon",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "esp-linguiça",
-                                    "name": "Linguiça Toscana Artesanal",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "esp-kafta",
-                                    "name": "Kafta Recheada com Queijo",
-                                    "price": 2.00,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "esp-queijo",
-                                    "name": "Queijo Coalho Dourado",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "esp-pao-alho",
-                                    "name": "Pão de Alho Cremoso",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                }
+                                { "id": "esp-alcatra", "name": "Alcatra Bovina na Brasa", "price": 0, "maxQuantity": 1 },
+                                { "id": "esp-frango-bacon", "name": "Medalhão de Frango com Bacon", "price": 0, "maxQuantity": 1 },
+                                { "id": "esp-linguiça", "name": "Linguiça Toscana Artesanal", "price": 0, "maxQuantity": 1 },
+                                { "id": "esp-kafta", "name": "Kafta Recheada com Queijo", "price": 2.00, "maxQuantity": 1 },
+                                { "id": "esp-queijo", "name": "Queijo Coalho Dourado", "price": 0, "maxQuantity": 1 },
+                                { "id": "esp-pao-alho", "name": "Pão de Alho Cremoso", "price": 0, "maxQuantity": 1 }
                             ]
                         },
                         {
@@ -89,18 +50,8 @@
                             "min": 1,
                             "max": 1,
                             "options": [
-                                {
-                                    "id": "p-ao-ponto",
-                                    "name": "Ao Ponto (Rosada e Suculenta)",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "p-bem-passado",
-                                    "name": "Bem Passada",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                }
+                                { "id": "p-ao-ponto", "name": "Ao Ponto (Rosada e Suculenta)", "price": 0, "maxQuantity": 1 },
+                                { "id": "p-bem-passado", "name": "Bem Passada", "price": 0, "maxQuantity": 1 }
                             ]
                         },
                         {
@@ -110,24 +61,9 @@
                             "min": 0,
                             "max": 3,
                             "options": [
-                                {
-                                    "id": "add-mandioca",
-                                    "name": "Porção de Mandioca Cozida na Manteiga",
-                                    "price": 7.00,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "add-vinagrete-extra",
-                                    "name": "Pote de Vinagrete Extra (100ml)",
-                                    "price": 4.00,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "add-molho-alho",
-                                    "name": "Molho de Alho Especial da Casa",
-                                    "price": 3.50,
-                                    "maxQuantity": 2
-                                }
+                                { "id": "add-mandioca", "name": "Porção de Mandioca Cozida na Manteiga", "price": 7.00, "maxQuantity": 1 },
+                                { "id": "add-vinagrete-extra", "name": "Pote de Vinagrete Extra (100ml)", "price": 4.00, "maxQuantity": 1 },
+                                { "id": "add-molho-alho", "name": "Molho de Alho Especial da Casa", "price": 3.50, "maxQuantity": 2 }
                             ]
                         }
                     ]
@@ -147,36 +83,11 @@
                             "min": 2,
                             "max": 2,
                             "options": [
-                                {
-                                    "id": "d-alcatra",
-                                    "name": "1x Alcatra Bovina",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "d-medalhao",
-                                    "name": "1x Medalhão de Frango com Bacon",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "d-kafta",
-                                    "name": "1x Kafta com Queijo",
-                                    "price": 2.00,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "d-pao-alho",
-                                    "name": "1x Pão de Alho Especial",
-                                    "price": 0,
-                                    "maxQuantity": 2
-                                },
-                                {
-                                    "id": "d-queijo-coalho",
-                                    "name": "1x Queijo Coalho com Melaço",
-                                    "price": 1.50,
-                                    "maxQuantity": 2
-                                }
+                                { "id": "d-alcatra", "name": "1x Alcatra Bovina", "price": 0, "maxQuantity": 2 },
+                                { "id": "d-medalhao", "name": "1x Medalhão de Frango com Bacon", "price": 0, "maxQuantity": 2 },
+                                { "id": "d-kafta", "name": "1x Kafta com Queijo", "price": 2.00, "maxQuantity": 2 },
+                                { "id": "d-pao-alho", "name": "1x Pão de Alho Especial", "price": 0, "maxQuantity": 2 },
+                                { "id": "d-queijo-coalho", "name": "1x Queijo Coalho com Melaço", "price": 1.50, "maxQuantity": 2 }
                             ]
                         }
                     ]
@@ -203,18 +114,8 @@
                             "min": 1,
                             "max": 1,
                             "options": [
-                                {
-                                    "id": "ponto-ao-ponto",
-                                    "name": "Ao Ponto (Suculento)",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                },
-                                {
-                                    "id": "ponto-bem-passado",
-                                    "name": "Bem Passado",
-                                    "price": 0,
-                                    "maxQuantity": 1
-                                }
+                                { "id": "ponto-ao-ponto", "name": "Ao Ponto (Suculento)", "price": 0, "maxQuantity": 1 },
+                                { "id": "ponto-bem-passado", "name": "Bem Passado", "price": 0, "maxQuantity": 1 }
                             ]
                         }
                     ]
@@ -343,30 +244,12 @@
             "experienceLabel": "Experiência excelente",
             "description": "Com base nos pedidos dos últimos 3 meses, a casa se destaca pelo ponto perfeito da brasa e entrega rápida.",
             "badges": [
-                {
-                    "icon": "star",
-                    "label": "Espetos suculentos e quentes",
-                    "status": "success"
-                },
-                {
-                    "icon": "chat-alert",
-                    "label": "Poucas reclamações",
-                    "status": "warning"
-                },
-                {
-                    "icon": "check-doc",
-                    "label": "Zero ou poucos cancelamentos",
-                    "status": "success"
-                }
+                { "icon": "star", "label": "Espetos suculentos e quentes", "status": "success" },
+                { "icon": "chat-alert", "label": "Poucas reclamações", "status": "warning" },
+                { "icon": "check-doc", "label": "Zero ou poucos cancelamentos", "status": "success" }
             ]
         },
-        "distribution": {
-            "5": 89,
-            "4": 8,
-            "3": 2,
-            "2": 1,
-            "1": 0
-        },
+        "distribution": { "5": 89, "4": 8, "3": 2, "2": 1, "1": 0 },
         "comments": [
             {
                 "id": "rev-esp-1",
@@ -374,10 +257,7 @@
                 "rating": 5,
                 "date": "Há 1 dia",
                 "comment": "A jantinha é sensacional! O feijão tropeiro e a mandioca com manteiga de garrafa vieram quentinhos. A alcatra no ponto exato.",
-                "itemsOrdered": [
-                    "1x Jantinha Tradicional Completa (1 Espeto)",
-                    "1x Cerveja Heineken Long Neck 330ml"
-                ]
+                "itemsOrdered": ["1x Jantinha Tradicional Completa (1 Espeto)", "1x Cerveja Heineken Long Neck 330ml"]
             },
             {
                 "id": "rev-esp-2",
@@ -385,10 +265,7 @@
                 "rating": 5,
                 "date": "Há 3 dias",
                 "comment": "Melhor espetaria da região! O queijo coalho com melaço e o medalhão com bacon são imperdíveis. Chegou antes do tempo previsto.",
-                "itemsOrdered": [
-                    "1x Espeto de Queijo Coalho com Melaço",
-                    "2x Espeto de Medalhão de Frango com Bacon"
-                ]
+                "itemsOrdered": ["1x Espeto de Queijo Coalho com Melaço", "2x Espeto de Medalhão de Frango com Bacon"]
             },
             {
                 "id": "rev-esp-3",
@@ -396,9 +273,7 @@
                 "rating": 4,
                 "date": "Há 6 dias",
                 "comment": "Muito bom e bem servido. Só sugiro mandar um pouco mais de vinagrete, porque o tempero é muito bom!",
-                "itemsOrdered": [
-                    "1x Jantinha Dupla Master (2 Espetos)"
-                ]
+                "itemsOrdered": ["1x Jantinha Dupla Master (2 Espetos)"]
             }
         ]
     }
