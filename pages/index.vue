@@ -51,7 +51,7 @@
                 ? 'bg-purple-700 text-white font-bold shadow-sm shadow-purple-700/20'
                 : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
             ]">
-            ✂️ Serviços & Saúde (Alaska Hub)
+            ✂️ Serviços, Semijoias & Saúde (Alaska Hub)
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@
       <div id="showcase-grid" role="region" aria-label="Lista de demonstrações de lojas"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink v-for="store in filteredTenants" :key="store.slug" :to="`/${store.slug}`"
-          :aria-label="`Acessar demonstração de ${store.name}. ${isHubStore(store.slug) ? 'Serviços e agendamentos' : 'Cardápio e pedidos'}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
+          :aria-label="`Acessar demonstração de ${store.name}. ${isHubStore(store.slug) ? 'Serviços e catálogo' : 'Cardápio e pedidos'}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
           class="group bg-white rounded-2xl border border-slate-200 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]"
           :class="getStoreBorderHover(store.theme)">
           <!-- Banner Superior da Loja -->
@@ -119,7 +119,7 @@
             <!-- Footer do Card com Botão de Ação -->
             <div
               class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">
-              <span class="text-[11px] text-slate-400 font-normal">Ver Cardápio / Serviços</span>
+              <span class="text-[11px] text-slate-400 font-normal">Ver Catálogo / Serviços</span>
               <span
                 class="inline-flex items-center gap-1 font-bold text-slate-900 group-hover:translate-x-1 transition-transform"
                 aria-hidden="true">
@@ -157,7 +157,7 @@ const tenantsList = computed<Tenant[]>(() => {
 })
 
 function isHubStore(slug: string): boolean {
-  return slug === 'barbearia-style' || slug === 'clinica-sorriso'
+  return slug === 'barbearia-style' || slug === 'clinica-sorriso' || slug === 'karine-finardi'
 }
 
 function getStoreTitleHover(theme?: string): string {
@@ -201,7 +201,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'Soluções digitais locais para food service, adegas, delivery e prestadores de serviços.'
+      content: 'Soluções digitais locais para food service, semijoias, adegas, delivery e prestadores de serviços.'
     }
   ]
 })

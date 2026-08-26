@@ -9,5 +9,6 @@ Coloque os arquivos de logo e banner de cada estabelecimento em sua respectiva s
 - `public/tenants/espetaria-brasa/logo.png`
 - `public/tenants/cafe-central/logo.png`
 - `public/tenants/restaurante-bella-italia/logo.png`
+- `public/tenants/karine-finardi/logo.png`
 
 > **Formatos recomendados:** PNG transparente ou WebP (512x512 ou 200x200 para logo; 1200x400 para banner).
