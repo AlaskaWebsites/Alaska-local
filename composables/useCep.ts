@@ -31,6 +31,11 @@ export function isValidCep(cep?: string): boolean {
 }
 
 /**
+ * Re-exporta o utilitário de formatação com máscara visual (00000-000).
+ */
+export { formatCep }
+
+/**
  * Consulta a API pública do ViaCEP e valida o payload com Zod (fail-fast).
  */
 export async function fetchAddressByCep(rawCep: string): Promise<ParsedAddress | null> {
