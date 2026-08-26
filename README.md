@@ -1,6 +1,6 @@
 # 🏔️ Alaska Local — Vitrines Digitais Mobile-First para Negócios Locais
 
-> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas e serviços), com cardápio interativo, avaliações estilo iFood e despacho formatado direto para o WhatsApp.
+> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas, semijoias e serviços), com cardápio/catálogo interativo, avaliações estilo iFood e despacho formatado direto para o WhatsApp.
 
 [![Nuxt 3](https://img.shields.io/badge/Nuxt-3.15+-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com/)
 [![Vue 3](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
@@ -14,7 +14,7 @@
 ## 📱 Verticais de Negócio
 
 * 🍔 **Alaska Menu**: Experiência visual rica inspirada no iFood para food service (hamburguerias, pizzarias, adegas 24h, espetarias e cafeterias), com seleção de adicionais, observações e cálculo de taxa de entrega.
-* ✂️ **Alaska Hub**: Páginas institucionais de alta conversão para prestadores de serviços, barbearias com escolha de profissionais e clínicas com agendamento direto.
+* ✂️ **Alaska Hub**: Páginas institucionais de alta conversão para prestadores de serviços, semijoias femininas e presentes, barbearias com escolha de profissionais e clínicas com agendamento direto.
 
 ---
 
@@ -22,10 +22,11 @@
 
 | Estabelecimento | Segmento | Tema Visual | Rota |
 | :--- | :--- | :--- | :--- |
+| **Karine Finardi** | Semijoias & Revenda | `barber` (Âmbar / Ouro 18k) | [`/karine-finardi`](https://alaskalocal.vercel.app/karine-finardi) |
 | **Hamburgueria X** | Burgers Artesanais | `food` (Vermelho iFood) | [`/hamburgueria-x`](https://alaskalocal.vercel.app/hamburgueria-x) |
 | **Adega & Distribuidora Prime** | Bebidas & 24h | `drinks` (Roxo Neon) | [`/adega-prime`](https://alaskalocal.vercel.app/adega-prime) |
 | **Barbearia Style** | Barbearia & Estética | `barber` (Âmbar Vintage) | [`/barbearia-style`](https://alaskalocal.vercel.app/barbearia-style) |
-| **Clínica Sorriso** | Odontologia & Saúde | `health` (Teal Clínico) | [`/clinica-sorriso`](https://alaskalocal.vercel.app/clinica-sorriso) |
+| **Clínica Sorriso** | Odontologia & Saúde | `health` (Teal Médico) | [`/clinica-sorriso`](https://alaskalocal.vercel.app/clinica-sorriso) |
 | **Espetaria & Jantinha Brasa** | Churrasco & Espetos | `food` (Vermelho) | [`/espetaria-brasa`](https://alaskalocal.vercel.app/espetaria-brasa) |
 | **Restaurante Bella Italia** | Pizzaria & Massas | `food` (Vermelho) | [`/restaurante-bella-italia`](https://alaskalocal.vercel.app/restaurante-bella-italia) |
 | **Café Central** | Cafeteria Artesanal | `food` (Vermelho) | [`/cafe-central`](https://alaskalocal.vercel.app/cafe-central) |

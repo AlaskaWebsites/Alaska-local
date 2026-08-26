@@ -1,0 +1,332 @@
+{
+  "slug": "karine-finardi",
+  "name": "Karine Finardi | Semijoias & Revenda",
+  "description": "Semijoias femininas delicadas, hipoalergênicas, banhadas a ouro 18k e prata 925 com garantia, peças personalizadas com foto/inicial e programa de revenda.",
+  "logo": "/tenants/karine-finardi/logo.png",
+  "banner": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&h=400&fit=crop&q=80",
+  "phoneWhatsApp": "11999998888",
+  "address": "Francisco Morato – SP",
+  "currency": "R$",
+  "deliveryFee": 0.00,
+  "minOrderValue": 0.00,
+  "theme": "barber",
+  "category": "Semijoias & Acessórios",
+  "distance": "0,5 km",
+  "priceRange": "$$",
+  "paymentMethods": [
+    "Pix",
+    "Cartão de Crédito",
+    "Cartão de Débito",
+    "Dinheiro"
+  ],
+  "openingHours": {
+    "open": "09:00",
+    "close": "19:00"
+  },
+  "categories": [
+    {
+      "id": "personalizados-gravacao",
+      "name": "✨ Personalizados & Gravação Especial",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "colar-gravacao-foto",
+          "name": "Colar Medalha com Gravação de Foto Afetiva",
+          "description": "Medalha com gravação a laser de alta precisão da sua foto favorita. Hipoalergênico e acompanha certificado de garantia de 1 ano.",
+          "price": 89.90,
+          "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "tipo-banho-foto",
+              "title": "Escolha o Banho da Peça",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "ouro-18k", "name": "Banhado a Ouro 18k (Dourado)", "price": 0, "maxQuantity": 1 },
+                { "id": "prata-925", "name": "Banhado a Prata 925 (Prateado)", "price": 0, "maxQuantity": 1 }
+              ]
+            },
+            {
+              "id": "tam-corrente-foto",
+              "title": "Comprimento da Corrente Veneziana",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "corr-45cm", "name": "45 cm (Padrão no Colo)", "price": 0, "maxQuantity": 1 },
+                { "id": "corr-50cm", "name": "50 cm (Médio/Alongado)", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "colar-inicial-lumiere",
+          "name": "Colar Inicial Lumière com Micro Zircônias",
+          "description": "Pingente de letra cravejado com micro zircônias brilhantes. Design exclusivo e delicado para usar sozinho ou em mix.",
+          "price": 69.90,
+          "image": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "banho-lumiere",
+              "title": "Banho da Peça",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "lum-ouro", "name": "Banhado a Ouro 18k", "price": 0, "maxQuantity": 1 },
+                { "id": "lum-prata", "name": "Banhado a Prata 925", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "pulseira-plaquinha-nome",
+          "name": "Pulseira Elos com Plaquinha Gravada",
+          "description": "Pulseira de elos delicados com placa personalizada para gravação de nomes, datas especiais ou palavras afetivas.",
+          "price": 59.90,
+          "image": "https://images.unsplash.com/photo-1611591475837-14e910243e80?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "banho-pulseira",
+              "title": "Banho da Pulseira",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "puls-ouro", "name": "Banhada a Ouro 18k", "price": 0, "maxQuantity": 1 },
+                { "id": "puls-prata", "name": "Banhada a Prata 925", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "colares-chokers",
+      "name": "💎 Colares & Chokers Delicados",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "choker-fita-espelhada",
+          "name": "Choker Fita Espelhada Banhada a Ouro 18k",
+          "description": "A fita espelhada mais desejada! Brilho intenso, caimento maleável perfeito no pescoço e fecho com extensor de 5cm.",
+          "price": 54.90,
+          "image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "mix-colares-ponto-luz",
+          "name": "Mix Duplo: Ponto de Luz Zircônia + Corrente Veneziana",
+          "description": "Combo pronto e harmonioso de 2 colares sobrepostos. Visual elegante e atemporal para valorizar qualquer produção.",
+          "price": 78.00,
+          "image": "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "colar-gravatinha-cristal",
+          "name": "Colar Gravatinha com Zircônias Cristal",
+          "description": "Modelo gravatinha ajustável com pingentes de zircônia nas pontas. Valoriza decotes com leveza e sofisticação.",
+          "price": 64.90,
+          "image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "brincos-argolas",
+      "name": "✨ Brincos & Argolinhas Hipoalergênicos",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "trio-argolinhas-cravejadas",
+          "name": "Trio de Argolinhas Click Cravejadas (1º, 2º e 3º Furo)",
+          "description": "Conjunto com 3 pares de argolinhas click com micro zircônias. Perfeitas para composição de orelha cheia e confortável para dormir.",
+          "price": 65.00,
+          "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "banho-trio",
+              "title": "Banho do Trio",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "trio-ouro", "name": "Ouro 18k Dourado", "price": 0, "maxQuantity": 1 },
+                { "id": "trio-prata", "name": "Prata 925 Prateado", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "brinco-ear-cuff-ramos",
+          "name": "Brinco Ear Cuff Ramos de Zircônia",
+          "description": "Design anatômico que contorna a cartilagem da orelha com brilho radiante. Encaixe por pressão sem necessidade de furo extra.",
+          "price": 49.90,
+          "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "brinco-ponto-luz-6mm",
+          "name": "Brinco Ponto de Luz Zircônia 6mm Hipoalergênico",
+          "description": "Clássico indispensável! Zircônia lapidação brilhante 6mm com tarraxa baby confortável.",
+          "price": 29.90,
+          "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "aneis-regulaveis",
+      "name": "💍 Anéis & Solitários Reguláveis",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "anel-solitario-regulavel",
+          "name": "Anel Solitário Regulável com Zircônia Central",
+          "description": "Aro ajustável inteligente que se adapta a qualquer numeração de dedo (do 14 ao 24). Pedra central lapidada com 4 garras.",
+          "price": 45.00,
+          "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        },
+        {
+          "id": "anel-aparador-duplo",
+          "name": "Anel Aparador com Micro Cravação Dupla",
+          "description": "Anel delicado ideal para usar junto com alianças ou em mixes de anéis. Ajustável e confortável.",
+          "price": 42.00,
+          "image": "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "buques-presentes",
+      "name": "🎁 Buquês de Semijoias & Kits Presente",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "buque-semijoias-rosas",
+          "name": "Buquê Especial de Semijoias (3 Peças + Rosas Aveludadas)",
+          "description": "O presente mais surpreendente e romântico! Buquê montado artesanalmente com rosas de cetim aveludadas contendo 1 Colar, 1 Par de Brincos e 1 Pulseira à sua escolha.",
+          "price": 179.90,
+          "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": [
+            {
+              "id": "estilo-buque",
+              "title": "Estilo do Mix de Semijoias",
+              "required": true,
+              "min": 1,
+              "max": 1,
+              "options": [
+                { "id": "mix-ouro", "name": "Mix Dourado Romântico (Ouro 18k)", "price": 0, "maxQuantity": 1 },
+                { "id": "mix-prata", "name": "Mix Prata Minimalista (Prata 925)", "price": 0, "maxQuantity": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "caixa-porta-joias-luxo",
+          "name": "Porta-Joias Portátil de Luxo + Colar Surpresa",
+          "description": "Estojo porta-joias compacto em couro sintético ecológico com divisórias para anéis e colares, acompanhado de 1 colar delicado de presente.",
+          "price": 79.90,
+          "image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "revenda-kf",
+      "name": "👑 Seja uma Revendedora K.F (Margem 100%)",
+      "icon": "sparkles",
+      "products": [
+        {
+          "id": "kit-start-revendedora",
+          "name": "Kit Start Revendedora K.F (Mostruário + R$ 600 em Peças)",
+          "description": "Conquiste sua independência financeira revendendo semijoias hipoalergênicas de alta qualidade com garantia de 1 ano. Margem de lucro de 100% + suporte exclusivo da Kah.",
+          "price": 299.90,
+          "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    }
+  ],
+  "reviews": {
+    "score": 4.9,
+    "totalReviews": 318,
+    "serviceQuality": {
+      "level": 4,
+      "experienceLabel": "Semijoias finas com garantia",
+      "description": "Mais de 4 anos de atuação em Francisco Morato – SP. Peças hipoalergênicas com banho de alta durabilidade e personalização de fotos.",
+      "badges": [
+        {
+          "icon": "star",
+          "label": "Peças hipoalergênicas com garantia",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Gravação de fotos impecável",
+          "status": "success"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Embalagem e buquês presenteáveis",
+          "status": "success"
+        }
+      ]
+    },
+    "distribution": {
+      "5": 92,
+      "4": 6,
+      "3": 1,
+      "2": 1,
+      "1": 0
+    },
+    "comments": [
+      {
+        "id": "rev-kf-1",
+        "author": "Aline Ferreira",
+        "rating": 5,
+        "date": "Há 1 dia",
+        "comment": "O colar personalizado com a foto dos meus filhos ficou perfeito demais! A gravação é super nítida e o brilho do ouro 18k é maravilhoso. Não tiro mais do pescoço!",
+        "itemsOrdered": [
+          "1x Colar Medalha com Gravação de Foto Afetiva"
+        ]
+      },
+      {
+        "id": "rev-kf-2",
+        "author": "Mariana Souza",
+        "rating": 5,
+        "date": "Há 3 dias",
+        "comment": "O buquê de semijoias foi o melhor presente de aniversário que já recebi! A caixinha é linda, as peças são super delicadas e não me deram nenhuma alergia. Recomendo de olhos fechados.",
+        "itemsOrdered": [
+          "1x Buquê Especial de Semijoias (3 Peças + Rosas Aveludadas)"
+        ]
+      },
+      {
+        "id": "rev-kf-3",
+        "author": "Camila Rodrigues",
+        "rating": 5,
+        "date": "Há 1 semana",
+        "comment": "Comecei como revendedora K.F há 2 meses e o retorno é real! As clientes amam a qualidade e a garantia de 1 ano dá muita segurança para vender. Atendimento da Kah é nota 1000!",
+        "itemsOrdered": [
+          "1x Kit Start Revendedora K.F (Mostruário + R$ 600 em Peças)"
+        ]
+      }
+    ]
+  }
+}
