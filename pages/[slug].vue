@@ -142,8 +142,41 @@
       </div>
     </div>
 
-    <!-- 4. Seção Destaques & Mais Pedidos -->
-    <section v-if="featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
+    <!-- 4. Campo de Busca de Produtos em Tempo Real -->
+    <div class="max-w-4xl mx-auto px-4 mt-6">
+      <ProductSearchInput v-model="searchQuery" :theme="tenant.theme" @clear="clearSearch" />
+    </div>
+
+    <!-- Feedback de Busca Ativa com Contagem de Resultados -->
+    <div v-if="isSearching && hasResults"
+      class="max-w-4xl mx-auto px-4 mt-3 flex items-center justify-between text-xs text-slate-600 animate-in fade-in duration-150">
+      <span>
+        Encontrado{{ totalResultsCount === 1 ? '' : 's' }} <strong>{{ totalResultsCount }}</strong> produto{{ totalResultsCount === 1 ? '' : 's' }} para "<strong class="text-slate-900">{{ searchQuery }}</strong>"
+      </span>
+      <button @click="clearSearch" class="font-bold text-xs hover:underline cursor-pointer"
+        :class="themeClasses.primaryText">
+        Ver catálogo completo
+      </button>
+    </div>
+
+    <!-- Estado Vazio quando a Busca não encontra resultados -->
+    <div v-if="isSearching && !hasResults"
+      class="max-w-4xl mx-auto px-4 py-16 text-center space-y-3.5 animate-in fade-in duration-200" role="status">
+      <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+        <Search class="w-6 h-6" aria-hidden="true" />
+      </div>
+      <h3 class="font-bold text-base text-slate-900">Nenhum produto encontrado</h3>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+        Não encontramos nenhum item correspondente a "<strong class="text-slate-800">{{ searchQuery }}</strong>". Tente buscar por outros termos ou ingredientes.
+      </p>
+      <button @click="clearSearch" class="px-5 py-2.5 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer shadow-sm active:scale-95"
+        :class="themeClasses.buttonPrimary">
+        Limpar busca e ver tudo
+      </button>
+    </div>
+
+    <!-- 5. Seção Destaques & Mais Pedidos (Ocultada quando em busca ativa para focar nos resultados) -->
+    <section v-if="!isSearching && featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
       aria-labelledby="featured-title">
       <div class="flex items-center justify-between">
         <h2 id="featured-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -197,12 +230,12 @@
       </div>
     </section>
 
-    <!-- 5. Barra Fixa de Categorias -->
-    <CategoryTabs :categories="tenant.categories" :theme="tenant.theme" class="mt-8" />
+    <!-- 6. Barra Fixa de Categorias (Alimentada reativamente pelas categorias filtradas) -->
+    <CategoryTabs v-if="filteredCategories.length > 0" :categories="filteredCategories" :theme="tenant.theme" class="mt-6" />
 
-    <!-- 6. Catálogo Completo de Produtos -->
-    <main class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo de produtos">
-      <section v-for="category in tenant.categories" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
+    <!-- 7. Catálogo Completo de Produtos -->
+    <main v-if="filteredCategories.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo de produtos">
+      <section v-for="category in filteredCategories" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
         :aria-labelledby="`cat-title-${category.id}`">
         <div class="flex items-center gap-2">
           <span class="w-1.5 h-4 rounded-full" :class="themeClasses.categoryIndicator" aria-hidden="true"></span>
@@ -243,11 +276,11 @@
       </section>
     </main>
 
-    <!-- 7. Modal de Customização do Produto -->
+    <!-- 8. Modal de Customização do Produto -->
     <ProductCustomizerModal :product="selectedProduct" :tenant="tenant" :is-open="!!selectedProduct"
       @close="closeProductModal" @add-to-cart="handleAddProductToCart" />
 
-    <!-- 8. Barra Fixa Inferior da Sacola -->
+    <!-- 9. Barra Fixa Inferior da Sacola -->
     <div v-if="cart.items.length > 0" role="region" aria-label="Resumo da sacola de compras"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
@@ -267,11 +300,11 @@
       </div>
     </div>
 
-    <!-- 9. Drawer Modular de Finalização do Carrinho -->
+    <!-- 10. Drawer Modular de Finalização do Carrinho -->
     <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cart.items" @close="isCartDrawerOpen = false"
       @remove-item="removeCartItem" />
 
-    <!-- 10. Modais da Loja -->
+    <!-- 11. Modais da Loja -->
     <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :theme="tenant.theme" :is-open="isReviewsOpen"
       @close="isReviewsOpen = false" />
 
@@ -285,7 +318,9 @@ import { useTenant } from '~/composables/useTenant'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useOpeningHours } from '~/composables/useOpeningHours'
 import { useShare } from '~/composables/useShare'
+import { useProductSearch } from '~/composables/useProductSearch'
 import { formatCurrency } from '~/utils/formatters'
+import ProductSearchInput from '~/components/ProductSearchInput.vue'
 import {
   Phone,
   MapPin,
@@ -297,7 +332,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Share2,
-  Check
+  Check,
+  Search
 } from 'lucide-vue-next'
 import type { Product, CartItem } from '~/types'
 
@@ -313,7 +349,17 @@ const { isOpen } = useOpeningHours(tenant)
 // 4. Compartilhamento e Toast
 const { isCopied, shareStore } = useShare(tenant)
 
-// 5. SEO & OpenGraph Dinâmico
+// 5. Busca Rápida de Produtos em Tempo Real
+const {
+  searchQuery,
+  isSearching,
+  filteredCategories,
+  totalResultsCount,
+  hasResults,
+  clearSearch
+} = useProductSearch(computed(() => tenant.value?.categories))
+
+// 6. SEO & OpenGraph Dinâmico
 useSeoMeta({
   title: () => tenant.value ? `${tenant.value.name} — Cardápio Digital & Pedidos` : 'Alaska Local',
   description: () => tenant.value?.description || 'Faça seu pedido online de forma rápida pelo WhatsApp.',
@@ -324,7 +370,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 6. Estados de Modais
+// 7. Estados de Modais
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
@@ -339,7 +385,7 @@ function closeProductModal() {
   selectedProduct.value = null
 }
 
-// 7. Estado do Carrinho (Tipagem Centralizada via CartItem)
+// 8. Estado do Carrinho (Tipagem Centralizada via CartItem)
 const cart = ref<{ items: CartItem[] }>({ items: [] })
 
 function handleAddProductToCart(payload: CartItem) {
@@ -361,7 +407,7 @@ const cartSubtotal = computed(() => {
   return cart.value.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
 })
 
-// 8. Destaques Dinâmicos
+// 9. Destaques Dinâmicos
 const featuredProducts = computed(() => {
   if (!tenant.value) return []
   const all: Product[] = []
@@ -371,7 +417,7 @@ const featuredProducts = computed(() => {
   return all.slice(0, 6)
 })
 
-// 9. Controle de Rolagem Horizontal
+// 10. Controle de Rolagem Horizontal
 const carouselRef = ref<HTMLElement | null>(null)
 
 function scrollCarousel(direction: 'left' | 'right') {
