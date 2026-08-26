@@ -188,13 +188,48 @@
               />
             </div>
 
-            <!-- 4. Endereço Completo (Apenas se for Entrega) -->
+            <!-- 4. Endereço Completo com Busca de CEP (Apenas se for Entrega) -->
             <div v-if="form.deliveryType === 'delivery'" class="space-y-2.5 pt-2 border-t border-dashed border-slate-200">
-              <span class="text-xs font-bold text-slate-700 block">Endereço de Entrega *</span>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700 block">Endereço de Entrega *</span>
+                <span v-if="isLoadingCep" class="text-[11px] text-slate-500 flex items-center gap-1 font-medium">
+                  <Loader2 class="w-3 h-3 animate-spin text-slate-600" aria-hidden="true" />
+                  <span>Buscando CEP...</span>
+                </span>
+              </div>
 
+              <!-- Campo de CEP com Busca Automática -->
+              <div class="space-y-1">
+                <div class="relative flex items-center">
+                  <input
+                    id="checkout-cep"
+                    v-model="form.address.cep"
+                    @input="onCepInput"
+                    @blur="onCepBlur"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="9"
+                    placeholder="CEP (ex: 07901-020)"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                    :class="[themeClasses.focusRing, cepError ? 'border-red-400 bg-red-50/40' : '']"
+                  />
+                  <div v-if="isLoadingCep" class="absolute right-3 text-slate-400 pointer-events-none">
+                    <Loader2 class="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                  </div>
+                  <div v-else-if="form.address.street && !cepError" class="absolute right-3 text-emerald-600 pointer-events-none">
+                    <Check class="w-3.5 h-3.5" aria-hidden="true" />
+                  </div>
+                </div>
+                <p v-if="cepError" class="text-[11px] text-red-500 font-medium pl-1">
+                  {{ cepError }}
+                </p>
+              </div>
+
+              <!-- Rua e Número -->
               <div class="grid grid-cols-3 gap-2">
                 <div class="col-span-2 space-y-1">
                   <input
+                    id="checkout-street"
                     v-model="form.address.street"
                     type="text"
                     placeholder="Rua / Avenida *"
@@ -205,6 +240,8 @@
                 </div>
                 <div class="space-y-1">
                   <input
+                    id="checkout-number"
+                    ref="numberInputRef"
                     v-model="form.address.number"
                     type="text"
                     placeholder="Nº *"
@@ -215,8 +252,10 @@
                 </div>
               </div>
 
+              <!-- Bairro e Complemento -->
               <div class="grid grid-cols-2 gap-2">
                 <input
+                  id="checkout-neighborhood"
                   v-model="form.address.neighborhood"
                   type="text"
                   placeholder="Bairro *"
@@ -225,6 +264,7 @@
                   required
                 />
                 <input
+                  id="checkout-complement"
                   v-model="form.address.complement"
                   type="text"
                   placeholder="Complemento (Apto, Bloco)"
@@ -325,10 +365,11 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
-import { ShoppingCart, X, Trash2, ShoppingBag, Truck, Store, Send } from 'lucide-vue-next'
+import { ShoppingCart, X, Trash2, ShoppingBag, Truck, Store, Send, Loader2, Check } from 'lucide-vue-next'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
-import { formatCurrency } from '~/utils/formatters'
+import { useCep } from '~/composables/useCep'
+import { formatCurrency, formatCep, sanitizeDigits } from '~/utils/formatters'
 import { generateWhatsAppOrderUrl } from '~/utils/whatsapp'
 import type { Tenant, CartItem, CheckoutFormData } from '~/types'
 
@@ -351,8 +392,9 @@ const { themeClasses } = useTenantTheme(computed(() => props.tenant))
 const isModalOpen = computed(() => props.isOpen)
 useBodyScrollLock(isModalOpen)
 
-// 3. Foco Automático no Primeiro Campo
+// 3. Foco Automático no Primeiro Campo e Referência do Número
 const nameInputRef = ref<HTMLInputElement | null>(null)
+const numberInputRef = ref<HTMLInputElement | null>(null)
 
 watch(
   () => props.isOpen,
@@ -382,6 +424,7 @@ const form = useLocalStorage<CheckoutFormData>('alaska_checkout_profile', {
   changeFor: null,
   notes: '',
   address: {
+    cep: '',
     street: '',
     number: '',
     neighborhood: '',
@@ -391,7 +434,46 @@ const form = useLocalStorage<CheckoutFormData>('alaska_checkout_profile', {
   mergeDefaults: true
 })
 
-// 6. Cálculos de Totais
+// 6. Consulta Automática de CEP (ViaCEP)
+const { isLoadingCep, cepError, lookupCep } = useCep()
+
+async function triggerCepSearch(rawCep?: string) {
+  if (!rawCep) return
+  const clean = sanitizeDigits(rawCep)
+  if (clean.length === 8) {
+    const address = await lookupCep(clean)
+    if (address) {
+      form.value.address.street = address.street
+      form.value.address.neighborhood = address.neighborhood
+      form.value.address.city = address.city
+      form.value.address.state = address.state
+      form.value.address.cep = address.cep
+
+      // Micro-UX: Move o cursor automaticamente para o campo de número da residência
+      await nextTick()
+      numberInputRef.value?.focus()
+    }
+  }
+}
+
+function onCepInput(e: Event) {
+  const target = e.target as HTMLInputElement
+  const formatted = formatCep(target.value)
+  form.value.address.cep = formatted
+
+  const clean = sanitizeDigits(formatted)
+  if (clean.length === 8) {
+    triggerCepSearch(clean)
+  }
+}
+
+function onCepBlur() {
+  if (form.value.address.cep) {
+    triggerCepSearch(form.value.address.cep)
+  }
+}
+
+// 7. Cálculos de Totais
 const totalItemsCount = computed(() => {
   return props.items.reduce((acc, item) => acc + item.quantity, 0)
 })
@@ -409,7 +491,7 @@ const orderTotal = computed(() => {
   return subtotal.value + deliveryFee.value
 })
 
-// 7. Validação do Formulário
+// 8. Validação do Formulário
 const isFormValid = computed(() => {
   if (!form.value.customerName.trim()) return false
   if (props.items.length === 0) return false
@@ -423,7 +505,7 @@ const isFormValid = computed(() => {
   return true
 })
 
-// 8. Despacho para o WhatsApp
+// 9. Despacho para o WhatsApp
 function sendOrderViaWhatsApp() {
   if (!isFormValid.value || !props.tenant) return
 
