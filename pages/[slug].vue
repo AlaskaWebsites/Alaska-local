@@ -281,7 +281,7 @@
       @close="closeProductModal" @add-to-cart="handleAddProductToCart" />
 
     <!-- 9. Barra Fixa Inferior da Sacola -->
-    <div v-if="cart.items.length > 0" role="region" aria-label="Resumo da sacola de compras"
+    <div v-if="cartItems.length > 0" role="region" aria-label="Resumo da sacola de compras"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
@@ -301,8 +301,8 @@
     </div>
 
     <!-- 10. Drawer Modular de Finalização do Carrinho -->
-    <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cart.items" @close="isCartDrawerOpen = false"
-      @remove-item="removeCartItem" />
+    <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cartItems" @close="isCartDrawerOpen = false"
+      @remove-item="removeCartItem" @clear-cart="clearCart" />
 
     <!-- 11. Modais da Loja -->
     <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :theme="tenant.theme" :is-open="isReviewsOpen"
@@ -319,6 +319,7 @@ import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useOpeningHours } from '~/composables/useOpeningHours'
 import { useShare } from '~/composables/useShare'
 import { useProductSearch } from '~/composables/useProductSearch'
+import { useCart } from '~/composables/useCart'
 import { formatCurrency } from '~/utils/formatters'
 import ProductSearchInput from '~/components/ProductSearchInput.vue'
 import {
@@ -359,7 +360,17 @@ const {
   clearSearch
 } = useProductSearch(computed(() => tenant.value?.categories))
 
-// 6. SEO & OpenGraph Dinâmico
+// 6. Carrinho Persistente Multi-Tenant via LocalStorage (useCart)
+const {
+  items: cartItems,
+  addItem: handleAddProductToCart,
+  removeItem: removeCartItem,
+  clearCart,
+  totalItemsCount,
+  cartSubtotal
+} = useCart(tenant)
+
+// 7. SEO & OpenGraph Dinâmico
 useSeoMeta({
   title: () => tenant.value ? `${tenant.value.name} — Cardápio Digital & Pedidos` : 'Alaska Local',
   description: () => tenant.value?.description || 'Faça seu pedido online de forma rápida pelo WhatsApp.',
@@ -370,7 +381,7 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-// 7. Estados de Modais
+// 8. Estados de Modais
 const isReviewsOpen = ref(false)
 const isInfoOpen = ref(false)
 const selectedProduct = ref<Product | null>(null)
@@ -384,28 +395,6 @@ function openProductModal(product: Product) {
 function closeProductModal() {
   selectedProduct.value = null
 }
-
-// 8. Estado do Carrinho (Tipagem Centralizada via CartItem)
-const cart = ref<{ items: CartItem[] }>({ items: [] })
-
-function handleAddProductToCart(payload: CartItem) {
-  cart.value.items.push(payload)
-}
-
-function removeCartItem(index: number) {
-  cart.value.items.splice(index, 1)
-  if (cart.value.items.length === 0) {
-    isCartDrawerOpen.value = false
-  }
-}
-
-const totalItemsCount = computed(() => {
-  return cart.value.items.reduce((acc, item) => acc + item.quantity, 0)
-})
-
-const cartSubtotal = computed(() => {
-  return cart.value.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
-})
 
 // 9. Destaques Dinâmicos
 const featuredProducts = computed(() => {
