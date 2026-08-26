@@ -1,6 +1,6 @@
 <!-- pages/[slug].vue -->
 <template>
-  <div v-if="tenant" class="min-h-screen bg-[#f5f5f5] text-slate-800 pb-36" :class="themeClasses.selectionClass">
+  <div v-if="tenant" class="min-h-screen bg-[#f5f5f5] text-slate-800 pb-36 overflow-x-hidden w-full max-w-full" :class="themeClasses.selectionClass">
 
     <!-- Toast Feedback de Link Copiado -->
     <div v-if="isCopied" role="status" aria-live="polite"
@@ -35,12 +35,12 @@
     </div>
 
     <!-- 2. Card Flutuante de Identidade do Restaurante -->
-    <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20">
+    <header class="max-w-4xl mx-auto px-4 -mt-16 relative z-20 w-full">
       <div
-        class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4">
+        class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200/80 text-center sm:text-left flex flex-col sm:flex-row items-center sm:items-start gap-4 w-full max-w-full min-w-0 overflow-hidden">
         <!-- Logo Circular -->
         <div
-          class="relative -mt-14 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
+          class="relative -mt-12 sm:-mt-10 shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-md overflow-hidden bg-white">
           <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logotipo de ${tenant.name}`"
             class="w-full h-full object-cover" />
           <div v-else class="w-full h-full bg-slate-100 flex items-center justify-center font-bold text-xl"
@@ -50,13 +50,13 @@
         </div>
 
         <!-- Dados do Estabelecimento -->
-        <div class="flex-1 min-w-0 space-y-2.5">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">
+        <div class="flex-1 min-w-0 w-full space-y-2.5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0">
+            <div class="min-w-0">
+              <h1 class="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight truncate">
                 {{ tenant.name }}
               </h1>
-              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-500 line-clamp-1 mt-0.5">
+              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-500 line-clamp-2 mt-0.5 break-words">
                 {{ tenant.description }}
               </p>
             </div>
@@ -71,12 +71,12 @@
 
           <!-- Linha de Metadados -->
           <div
-            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-3 text-xs text-slate-500 pt-1">
+            class="flex flex-wrap items-center justify-center sm:justify-start gap-y-2 gap-x-2.5 text-xs text-slate-500 pt-1 min-w-0">
             <!-- Selo de Avaliações -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true" aria-haspopup="dialog"
               :aria-expanded="isReviewsOpen"
               :aria-label="`Abrir avaliações da loja. Nota média ${tenant.reviews.score.toFixed(1)} baseada em ${tenant.reviews.totalReviews} avaliações`"
-              class="flex items-center gap-1 font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-2xs"
+              class="flex items-center gap-1 font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-2xs shrink-0"
               title="Ver detalhes das avaliações">
               <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
               <span>{{ tenant.reviews.score.toFixed(1) }}</span>
@@ -87,23 +87,23 @@
             <!-- Selo de Informações -->
             <button @click="isInfoOpen = true" aria-haspopup="dialog" :aria-expanded="isInfoOpen"
               aria-label="Abrir informações operacionais, horários e formas de pagamento da loja"
-              class="flex items-center gap-1 font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-2xs"
+              class="flex items-center gap-1 font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95 px-2.5 py-1 rounded-lg cursor-pointer transition-all shadow-2xs shrink-0"
               title="Ver informações da loja">
               <Info class="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
               <span>Informações</span>
               <ChevronRight class="w-3 h-3 text-slate-400 ml-0.5" aria-hidden="true" />
             </button>
 
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 shrink-0">
               <span>🛵 Entrega • 30-45 min</span>
             </div>
 
-            <div class="flex items-center gap-1">
+            <div class="flex items-center gap-1 shrink-0">
               <span class="text-slate-300" aria-hidden="true">•</span>
               <span>Taxa: {{ tenant.deliveryFee ? formatCurrency(tenant.deliveryFee) : 'Grátis' }}</span>
             </div>
 
-            <div v-if="tenant.minOrderValue" class="flex items-center gap-1">
+            <div v-if="tenant.minOrderValue" class="flex items-center gap-1 shrink-0">
               <span class="text-slate-300" aria-hidden="true">•</span>
               <span>Mín: {{ formatCurrency(tenant.minOrderValue) }}</span>
             </div>
@@ -111,15 +111,15 @@
 
           <!-- Endereço e WhatsApp -->
           <div
-            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2.5 border-t border-slate-100 text-xs">
-            <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-500 truncate">
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2.5 border-t border-slate-100 text-xs min-w-0 w-full">
+            <div class="flex items-center justify-center sm:justify-start gap-1.5 text-slate-500 min-w-0 w-full truncate">
               <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-              <span class="truncate">{{ tenant.address || 'Atendimento e entrega local' }}</span>
+              <span class="truncate block min-w-0">{{ tenant.address || 'Atendimento e entrega local' }}</span>
             </div>
 
             <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
               aria-label="Abrir conversa no WhatsApp com o estabelecimento para tirar dúvidas"
-              class="inline-flex items-center justify-center gap-1.5 font-bold hover:underline"
+              class="inline-flex items-center justify-center gap-1.5 font-bold hover:underline shrink-0"
               :class="themeClasses.primaryText">
               <Phone class="w-3.5 h-3.5" />
               <span>Dúvidas no WhatsApp</span>
