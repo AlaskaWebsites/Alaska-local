@@ -73,6 +73,7 @@ npx vitest run
 * 📜 **[ADR 002: Arquitetura NestJS e Validação Zod](docs/adrs/002-arquitetura-nestjs-validacao-zod.md)** — Clean Architecture, Ports & Adapters e Supabase RLS.
 * 📜 **[ADR 003: Desacoplamento de Modais e Acessibilidade](docs/adrs/003-desacoplamento-composables-modais-acessibilidade.md)** — Composables, WCAG, `useBodyScrollLock` e acessibilidade.
 * 📜 **[ADR 004: Categorização de Negócios e Templates](docs/adrs/004-categorizacao-de-negocios-e-templates.md)** — Schemas Zod de categorias e especialização de templates.
+* 📜 **[ADR 005: Autopreenchimento de Endereço via CEP (ViaCEP)](docs/adrs/005-integracao-viacep-autocompletion-endereco.md)** — Validação Zod, resiliência e micro-UX de foco automático no checkout.
 
 ### 🛠️ Operações
 * ⚡ **[Runbook de Geração de Demos](docs/operations/RUNBOOK_DEMOS.md)** — Automação CLI para criação rápida de vitrines com `scripts/new-demo.js`.
