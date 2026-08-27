@@ -26,12 +26,14 @@ export function formatWhatsAppOrderMessage(payload: WhatsAppOrderPayload): strin
     }
     message += `*Tipo:* ${isDelivery ? '🛵 Entrega' : '🏪 Retirada no Balcão'}\n`
 
-    if (isDelivery) {
-        let addrStr = `${formData.address.street}, Nº ${formData.address.number}`
+    if (isDelivery && formData.address) {
+        let addrStr = `${formData.address.street || ''}, Nº ${formData.address.number || ''}`
         if (formData.address.complement) {
             addrStr += ` (${formData.address.complement})`
         }
-        addrStr += ` - Bairro ${formData.address.neighborhood}`
+        if (formData.address.neighborhood) {
+            addrStr += ` - Bairro ${formData.address.neighborhood}`
+        }
         if (formData.address.cep) {
             addrStr += ` - CEP: ${formData.address.cep}`
         }
@@ -50,23 +52,24 @@ export function formatWhatsAppOrderMessage(payload: WhatsAppOrderPayload): strin
     message += `\n*ITENS DO PEDIDO:*\n`
     items.forEach((item, index) => {
         message += `\n${index + 1}. *${item.quantity}x ${item.product.name}* - ${formatCurrency(item.unitPrice * item.quantity)}\n`
-        if (item.options && item.options.length > 0) {
-            item.options.forEach((opt) => {
+        const optionsList = item.options || item.selectedOptions || []
+        if (optionsList && optionsList.length > 0) {
+            optionsList.forEach((opt: any) => {
                 message += `   + ${opt.name}${opt.price > 0 ? ` (${formatCurrency(opt.price)})` : ''}\n`
             })
         }
-        if (item.notes) {
-            message += `   _Obs: ${item.notes}_\n`
+        const note = item.notes || item.observation
+        if (note) {
+            message += `   _Obs: ${note}_\n`
         }
     })
 
-    message += `\n----------------------------\n`
-    message += `*Subtotal:* ${formatCurrency(subtotal)}\n`
+    message += `\n━━━━━━━━━━━━━━━━━━━━━\n`
+    message += `Subtotal: ${formatCurrency(subtotal)}\n`
     if (isDelivery) {
-        message += `*Taxa de Entrega:* ${deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Grátis'}\n`
+        message += `Taxa de Entrega: ${deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Grátis'}\n`
     }
-    message += `*TOTAL DO PEDIDO:* ${formatCurrency(total)}\n`
-    message += `----------------------------`
+    message += `*TOTAL DO PEDIDO: ${formatCurrency(total)}*`
 
     return message
 }
@@ -97,7 +100,7 @@ export function formatLegacyWhatsAppOrderMessage(tenant: Tenant, cart: CartState
 
         const obs = item.observation || item.notes
         if (obs) {
-            lines.push(`   └ 💬 Obs: "${obs}"`)
+            lines.push(`   └ 💬 Obs: \"${obs}\"`)
         }
         lines.push('')
     })
