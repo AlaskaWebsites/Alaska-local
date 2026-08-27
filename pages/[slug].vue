@@ -105,7 +105,7 @@
 
           <div class="flex items-center gap-2">
             <Phone class="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
-            <a :href="`https://wa.me/55${tenant.phoneWhatsApp.replace(/\D/g, '')}`" target="_blank"
+            <a :href="`https://wa.me/55${(tenant.phoneWhatsApp || '').replace(/\D/g, '')}`" target="_blank"
               class="font-bold hover:underline" :class="themeClasses.primaryText">
               WhatsApp Direto
             </a>
@@ -294,11 +294,21 @@
     <BookingModal v-if="tenant" :is-open="isBookingOpen" :tenant="tenant" :initial-service="selectedBookingService"
       @close="isBookingOpen = false" />
   </div>
+
+  <!-- Estado de Carregamento ou 404 durante SSR -->
+  <div v-else class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div class="text-center space-y-3">
+      <h2 class="text-lg font-bold text-slate-800">Estabelecimento não encontrado</h2>
+      <p class="text-xs text-slate-500">O endereço acessado não corresponde a nenhuma demonstração ativa.</p>
+      <NuxtLink to="/" class="inline-block mt-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">
+        Voltar para a página inicial
+      </NuxtLink>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useTenant } from '~/composables/useTenant'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useOpeningHours } from '~/composables/useOpeningHours'
@@ -324,8 +334,8 @@ import {
 } from 'lucide-vue-next'
 import type { Product, CartItem, BookingService } from '~/types'
 
-// 1. Resolução do Tenant Atual
-const { tenant } = useTenant()
+// 1. Resolução do Tenant Atual (Retorna referências reativas síncronas)
+const { tenant, slug } = useTenant()
 
 // 2. Tema Dinâmico
 const { themeClasses } = useTenantTheme(tenant)
@@ -344,7 +354,7 @@ const {
   totalResultsCount,
   hasResults,
   clearSearch
-} = useProductSearch(computed(() => tenant.value?.categories))
+} = useProductSearch(computed(() => tenant?.value?.categories || []))
 
 // 6. Carrinho Persistente Multi-Tenant via LocalStorage (useCart)
 const {
@@ -356,13 +366,13 @@ const {
   cartSubtotal
 } = useCart(tenant)
 
-// 7. SEO & OpenGraph Dinâmico
+// 7. SEO & OpenGraph Dinâmico com Guardas Defensivas de SSR
 useSeoMeta({
-  title: () => tenant.value ? `${tenant.value.name} — Vitrine & Pedidos Online` : 'Alaska Local',
-  description: () => tenant.value?.description || 'Faça seu pedido ou agende seu horário online de forma rápida pelo WhatsApp.',
-  ogTitle: () => tenant.value ? `${tenant.value.name}` : 'Alaska Local',
-  ogDescription: () => tenant.value?.description || 'Atendimento digital via WhatsApp.',
-  ogImage: () => tenant.value?.banner || tenant.value?.logo || '/og-image.png',
+  title: () => tenant?.value ? `${tenant.value.name} — Vitrine & Pedidos Online` : 'Alaska Local',
+  description: () => tenant?.value?.description || 'Faça seu pedido ou agende seu horário online de forma rápida pelo WhatsApp.',
+  ogTitle: () => tenant?.value?.name || 'Alaska Local',
+  ogDescription: () => tenant?.value?.description || 'Atendimento digital via WhatsApp.',
+  ogImage: () => tenant?.value?.banner || tenant?.value?.logo || '/og-image.png',
   twitterCard: 'summary_large_image'
 })
 
@@ -377,7 +387,7 @@ const isBookingOpen = ref(false)
 const selectedBookingService = ref<BookingService | null>(null)
 
 const isServiceStore = computed(() => {
-  if (!tenant.value) return false
+  if (!tenant?.value) return false
   const cat = tenant.value.businessCategory || tenant.value.template
   return cat === 'hub' || cat === 'pro' || tenant.value.slug === 'barbearia-style' || tenant.value.slug === 'clinica-sorriso'
 })
@@ -408,7 +418,7 @@ function closeProductModal() {
 
 // 9. Destaques Dinâmicos
 const featuredProducts = computed(() => {
-  if (!tenant.value) return []
+  if (!tenant?.value) return []
   const all: Product[] = []
   tenant.value.categories?.forEach((cat) => {
     all.push(...cat.products)
