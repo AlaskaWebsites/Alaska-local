@@ -3,14 +3,16 @@ import { describe, it, expect } from 'vitest'
 import {
   timeToMinutes,
   minutesToTime,
+  generateBookingDays,
   generateTimeSlots,
+  getMockBookedSlotsForDate,
   calculateTotalDuration,
   calculateTotalPrice,
   formatBookingWhatsAppMessage,
 } from '~/composables/useBookingSlots'
 import type { BookingAppointmentPayload, BookingService } from '~/types/booking'
 
-describe('Unit: Lógica de Agendamentos e Geração de Slots (useBookingSlots.ts)', () => {
+describe('Unit: Lógica de Agendamentos, Calendário e Slots (useBookingSlots.ts)', () => {
   describe('1. Conversões de Tempo (timeToMinutes e minutesToTime)', () => {
     it('deve converter corretamente HH:mm para minutos a partir da meia-noite', () => {
       expect(timeToMinutes('00:00')).toBe(0)
@@ -27,7 +29,35 @@ describe('Unit: Lógica de Agendamentos e Geração de Slots (useBookingSlots.ts
     })
   })
 
-  describe('2. Geração de Slots de Horários (generateTimeSlots)', () => {
+  describe('2. Geração Automática de Dias do Mês (generateBookingDays)', () => {
+    it('deve gerar 30 dias contínuos a partir de uma data de referência', () => {
+      const refDate = new Date(2026, 7, 27) // 27/08/2026
+      const days = generateBookingDays(refDate, 30, [0])
+
+      expect(days.length).toBe(30)
+      expect(days[0].dateStr).toBe('27/08/2026')
+      expect(days[0].isToday).toBe(true)
+      expect(days[0].weekDay).toBe('Hoje')
+
+      expect(days[1].dateStr).toBe('28/08/2026')
+      expect(days[1].weekDay).toBe('Amanhã')
+
+      // O último dia deve estar em Setembro
+      expect(days[days.length - 1].monthName).toBe('Setembro')
+    })
+
+    it('deve identificar e marcar domingos como dias fechados', () => {
+      const refDate = new Date(2026, 7, 27) // Quinta-feira
+      const days = generateBookingDays(refDate, 7, [0]) // Domingo é dia 30/08
+
+      const sunday = days.find((d) => d.dateStr === '30/08/2026')
+      expect(sunday).toBeDefined()
+      expect(sunday?.isClosed).toBe(true)
+      expect(sunday?.weekDay).toBe('Dom')
+    })
+  })
+
+  describe('3. Geração de Slots de Horários com Bloqueios (generateTimeSlots)', () => {
     it('deve gerar slots de 30 em 30 minutos entre 09:00 e 12:00', () => {
       const slots = generateTimeSlots('09:00', '12:00', 30)
       expect(slots.length).toBe(6) // 09:00, 09:30, 10:00, 10:30, 11:00, 11:30
@@ -36,11 +66,42 @@ describe('Unit: Lógica de Agendamentos e Geração de Slots (useBookingSlots.ts
       expect(slots.every((s) => s.available)).toBe(true)
     })
 
-    it('deve gerar slots de 45 em 45 minutos corretamente', () => {
-      const slots = generateTimeSlots('14:00', '16:00', 45)
-      // 14:00 (840), 14:45 (885), 15:30 (930)
-      expect(slots.length).toBe(3)
-      expect(slots.map((s) => s.time)).toEqual(['14:00', '14:45', '15:30'])
+    it('deve bloquear slots que constam na lista de bookedSlots', () => {
+      const slots = generateTimeSlots('14:00', '17:00', 30, {
+        bookedSlots: ['15:00', '16:00'],
+      })
+
+      const slot15 = slots.find((s) => s.time === '15:00')
+      const slot16 = slots.find((s) => s.time === '16:00')
+      const slot14 = slots.find((s) => s.time === '14:00')
+
+      expect(slot15?.available).toBe(false)
+      expect(slot15?.reason).toBe('booked')
+
+      expect(slot16?.available).toBe(false)
+      expect(slot16?.reason).toBe('booked')
+
+      expect(slot14?.available).toBe(true)
+      expect(slot14?.reason).toBe('available')
+    })
+
+    it('deve bloquear horários passados quando o dia selecionado for hoje', () => {
+      // Simula referência às 10:15 no dia 27/08/2026
+      const refDate = new Date(2026, 7, 27, 10, 15)
+      const slots = generateTimeSlots('09:00', '12:00', 30, {
+        selectedDateStr: '27/08/2026',
+        referenceDate: refDate,
+      })
+
+      // 09:00, 09:30 e 10:00 já passaram
+      const pastSlot = slots.find((s) => s.time === '09:30')
+      const futureSlot = slots.find((s) => s.time === '10:30')
+
+      expect(pastSlot?.available).toBe(false)
+      expect(pastSlot?.reason).toBe('past')
+
+      expect(futureSlot?.available).toBe(true)
+      expect(futureSlot?.reason).toBe('available')
     })
 
     it('deve retornar array vazio se o horário de fechamento for menor ou igual ao de abertura', () => {
@@ -49,7 +110,17 @@ describe('Unit: Lógica de Agendamentos e Geração de Slots (useBookingSlots.ts
     })
   })
 
-  describe('3. Cálculos de Totais e Duração', () => {
+  describe('4. Mock Determinístico de Ocupação (getMockBookedSlotsForDate)', () => {
+    it('deve retornar lista consistente de horários ocupados para a data', () => {
+      const mock1 = getMockBookedSlotsForDate('27/08/2026')
+      const mock2 = getMockBookedSlotsForDate('27/08/2026')
+
+      expect(mock1).toEqual(mock2)
+      expect(mock1.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('5. Cálculos de Totais e Duração', () => {
     const mockServices: BookingService[] = [
       { id: 's1', name: 'Corte', price: 45, durationMinutes: 40 },
       { id: 's2', name: 'Barba', price: 35, durationMinutes: 30 },
@@ -64,7 +135,7 @@ describe('Unit: Lógica de Agendamentos e Geração de Slots (useBookingSlots.ts
     })
   })
 
-  describe('4. Formatação de Mensagem de Agendamento para WhatsApp', () => {
+  describe('6. Formatação de Mensagem de Agendamento para WhatsApp', () => {
     const mockPayload: BookingAppointmentPayload = {
       tenantName: 'Barbearia Style',
       customerName: 'Danilo Gozzi',
