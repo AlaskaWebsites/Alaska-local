@@ -3,10 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
     sanitizeCep,
     isValidCep,
-    formatCep,
     fetchAddressByCep,
     useCep,
 } from '~/composables/useCep'
+import { formatCep } from '~/utils/formatters'
 import { ViaCepResponseSchema } from '~/types'
 
 describe('Unit: Utilitários e Composable de Consulta de CEP (useCep.ts)', () => {
