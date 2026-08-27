@@ -1,6 +1,6 @@
 # 🏔️ Alaska Local — Vitrines Digitais Mobile-First para Negócios Locais
 
-> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas, semijoias, boutiques e profissionais liberais), com cardápio/catálogo interativo, avaliações estilo iFood e checkout estruturado direto para o WhatsApp.
+> **One Codebase, Infinite Domains.** Solução digital de alta conversão para estabelecimentos locais (alimentação, adegas, barbearias, clínicas, semijoias, boutiques e profissionais liberais), com cardápio/catálogo interativo, agendamento de serviços, avaliações estilo iFood e checkout estruturado direto para o WhatsApp.
 
 [![Nuxt 3](https://img.shields.io/badge/Nuxt-3.15+-00DC82?logo=nuxt.js&logoColor=white)](https://nuxt.com/)
 [![Vue 3](https://img.shields.io/badge/Vue-3.5+-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
@@ -16,8 +16,8 @@
 
 * 🍔 **Alaska Menu**: Experiência visual rica inspirada no iFood para food service (hamburguerias, pizzarias, adegas 24h, espetarias e cafeterias), com seleção de adicionais, observações e cálculo de taxa de entrega.
 * 🛍️ **Alaska Shop**: Vitrines mobile dinâmicas para boutiques de moda, semijoias, calçados e cosméticos com sacola em tempo real e fechamento no WhatsApp.
-* 💈 **Alaska Hub**: Páginas institucionais de alta conversão para prestadores de serviços, barbearias com escolha de profissionais e clínicas com agendamento direto.
-* ⚖️ **Alaska Pro**: Landing pages institucionais One-Page para profissionais liberais (advogados, médicos, psicólogos, contadores, arquitetos) focadas em autoridade e captação de clientes de alto ticket.
+* 💈 **Alaska Hub**: Solução para prestadores de serviços, barbearias e salões com escolha de profissionais, horários de atendimento e venda híbrida de produtos (pomadas, óleos, kits).
+* ⚖️ **Alaska Pro**: Landing pages institucionais One-Page para profissionais liberais (médicos, dentistas, psicólogos, advogados) com agendamento de consultas e avaliações.
 
 ---
 
@@ -62,6 +62,7 @@ npx vitest run
 * 🎯 **[Playbook de Pitch & Scripts WhatsApp](docs/commercial/PITCH_E_SCRIPTS.md)** — Roteiros de prospecção consultiva anti-ban e contorno analítico de objeções.
 
 ### 🏗️ Arquitetura & Engenharia
+* 💈 **[Módulo de Agendamentos & Venda Híbrida](docs/architecture/modulo-agendamento-e-servicos.md)** — Arquitetura de agendamentos, comparação tecnológica (Google Calendar vs Supabase) e venda híbrida (serviço + produto upsell).
 * 🗺️ **[Roadmap Arquitetural e Estratégico](docs/architecture/roadmap.md)** — Evolução técnica em fases (Estágio 1, 2 e 3).
 * 🏷️ **[Taxonomia de Categorias de Negócio](docs/architecture/categorias-de-negocio.md)** — Definição das verticais `menu`, `shop`, `hub` e `pro`.
 * 🤖 **[Guia de Engenharia para IAs](docs/architecture/guia-engenharia-ia.md)** — Boas práticas de desenvolvimento e arquitetura limpa.
@@ -74,6 +75,7 @@ npx vitest run
 * 📜 **[ADR 003: Desacoplamento de Modais e Acessibilidade](docs/adrs/003-desacoplamento-composables-modais-acessibilidade.md)** — Composables, WCAG, `useBodyScrollLock` e acessibilidade.
 * 📜 **[ADR 004: Categorização de Negócios e Templates](docs/adrs/004-categorizacao-de-negocios-e-templates.md)** — Schemas Zod de categorias e especialização de templates.
 * 📜 **[ADR 005: Autopreenchimento de Endereço via CEP (ViaCEP)](docs/adrs/005-integracao-viacep-autocompletion-endereco.md)** — Validação Zod, resiliência e micro-UX de foco automático no checkout.
+* 📜 **[ADR 006: Módulo de Agendamentos e Venda Híbrida](docs/adrs/006-modulo-agendamento-servicos-e-venda-hibrida.md)** — Decisão de integração Google Calendar API + Supabase e suporte a upsell de produtos.
 
 ### 🛠️ Operações
 * ⚡ **[Runbook de Geração de Demos](docs/operations/RUNBOOK_DEMOS.md)** — Automação CLI para criação rápida de vitrines com `scripts/new-demo.js`.
