@@ -102,7 +102,7 @@ export const StoreReviewsSchema = z.object({
 export const TenantThemeSchema = z.enum(['food', 'barber', 'health', 'drinks', 'default']).default('food')
 
 // 8. Categorias Canônicas de Negócio
-export const BusinessCategorySchema = z.enum(['menu', 'shop', 'hub', 'pro']).default('menu')
+export const BusinessCategorySchema = z.enum(['menu', 'shop', 'hub', 'pro'])
 
 // 9. Schema Central do Estabelecimento (Tenant)
 export const TenantSchema = z.object({
@@ -116,8 +116,8 @@ export const TenantSchema = z.object({
   currency: z.string().default('R$'),
   deliveryFee: z.number().default(0),
   minOrderValue: z.number().default(0),
-  template: z.enum(['menu', 'hub', 'booking', 'pro']).optional().default('menu'),
-  businessCategory: BusinessCategorySchema.optional().default('menu'),
+  template: z.enum(['menu', 'hub', 'booking', 'pro', 'shop']).optional().default('menu'),
+  businessCategory: BusinessCategorySchema.optional(),
   theme: TenantThemeSchema.optional().default('food'),
   openingHours: OpeningHoursSchema.optional(),
   categories: z.array(CategorySchema).optional().default([]),
