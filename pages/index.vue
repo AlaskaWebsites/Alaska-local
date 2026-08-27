@@ -15,8 +15,8 @@
           Demonstrações interativas de alta conversão para comércios, lojas e prestadores de serviços com fechamento direto no WhatsApp.
         </p>
 
-        <!-- Filtros por Categoria de Negócio (Semântica de Tablist W3C) -->
-        <div class="flex flex-wrap items-center justify-center gap-2 pt-4" role="tablist"
+        <!-- Filtros por Categoria de Negócio (Semântica de Tablist W3C - Anti-Layout Shift) -->
+        <div class="flex items-center justify-start sm:justify-center gap-2 pt-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist"
           aria-label="Filtrar demonstrações por categoria de negócio">
           <button
             v-for="tab in filterTabs"
@@ -25,16 +25,16 @@
             :aria-selected="activeCategory === tab.id"
             :aria-controls="'showcase-grid'"
             @click="activeCategory = tab.id"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+            class="px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 border"
             :class="[
               activeCategory === tab.id
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+                ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-slate-200'
             ]"
           >
             <span>{{ tab.emoji }}</span>
             <span>{{ tab.label }}</span>
-            <span class="text-[11px] px-1.5 py-0.2 rounded-full font-medium"
+            <span class="text-[11px] px-1.5 py-0.5 rounded-full font-medium"
               :class="activeCategory === tab.id ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-500'">
               {{ tab.count }}
             </span>
@@ -44,7 +44,7 @@
     </header>
 
     <!-- Grid de Demonstrações -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 min-h-[50vh]">
       <div id="showcase-grid" role="region" aria-label="Lista de estabelecimentos disponíveis"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink
