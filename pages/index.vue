@@ -1,96 +1,75 @@
-<!-- pages/index.vue -->
 <template>
-  <div class="min-h-screen bg-[#f5f5f5] text-slate-800 selection:bg-slate-900 selection:text-white">
-    <!-- 1. Header & Hero Showcase -->
-    <header class="bg-white border-b border-slate-200/80 py-12 px-4 sm:px-6">
-      <div class="max-w-4xl mx-auto text-center space-y-4">
-        <!-- Badge Superior -->
-        <div
-          class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3.5 py-1 text-xs font-bold text-slate-700 border border-slate-200/80 shadow-xs">
-          <Sparkles class="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
-          <span>Vitrines Mobile & Pedidos no WhatsApp</span>
+  <div class="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <!-- Header e Apresentação -->
+    <header class="bg-white border-b border-slate-200 py-12 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto text-center space-y-3">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
+          <Sparkles class="w-3.5 h-3.5 text-amber-500" aria-hidden="true" />
+          <span>Ecossistema Multi-Tenant Alaska Local</span>
         </div>
-
-        <!-- Título Principal -->
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Alaska Local — Demonstrações Ativas
+          Vitrines Digitais & Cardápios Locais
         </h1>
-
-        <p class="text-sm sm:text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
-          Selecione um dos modelos abaixo para visualizar a experiência do cardápio digital e catálogo mobile-first em
-          tempo real.
+        <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
+          Demonstrações interativas de alta conversão para comércios, lojas e prestadores de serviços com fechamento direto no WhatsApp.
         </p>
 
-        <!-- Filtros em Pílulas Segmentadas -->
-        <div class="flex flex-wrap items-center justify-center gap-2 pt-2" role="tablist"
-          aria-label="Filtro de modelos de demonstração">
-          <button role="tab" :aria-selected="activeFilter === 'todos'" aria-controls="showcase-grid"
-            @click="activeFilter = 'todos'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
-              activeFilter === 'todos'
-                ? 'bg-slate-900 text-white font-bold shadow-sm'
-                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
-            ]">
-            Todos os Modelos ({{ tenantsList.length }})
-          </button>
-
-          <button role="tab" :aria-selected="activeFilter === 'menu'" aria-controls="showcase-grid"
-            @click="activeFilter = 'menu'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
-              activeFilter === 'menu'
-                ? 'bg-red-600 text-white font-bold shadow-sm shadow-red-600/20'
-                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
-            ]">
-            🍔 Alimentação & Espetos (Alaska Menu)
-          </button>
-
-          <button role="tab" :aria-selected="activeFilter === 'hub'" aria-controls="showcase-grid"
-            @click="activeFilter = 'hub'" :class="[
-              'rounded-full px-4 py-2 text-xs font-semibold transition-all cursor-pointer shadow-xs',
-              activeFilter === 'hub'
-                ? 'bg-purple-700 text-white font-bold shadow-sm shadow-purple-700/20'
-                : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-slate-200'
-            ]">
-            ✂️ Moda, Serviços & Saúde (Alaska Hub)
+        <!-- Filtros por Categoria de Negócio (Semântica de Tablist W3C) -->
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-4" role="tablist"
+          aria-label="Filtrar demonstrações por categoria de negócio">
+          <button
+            v-for="tab in filterTabs"
+            :key="tab.id"
+            role="tab"
+            :aria-selected="activeCategory === tab.id"
+            :aria-controls="'showcase-grid'"
+            @click="activeCategory = tab.id"
+            class="px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5"
+            :class="[
+              activeCategory === tab.id
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+            ]"
+          >
+            <span>{{ tab.emoji }}</span>
+            <span>{{ tab.label }}</span>
+            <span class="text-[11px] px-1.5 py-0.2 rounded-full font-medium"
+              :class="activeCategory === tab.id ? 'bg-slate-800 text-slate-300' : 'bg-slate-100 text-slate-500'">
+              {{ tab.count }}
+            </span>
           </button>
         </div>
       </div>
     </header>
 
-    <!-- 2. Grid de Vitrines / Demonstrações -->
-    <main class="max-w-5xl mx-auto px-4 py-12">
-      <div id="showcase-grid" role="region" aria-label="Lista de demonstrações de lojas"
+    <!-- Grid de Demonstrações -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
+      <div id="showcase-grid" role="region" aria-label="Lista de estabelecimentos disponíveis"
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <NuxtLink v-for="store in filteredTenants" :key="store.slug" :to="`/${store.slug}`"
-          :aria-label="`Acessar demonstração de ${store.name}. ${isHubStore(store.slug) ? 'Serviços e catálogo' : 'Cardápio e pedidos'}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
+        <NuxtLink
+          v-for="store in filteredTenants"
+          :key="store.slug"
+          :to="`/${store.slug}`"
+          :aria-label="`Acessar demonstração de ${store.name}. ${getStoreCategoryLabel(store.businessCategory || store.template)}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
           class="group bg-white rounded-2xl border border-slate-200 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]"
-          :class="getStoreBorderHover(store.theme)">
+          :class="getStoreBorderHover(store.theme)"
+        >
           <!-- Banner Superior da Loja -->
           <div class="relative h-36 w-full bg-slate-100 overflow-hidden">
             <img v-if="store.banner" :src="store.banner" :alt="`Banner de ${store.name}`"
-              class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
-            <div v-else class="w-full h-full bg-slate-200" aria-hidden="true"></div>
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
 
-            <!-- Logo Sobreposto -->
-            <div
-              class="absolute bottom-2.5 left-3.5 h-12 w-12 rounded-xl border-2 border-white overflow-hidden bg-white shadow-sm">
-              <img v-if="store.logo" :src="store.logo" :alt="`Logotipo de ${store.name}`"
-                class="w-full h-full object-cover" />
-              <div v-else
-                class="w-full h-full flex items-center justify-center bg-slate-100 text-slate-700 font-bold text-sm"
-                aria-hidden="true">
-                {{ store.name.charAt(0) }}
-              </div>
+            <!-- Logo da Loja -->
+            <div class="absolute bottom-3 left-3 flex items-center gap-2.5">
+              <img :src="store.logo || '/logo.png'" :alt="`Logo de ${store.name}`"
+                class="w-12 h-12 rounded-xl bg-white p-0.5 shadow-md object-cover border border-white/50" />
             </div>
 
-            <!-- Tag de Vertical (Menu vs Hub) -->
-            <span :class="[
-              'absolute top-3 right-3 text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs backdrop-blur-md',
-              isHubStore(store.slug)
-                ? 'bg-purple-900/90 text-purple-100 border border-purple-700/50'
-                : 'bg-slate-900/85 text-white border border-slate-700/50'
-            ]">
-              {{ isHubStore(store.slug) ? 'Alaska Hub' : 'Alaska Menu' }}
+            <!-- Badge de Categoria de Negócio -->
+            <span class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md"
+              :class="getCategoryBadgeClass(store.businessCategory || store.template)">
+              {{ getStoreCategoryLabel(store.businessCategory || store.template) }}
             </span>
           </div>
 
@@ -103,32 +82,32 @@
                   {{ store.name }}
                 </h2>
 
-                <!-- Avaliação em Estrelas -->
-                <div v-if="store.reviews" :aria-label="`Avaliação ${store.reviews.score.toFixed(1)} estrelas`"
-                  class="flex items-center gap-1 text-xs font-bold text-slate-800 shrink-0 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60">
+                <!-- Avaliação Prova Social -->
+                <div v-if="store.reviews" class="flex items-center gap-1 shrink-0 text-xs font-bold text-slate-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
                   <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                   <span>{{ store.reviews.score.toFixed(1) }}</span>
                 </div>
               </div>
 
-              <p class="text-xs text-slate-500 line-clamp-2 mt-1.5 leading-relaxed">
-                {{ store.description || 'Vitrines online, pedidos somados e atendimento direto no WhatsApp.' }}
+              <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+                {{ store.description }}
               </p>
             </div>
 
-            <!-- Footer do Card com Botão de Ação -->
-            <div
-              class="pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">
-              <span class="text-[11px] text-slate-400 font-normal">Ver Catálogo / Serviços</span>
-              <span
-                class="inline-flex items-center gap-1 font-bold text-slate-900 group-hover:translate-x-1 transition-transform"
-                aria-hidden="true">
-                Acessar
-                <ChevronRight class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900" />
-              </span>
+            <!-- Botão de Ação -->
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold"
+              :class="getStoreTextHover(store.theme)">
+              <span>{{ getStoreActionText(store.businessCategory || store.template) }}</span>
+              <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </div>
           </div>
         </NuxtLink>
+      </div>
+
+      <!-- Estado Vazio (caso não haja lojas na categoria) -->
+      <div v-if="filteredTenants.length === 0" class="text-center py-16 space-y-3">
+        <p class="text-base font-bold text-slate-700">Nenhum modelo cadastrado nesta categoria ainda.</p>
+        <p class="text-xs text-slate-500">Estamos desenvolvendo novas demonstrações para esta vertical.</p>
       </div>
     </main>
   </div>
@@ -137,9 +116,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Sparkles, Star, ChevronRight } from 'lucide-vue-next'
-import { TenantSchema, type Tenant } from '~/types/tenant'
+import { TenantSchema, type Tenant, type BusinessCategory } from '~/types/tenant'
 
-const activeFilter = ref<'todos' | 'menu' | 'hub'>('todos')
+type FilterCategory = 'all' | BusinessCategory
+
+const activeCategory = ref<FilterCategory>('all')
 
 // 1. Carregamento de Todos os Arquivos JSON de Tenants
 const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: any }>
@@ -156,13 +137,77 @@ const tenantsList = computed<Tenant[]>(() => {
   return list
 })
 
-function isHubStore(slug: string): boolean {
-  return (
-    slug === 'barbearia-style' ||
-    slug === 'clinica-sorriso' ||
-    slug === 'karine-finardi' ||
-    slug === 'bella-donna'
-  )
+function resolveCategory(tenant: Tenant): BusinessCategory {
+  if (tenant.businessCategory) return tenant.businessCategory
+  if (tenant.slug === 'bella-donna' || tenant.slug === 'karine-finardi') return 'shop'
+  if (tenant.slug === 'barbearia-style' || tenant.slug === 'clinica-sorriso') return 'hub'
+  if (tenant.template === 'hub' || tenant.template === 'booking') return 'hub'
+  if (tenant.template === 'pro') return 'pro'
+  return 'menu'
+}
+
+// 2. Abas de Filtros com Contagem Reativa
+const filterTabs = computed(() => {
+  const allCount = tenantsList.value.length
+  const menuCount = tenantsList.value.filter((t) => resolveCategory(t) === 'menu').length
+  const shopCount = tenantsList.value.filter((t) => resolveCategory(t) === 'shop').length
+  const hubCount = tenantsList.value.filter((t) => resolveCategory(t) === 'hub').length
+  const proCount = tenantsList.value.filter((t) => resolveCategory(t) === 'pro').length
+
+  return [
+    { id: 'all' as FilterCategory, label: 'Todos', emoji: '🌟', count: allCount },
+    { id: 'menu' as FilterCategory, label: 'Cardápios & Delivery', emoji: '🍔', count: menuCount },
+    { id: 'shop' as FilterCategory, label: 'Lojas & Vitrines', emoji: '🛍️', count: shopCount },
+    { id: 'hub' as FilterCategory, label: 'Serviços & Agenda', emoji: '💈', count: hubCount },
+    { id: 'pro' as FilterCategory, label: 'Profissionais & Pro', emoji: '⚖️', count: proCount },
+  ]
+})
+
+// 3. Filtragem Reativa do Showcase
+const filteredTenants = computed(() => {
+  if (activeCategory.value === 'all') {
+    return tenantsList.value
+  }
+  return tenantsList.value.filter((t) => resolveCategory(t) === activeCategory.value)
+})
+
+function getStoreCategoryLabel(cat?: string): string {
+  switch (cat) {
+    case 'shop':
+      return '🛍️ Loja & Vitrine'
+    case 'hub':
+      return '💈 Serviços & Agenda'
+    case 'pro':
+      return '⚖️ Institucional & Pro'
+    default:
+      return '🍔 Cardápio & Delivery'
+  }
+}
+
+function getCategoryBadgeClass(cat?: string): string {
+  switch (cat) {
+    case 'shop':
+      return 'bg-purple-950/80 text-purple-200 border border-purple-800'
+    case 'hub':
+      return 'bg-amber-950/80 text-amber-200 border border-amber-800'
+    case 'pro':
+      return 'bg-blue-950/80 text-blue-200 border border-blue-800'
+    default:
+      return 'bg-red-950/80 text-red-200 border border-red-800'
+  }
+}
+
+function getStoreActionText(cat?: string): string {
+  switch (cat) {
+    case 'shop':
+      return 'Ver vitrine de peças'
+    case 'hub':
+      return 'Ver serviços e agendar'
+    case 'pro':
+      return 'Acessar perfil institucional'
+    default:
+      return 'Acessar cardápio completo'
+  }
 }
 
 function getStoreTitleHover(theme?: string): string {
@@ -191,22 +236,25 @@ function getStoreBorderHover(theme?: string): string {
   }
 }
 
-const filteredTenants = computed(() => {
-  if (activeFilter.value === 'menu') {
-    return tenantsList.value.filter((t) => !isHubStore(t.slug))
+function getStoreTextHover(theme?: string): string {
+  switch (theme) {
+    case 'barber':
+      return 'text-amber-600'
+    case 'health':
+      return 'text-teal-600'
+    case 'drinks':
+      return 'text-purple-600'
+    default:
+      return 'text-red-600'
   }
-  if (activeFilter.value === 'hub') {
-    return tenantsList.value.filter((t) => isHubStore(t.slug))
-  }
-  return tenantsList.value
-})
+}
 
 useHead({
-  title: 'Alaska Local — Vitrines e Cardápios Digitais',
+  title: 'Alaska Local — Vitrines, Lojas e Cardápios Digitais',
   meta: [
     {
       name: 'description',
-      content: 'Soluções digitais locais para food service, moda feminina, semijoias, adegas, delivery e prestadores de serviços.'
+      content: 'Soluções digitais completas para food service, boutiques de moda, semijoias, clínicas e prestadores de serviços locais.'
     }
   ]
 })
