@@ -141,10 +141,11 @@ const tenantsList = computed<Tenant[]>(() => {
 function resolveCategory(tenant: Tenant): BusinessCategory {
   if (tenant.businessCategory) return tenant.businessCategory
   if (tenant.slug === 'bella-donna' || tenant.slug === 'karine-finardi') return 'shop'
-  if (tenant.slug === 'barbearia-style') return 'hub'
+  if (tenant.slug === 'barbearia-style' || tenant.slug === 'barbearia-dom-pedro') return 'hub'
   if (tenant.slug === 'clinica-sorriso') return 'pro'
   if (tenant.template === 'hub' || tenant.template === 'booking') return 'hub'
   if (tenant.template === 'pro') return 'pro'
+  if (tenant.template === 'shop') return 'shop'
   return 'menu'
 }
 
@@ -180,7 +181,7 @@ function getStoreCategoryLabel(cat?: string): string {
     case 'hub':
       return '💈 Serviços & Agenda'
     case 'pro':
-      return '🦷 Consultas & Pro'
+      return '⚖️ Consultas & Pro'
     default:
       return '🍔 Cardápio & Delivery'
   }
