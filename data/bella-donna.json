@@ -7,8 +7,10 @@
   "phoneWhatsApp": "11977778888",
   "address": "Rua Gerônimo Caetano Garcia, 280 – Centro, Francisco Morato - SP",
   "currency": "R$",
-  "deliveryFee": 5.00,
-  "minOrderValue": 30.00,
+  "deliveryFee": 5.0,
+  "minOrderValue": 30.0,
+  "template": "shop",
+  "businessCategory": "shop",
   "theme": "drinks",
   "category": "Moda Feminina & Boutique",
   "distance": "0,3 km",
@@ -33,7 +35,7 @@
           "id": "conjunto-pantalona-colete",
           "name": "Conjunto Pantalona + Colete Alfaiataria Duna",
           "description": "O conjunto mais elegante da estação! Colete estruturado com botões encapados e calça pantalona com elástico traseiro no cós. Tecido crepe duna que não amassa.",
-          "price": 139.90,
+          "price": 139.9,
           "image": "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -69,7 +71,7 @@
           "id": "conjunto-short-saia-blazer",
           "name": "Conjunto Short Saia + Blazer Manga Curta",
           "description": "Visual moderno e fresquinho para trabalho e passeios. Short saia confortável com zíper invisível e blazer de corte reto.",
-          "price": 119.90,
+          "price": 119.9,
           "image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -103,7 +105,7 @@
           "id": "calca-pantalona-cinto",
           "name": "Calça Pantalona Alfaiataria com Cinto Forrado",
           "description": "Cintura alta com caimento impecável que alonga a silhueta. Acompanha cinto forrado no mesmo tecido com fivela encapada.",
-          "price": 89.90,
+          "price": 89.9,
           "image": "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -133,7 +135,7 @@
           "id": "vestido-midi-fluido",
           "name": "Vestido Midi Fluido com Amarração & Mangas Bufantes",
           "description": "Modelagem romântica e elegante com elastex no busto para ajuste perfeito e fenda sutil na barra. Forro duplo que não marca.",
-          "price": 109.90,
+          "price": 109.9,
           "image": "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -167,7 +169,7 @@
           "id": "vestido-longo-tres-marias",
           "name": "Vestido Longo Três Marias em Crepe Seda",
           "description": "Caimento fluido em camadas com decote V valorizado. Perfeito para aniversários, almoços de domingo e cultos/eventos especiais.",
-          "price": 129.90,
+          "price": 129.9,
           "image": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -189,7 +191,7 @@
           "id": "macacao-pantalona-transpassado",
           "name": "Macacão Pantalona com Decote Transpassado",
           "description": "Peça única imponente e prática! Acompanha faixa para amarração na cintura e bolsos laterais funcionais.",
-          "price": 124.90,
+          "price": 124.9,
           "image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -205,7 +207,7 @@
           "id": "camisa-social-acetinada",
           "name": "Camisa Social Acetinada com Botões Dourados",
           "description": "Toque macio com brilho sofisticado de seda. Gola clássica, punhos estruturados e caimento soltinho.",
-          "price": 79.90,
+          "price": 79.9,
           "image": "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -240,7 +242,7 @@
           "id": "cropped-alfaiataria-estruturado",
           "name": "Cropped Alfaiataria Estruturado com Alças Largas",
           "description": "Decote reto com recortes princesa que desenham a silhueta. Fechamento por zíper traseiro de metal.",
-          "price": 49.90,
+          "price": 49.9,
           "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -249,7 +251,7 @@
           "id": "tshirt-algodao-egipcio",
           "name": "T-shirt 100% Algodão com Bordado 'C’est la vie'",
           "description": "Malha premium de toque aveludado, gola redonda canelada e bordado de linha em alta definição.",
-          "price": 45.00,
+          "price": 45.0,
           "image": "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -265,7 +267,7 @@
           "id": "saia-midi-plissada",
           "name": "Saia Midi Plissada com Cós Elástico Lurex",
           "description": "Plissado permanente com caimento leve e movimento gracioso. Veste super bem com t-shirt, camisa ou cropped.",
-          "price": 79.90,
+          "price": 79.9,
           "image": "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -287,7 +289,7 @@
           "id": "short-alfaiataria-cintura-alta",
           "name": "Short Alfaiataria Cintura Alta com Bolsos Faca",
           "description": "Comprimento ideal e elegante (não fica curto). Passantes para cinto, pences traseiras modeladoras e zíper com fecho social.",
-          "price": 59.90,
+          "price": 59.9,
           "image": "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -303,7 +305,7 @@
           "id": "vestido-tubinho-fenda",
           "name": "Vestido Tubinho com Fenda Lateral em Crepe Encorpado",
           "description": "Look poderoso e elegante para jantares, formaturas e eventos. Decote coração suave e fenda lateral na medida certa.",
-          "price": 119.90,
+          "price": 119.9,
           "image": "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -337,7 +339,7 @@
           "id": "body-canelado-decote-quadrado",
           "name": "Body Canelado com Decote Quadrado & Forro Duplo",
           "description": "Básico sofisticado com tecido canelado power de alta sustentação. Não fica transparente no busto e possui fecho reforçado.",
-          "price": 39.90,
+          "price": 39.9,
           "image": "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
