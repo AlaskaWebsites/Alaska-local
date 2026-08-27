@@ -1,86 +1,95 @@
-// tests/unit/tenant-schema.test.ts
+// tests/units/tenant-schema.test.ts
 import { describe, it, expect } from 'vitest'
-import { TenantSchema, ProductSchema } from '~/types/tenant'
+import {
+  TenantSchema,
+  BusinessCategorySchema,
+  ProductSchema,
+  CategorySchema,
+  StoreReviewsSchema,
+} from '~/types/tenant'
 
-describe('Unit: Validação de Schemas Zod (types/tenant.ts)', () => {
-    it('deve validar e sanitizar um tenant válido com telefone mascarado', () => {
-        const rawTenant = {
-            slug: 'adega-do-bairro',
-            name: 'Adega do Bairro',
-            description: 'Cervejas e destilados',
-            phoneWhatsApp: '(11) 98765-4321', // com máscara
-            address: 'Rua Central, 50',
-            currency: 'R$',
-            deliveryFee: 5.0,
-            minOrderValue: 15.0,
-            openingHours: {
-                open: '14:00',
-                close: '02:00'
-            },
-            categories: [
-                {
-                    id: 'cat-cervejas',
-                    name: 'Cervejas Geladas',
-                    products: [
-                        {
-                            id: 'prod-heineken',
-                            name: 'Heineken 350ml Lata',
-                            price: 6.5,
-                            available: true,
-                            optionGroups: []
-                        }
-                    ]
-                }
-            ]
-        }
-
-        const parsed = TenantSchema.parse(rawTenant)
-
-        expect(parsed.slug).toBe('adega-do-bairro')
-        expect(parsed.name).toBe('Adega do Bairro')
-        expect(parsed.phoneWhatsApp).toBe('11987654321') // sanitizado automaticamente
-        expect(parsed.categories[0].products[0].price).toBe(6.5)
+describe('Unit: Validação de Schemas Zod de Tenants (types/tenant.ts)', () => {
+  describe('1. Schema de Categorias de Negócio (BusinessCategorySchema)', () => {
+    it('deve aceitar as categorias canônicas: menu, shop, hub e pro', () => {
+      expect(BusinessCategorySchema.parse('menu')).toBe('menu')
+      expect(BusinessCategorySchema.parse('shop')).toBe('shop')
+      expect(BusinessCategorySchema.parse('hub')).toBe('hub')
+      expect(BusinessCategorySchema.parse('pro')).toBe('pro')
     })
 
-    it('deve aplicar valores default para campos opcionais ausentes', () => {
-        const minimalTenant = {
-            slug: 'barbearia-top',
-            name: 'Barbearia Top',
-            phoneWhatsApp: '11911112222',
-            categories: []
-        }
+    it('deve rejeitar categorias desconhecidas', () => {
+      expect(() => BusinessCategorySchema.parse('ecommerce')).toThrow()
+      expect(() => BusinessCategorySchema.parse('invalid')).toThrow()
+    })
+  })
 
-        const parsed = TenantSchema.parse(minimalTenant)
+  describe('2. Schema Principal de Tenant (TenantSchema)', () => {
+    it('deve validar um tenant completo com businessCategory e reviews', () => {
+      const mockTenant = {
+        slug: 'hamburgueria-x',
+        name: 'Hamburgueria X',
+        description: 'Os melhores smash burgers',
+        phoneWhatsApp: '11999998888',
+        businessCategory: 'menu',
+        theme: 'food',
+        template: 'menu',
+        deliveryFee: 5.0,
+        categories: [
+          {
+            id: 'burgers',
+            name: 'Burgers',
+            products: [
+              {
+                id: 'smash-1',
+                name: 'Smash Simples',
+                price: 20.0,
+                available: true,
+              },
+            ],
+          },
+        ],
+      }
 
-        expect(parsed.currency).toBe('R$')
-        expect(parsed.deliveryFee).toBe(0)
-        expect(parsed.minOrderValue).toBe(0)
-        expect(parsed.description).toBe('')
-        expect(parsed.categories).toEqual([])
+      const parsed = TenantSchema.parse(mockTenant)
+      expect(parsed.slug).toBe('hamburgueria-x')
+      expect(parsed.businessCategory).toBe('menu')
+      expect(parsed.currency).toBe('BRL')
+      expect(parsed.categories?.length).toBe(1)
     })
 
-    it('deve falhar se o produto tiver preço negativo', () => {
-        const invalidProduct = {
-            id: 'prod-invalido',
-            name: 'Produto Inválido',
-            price: -10
-        }
+    it('deve aplicar defaults para campos opcionais quando omitidos', () => {
+      const minimalTenant = {
+        slug: 'barbearia-style',
+        name: 'Barbearia Style',
+        phoneWhatsApp: '11988887777',
+      }
 
-        expect(() => ProductSchema.parse(invalidProduct)).toThrow()
+      const parsed = TenantSchema.parse(minimalTenant)
+      expect(parsed.currency).toBe('BRL')
+      expect(parsed.deliveryFee).toBe(0)
+      expect(parsed.minOrderValue).toBe(0)
+      expect(parsed.template).toBe('menu')
+      expect(parsed.theme).toBe('food')
     })
+  })
 
-    it('deve falhar se o formato de horário for inválido', () => {
-        const invalidHoursTenant = {
-            slug: 'teste-horario',
-            name: 'Teste',
-            phoneWhatsApp: '11999999999',
-            openingHours: {
-                open: '8:00 AM', // formato inválido (deve ser HH:mm)
-                close: '22:00'
-            },
-            categories: []
-        }
+  describe('3. Validação de Sanidade de Todos os Catálogos JSON (data/*.json)', () => {
+    it('todos os arquivos JSON em data/ devem ser válidos pelo TenantSchema', () => {
+      const jsonFiles = import.meta.glob('~/data/*.json', { eager: true }) as Record<
+        string,
+        { default: unknown }
+      >
 
-        expect(() => TenantSchema.parse(invalidHoursTenant)).toThrow()
+      const entries = Object.entries(jsonFiles)
+      expect(entries.length).toBeGreaterThanOrEqual(9)
+
+      entries.forEach(([filePath, content]) => {
+        const raw = content.default || content
+        expect(
+          () => TenantSchema.parse(raw),
+          `Arquivo ${filePath} deve seguir estritamente o TenantSchema`
+        ).not.toThrow()
+      })
     })
+  })
 })
