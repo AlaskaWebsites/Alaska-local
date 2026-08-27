@@ -1,120 +1,116 @@
 // types/tenant.ts
 import { z } from 'zod'
 
-// 1. Opcionais e Variações de Produtos
 export const OptionSchema = z.object({
   id: z.string(),
   name: z.string(),
-  price: z.number().default(0),
-  maxQuantity: z.number().default(1),
+  price: z.number().min(0).default(0),
+  maxQuantity: z.number().optional().default(1),
 })
 
 export const OptionGroupSchema = z.object({
   id: z.string(),
   title: z.string(),
   required: z.boolean().default(false),
-  min: z.number().default(0),
-  max: z.number().default(1),
+  min: z.number().optional().default(0),
+  max: z.number().optional().default(1),
   options: z.array(OptionSchema),
 })
 
-// 2. Produtos do Catálogo
 export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional().default(''),
-  price: z.number().min(0, 'Preço não pode ser negativo'),
-  image: z.string().optional().default(''),
+  price: z.number().min(0),
+  image: z.string().optional(),
   available: z.boolean().default(true),
   optionGroups: z.array(OptionGroupSchema).optional().default([]),
 })
 
-// 3. Categorias de Produtos
 export const CategorySchema = z.object({
   id: z.string(),
   name: z.string(),
   icon: z.string().optional(),
-  products: z.array(ProductSchema),
+  products: z.array(ProductSchema).default([]),
 })
 
-// 4. Horários de Funcionamento
-export const OpeningHoursSchema = z.object({
-  open: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
-  close: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
+export const LinkSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string(),
+  icon: z.string().optional(),
+  color: z.string().optional(),
 })
 
-// 5. Avaliações (iFood Style)
-export const ReviewItemSchema = z.object({
+export const ServiceSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  price: z.number().min(0),
+  description: z.string().optional(),
+})
+
+export const StoreReviewsDistributionSchema = z.object({
+  stars5: z.number().default(0),
+  stars4: z.number().default(0),
+  stars3: z.number().default(0),
+  stars2: z.number().default(0),
+  stars1: z.number().default(0),
+})
+
+export const StoreReviewCommentSchema = z.object({
   id: z.string(),
   author: z.string(),
-  rating: z.number().min(1).max(5),
+  score: z.number(),
   date: z.string(),
-  comment: z.string(),
-  itemsOrdered: z.array(z.string()).optional(),
-})
-
-export const ServiceBadgeSchema = z.object({
-  icon: z.enum(['star', 'chat-alert', 'check-doc']),
-  label: z.string(),
-  status: z.enum(['success', 'warning', 'neutral']),
-})
-
-export const ServiceQualitySchema = z.object({
-  level: z.number().min(1).max(5),
-  experienceLabel: z.string(),
-  description: z.string(),
-  badges: z.array(ServiceBadgeSchema),
+  text: z.string(),
+  orderItems: z.array(z.string()).optional(),
 })
 
 export const StoreReviewsSchema = z.object({
-  score: z.number().min(0).max(5),
-  totalReviews: z.number(),
-  serviceQuality: ServiceQualitySchema,
-  distribution: z.object({
-    5: z.number(),
-    4: z.number(),
-    3: z.number(),
-    2: z.number(),
-    1: z.number(),
-  }),
-  comments: z.array(ReviewItemSchema),
+  score: z.number().min(1).max(5),
+  totalCount: z.number().min(0),
+  serviceLevel: z.enum(['super', 'excelente', 'muito_bom', 'bom', 'regular']).default('super'),
+  badges: z.array(z.string()).optional().default([]),
+  distribution: StoreReviewsDistributionSchema.optional(),
+  comments: z.array(StoreReviewCommentSchema).optional().default([]),
 })
 
-// 6. Tema e Identidade Cromática por Segmento
 export const TenantThemeSchema = z.enum(['food', 'barber', 'health', 'drinks']).default('food')
 
-// 7. Schema Central do Estabelecimento (Tenant)
+export const BusinessCategorySchema = z.enum(['menu', 'shop', 'hub', 'pro']).default('menu')
+
 export const TenantSchema = z.object({
   slug: z.string(),
   name: z.string(),
   description: z.string().optional().default(''),
-  logo: z.string().optional().default(''),
-  banner: z.string().optional().default(''),
-  phoneWhatsApp: z.string().transform((val) => val.replace(/\D/g, '')), // Remove não-dígitos
+  logo: z.string().optional(),
+  banner: z.string().optional(),
+  phoneWhatsApp: z.string(),
   address: z.string().optional().default(''),
-  currency: z.string().default('R$'),
+  currency: z.string().default('BRL'),
   deliveryFee: z.number().default(0),
   minOrderValue: z.number().default(0),
-  theme: TenantThemeSchema.optional().default('food'), // 👈 Novo campo de tema integrado
-  openingHours: OpeningHoursSchema.optional(),
-  categories: z.array(CategorySchema),
+  template: z.enum(['menu', 'hub', 'booking', 'pro']).default('menu'),
+  businessCategory: BusinessCategorySchema.optional(),
+  theme: TenantThemeSchema.optional().default('food'),
   reviews: StoreReviewsSchema.optional(),
-  // Campos adicionais para aba Informações
-  category: z.string().optional().default(''), // ex: "Lanches", "Restaurantes"
-  distance: z.string().optional().default(''), // ex: "0,4 km"
-  priceRange: z.string().optional().default(''), // ex: "$$$$"
-  paymentMethods: z.array(z.string()).optional().default([]), // ex: ["Pix", "Cartão", "Dinheiro"]
+  links: z.array(LinkSchema).optional(),
+  services: z.array(ServiceSchema).optional(),
+  openingHours: z.object({
+    open: z.string(),
+    close: z.string(),
+  }).optional(),
+  categories: z.array(CategorySchema).optional().default([]),
 })
 
-// Tipos TypeScript inferidos automaticamente
-export type Option = z.infer<typeof OptionSchema>
-export type OptionGroup = z.infer<typeof OptionGroupSchema>
+export type Tenant = z.infer<typeof TenantSchema>
 export type Product = z.infer<typeof ProductSchema>
 export type Category = z.infer<typeof CategorySchema>
-export type OpeningHours = z.infer<typeof OpeningHoursSchema>
-export type ReviewItem = z.infer<typeof ReviewItemSchema>
-export type ServiceBadge = z.infer<typeof ServiceBadgeSchema>
-export type ServiceQuality = z.infer<typeof ServiceQualitySchema>
+export type OptionGroup = z.infer<typeof OptionGroupSchema>
+export type Option = z.infer<typeof OptionSchema>
+export type ProductOption = Option
+export type Link = z.infer<typeof LinkSchema>
+export type Service = z.infer<typeof ServiceSchema>
 export type StoreReviews = z.infer<typeof StoreReviewsSchema>
 export type TenantTheme = z.infer<typeof TenantThemeSchema>
-export type Tenant = z.infer<typeof TenantSchema>
+export type BusinessCategory = z.infer<typeof BusinessCategorySchema>
