@@ -5,10 +5,12 @@
   "logo": "/tenants/karine-finardi/logo.png",
   "banner": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11999998888",
-  "address": "R. Virgílio Martins de Oliveira, 438 – Centro, Francisco Morato - SP, CEP 07901-020",
+  "address": "Francisco Morato – SP",
   "currency": "R$",
-  "deliveryFee": 0.00,
-  "minOrderValue": 0.00,
+  "deliveryFee": 0.0,
+  "minOrderValue": 0.0,
+  "template": "shop",
+  "businessCategory": "shop",
   "theme": "barber",
   "category": "Semijoias & Acessórios",
   "distance": "0,5 km",
@@ -33,7 +35,7 @@
           "id": "colar-gravacao-foto",
           "name": "Colar Medalha com Gravação de Foto Afetiva",
           "description": "Medalha com gravação a laser de alta precisão da sua foto favorita. Hipoalergênico e acompanha certificado de garantia de 1 ano.",
-          "price": 89.90,
+          "price": 89.9,
           "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -65,7 +67,7 @@
           "id": "colar-inicial-lumiere",
           "name": "Colar Inicial Lumière com Micro Zircônias",
           "description": "Pingente de letra cravejado com micro zircônias brilhantes. Design exclusivo e delicado para usar sozinho ou em mix.",
-          "price": 69.90,
+          "price": 69.9,
           "image": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -86,7 +88,7 @@
           "id": "pulseira-plaquinha-nome",
           "name": "Pulseira Elos com Plaquinha Gravada",
           "description": "Pulseira de elos delicados com placa personalizada para gravação de nomes, datas especiais ou palavras afetivas.",
-          "price": 59.90,
+          "price": 59.9,
           "image": "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -114,7 +116,7 @@
           "id": "choker-fita-espelhada",
           "name": "Choker Fita Espelhada Banhada a Ouro 18k",
           "description": "A fita espelhada mais desejada! Brilho intenso, caimento maleável perfeito no pescoço e fecho com extensor de 5cm.",
-          "price": 54.90,
+          "price": 54.9,
           "image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -123,7 +125,7 @@
           "id": "mix-colares-ponto-luz",
           "name": "Mix Duplo: Ponto de Luz Zircônia + Corrente Veneziana",
           "description": "Combo pronto e harmonioso de 2 colares sobrepostos. Visual elegante e atemporal para valorizar qualquer produção.",
-          "price": 78.00,
+          "price": 78.0,
           "image": "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -132,7 +134,7 @@
           "id": "colar-gravatinha-cristal",
           "name": "Colar Gravatinha com Zircônias Cristal",
           "description": "Modelo gravatinha ajustável com pingentes de zircônia nas pontas. Valoriza decotes com leveza e sofisticação.",
-          "price": 64.90,
+          "price": 64.9,
           "image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -148,7 +150,7 @@
           "id": "trio-argolinhas-cravejadas",
           "name": "Trio de Argolinhas Click Cravejadas (1º, 2º e 3º Furo)",
           "description": "Conjunto com 3 pares de argolinhas click com micro zircônias. Perfeitas para composição de orelha cheia e confortável para dormir.",
-          "price": 65.00,
+          "price": 65.0,
           "image": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -169,7 +171,7 @@
           "id": "brinco-ear-cuff-ramos",
           "name": "Brinco Ear Cuff Ramos de Zircônia",
           "description": "Design anatômico que contorna a cartilagem da orelha com brilho radiante. Encaixe por pressão sem necessidade de furo extra.",
-          "price": 49.90,
+          "price": 49.9,
           "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -178,7 +180,7 @@
           "id": "brinco-ponto-luz-6mm",
           "name": "Brinco Ponto de Luz Zircônia 6mm Hipoalergênico",
           "description": "Clássico indispensável! Zircônia lapidação brilhante 6mm com tarraxa baby confortável.",
-          "price": 29.90,
+          "price": 29.9,
           "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -194,7 +196,7 @@
           "id": "anel-solitario-regulavel",
           "name": "Anel Solitário Regulável com Zircônia Central",
           "description": "Aro ajustável inteligente que se adapta a qualquer numeração de dedo (do 14 ao 24). Pedra central lapidada com 4 garras.",
-          "price": 45.00,
+          "price": 45.0,
           "image": "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -203,7 +205,7 @@
           "id": "anel-aparador-duplo",
           "name": "Anel Aparador com Micro Cravação Dupla",
           "description": "Anel delicado ideal para usar junto com alianças ou em mixes de anéis. Ajustável e confortável.",
-          "price": 42.00,
+          "price": 42.0,
           "image": "https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -219,7 +221,7 @@
           "id": "buque-semijoias-rosas",
           "name": "Buquê Especial de Semijoias (3 Peças + Rosas Aveludadas)",
           "description": "O presente mais surpreendente e romântico! Buquê montado artesanalmente com rosas de cetim aveludadas contendo 1 Colar, 1 Par de Brincos e 1 Pulseira à sua escolha.",
-          "price": 179.90,
+          "price": 179.9,
           "image": "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": [
@@ -240,7 +242,7 @@
           "id": "caixa-porta-joias-luxo",
           "name": "Porta-Joias Portátil de Luxo + Colar Surpresa",
           "description": "Estojo porta-joias compacto em couro sintético ecológico com divisórias para anéis e colares, acompanhado de 1 colar delicado de presente.",
-          "price": 79.90,
+          "price": 79.9,
           "image": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
@@ -256,7 +258,7 @@
           "id": "kit-start-revendedora",
           "name": "Kit Start Revendedora K.F (Mostruário + R$ 600 em Peças)",
           "description": "Conquiste sua independência financeira revendendo semijoias hipoalergênicas de alta qualidade com garantia de 1 ano. Margem de lucro de 100% + suporte exclusivo da Kah.",
-          "price": 299.90,
+          "price": 299.9,
           "image": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&h=350&fit=crop&q=80",
           "available": true,
           "optionGroups": []
