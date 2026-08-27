@@ -34,6 +34,7 @@ describe('Unit: Validação de Schemas Zod de Tenants (types/tenant.ts)', () => 
         theme: 'food',
         template: 'menu',
         deliveryFee: 5.0,
+        currency: 'R$',
         categories: [
           {
             id: 'burgers',
@@ -53,7 +54,7 @@ describe('Unit: Validação de Schemas Zod de Tenants (types/tenant.ts)', () => 
       const parsed = TenantSchema.parse(mockTenant)
       expect(parsed.slug).toBe('hamburgueria-x')
       expect(parsed.businessCategory).toBe('menu')
-      expect(parsed.currency).toBe('BRL')
+      expect(parsed.currency).toBe('R$')
       expect(parsed.categories?.length).toBe(1)
     })
 
@@ -65,10 +66,11 @@ describe('Unit: Validação de Schemas Zod de Tenants (types/tenant.ts)', () => 
       }
 
       const parsed = TenantSchema.parse(minimalTenant)
-      expect(parsed.currency).toBe('BRL')
+      expect(parsed.currency).toBe('R$')
       expect(parsed.deliveryFee).toBe(0)
       expect(parsed.minOrderValue).toBe(0)
       expect(parsed.template).toBe('menu')
+      expect(parsed.businessCategory).toBe('menu')
       expect(parsed.theme).toBe('food')
     })
   })
