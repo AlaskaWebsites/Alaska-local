@@ -1,39 +1,63 @@
 // composables/useTenant.ts
+import { computed, isRef, type Ref } from 'vue'
 import { TenantSchema, type Tenant } from '~/types/tenant'
 
-export async function useTenant(customSlug?: string) {
+/**
+ * Composable reativo e SSR-safe para resolução de Tenant pelo slug da rota ou customizado.
+ * Retorna referências reativas síncronas sem envolver a chamada em Promise desnecessária.
+ */
+export function useTenant(customSlug?: string | Ref<string | null | undefined>) {
     const route = useRoute()
-    const slug = customSlug || (route.params.slug as string) || 'hamburgueria-x'
 
-    const { data: tenant, pending, error } = await useAsyncData(
-        `tenant-${slug}`,
-        async () => {
+    // Resolve o slug reativamente
+    const slug = computed(() => {
+        if (customSlug) {
+            const val = isRef(customSlug) ? customSlug.value : customSlug
+            if (val) return String(val).toLowerCase()
+        }
+        return (route.params.slug as string)?.toLowerCase() || 'hamburgueria-x'
+    })
+
+    const { data: tenant, pending, error } = useAsyncData<Tenant | null>(
+        `tenant-${slug.value}`,
+        () => {
             try {
                 const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<
                     string,
                     { default: any }
                 >
-                const fileKeys = Object.keys(files)
+                const targetSlug = slug.value
 
-                const matchedKey = fileKeys.find((key) => key.endsWith(`/${slug}.json`))
-                if (matchedKey && files[matchedKey]) {
-                    return TenantSchema.parse(files[matchedKey].default)
+                // Busca direta pelo slug correspondente
+                for (const key in files) {
+                    if (key.endsWith(`/${targetSlug}.json`)) {
+                        const raw = files[key].default || files[key]
+                        const parsed = TenantSchema.safeParse(raw)
+                        if (parsed.success) {
+                            return parsed.data
+                        }
+                    }
                 }
 
-                const fallbackKey =
-                    fileKeys.find((key) => key.includes('hamburgueria-x.json')) || fileKeys[0]
-                if (fallbackKey && files[fallbackKey]) {
-                    return TenantSchema.parse(files[fallbackKey].default)
+                // Fallback de segurança para hamburgueria-x ou primeiro catálogo
+                for (const key in files) {
+                    if (key.includes('hamburgueria-x.json')) {
+                        const raw = files[key].default || files[key]
+                        const parsed = TenantSchema.safeParse(raw)
+                        if (parsed.success) {
+                            return parsed.data
+                        }
+                    }
                 }
 
-                throw new Error('Nenhum arquivo de demonstração encontrado.')
+                return null
             } catch (err) {
-                console.error(`Erro ao carregar tenant [${slug}]:`, err)
-                throw createError({
-                    statusCode: 404,
-                    statusMessage: 'Estabelecimento não encontrado',
-                })
+                console.error(`Erro ao carregar tenant [${slug.value}]:`, err)
+                return null
             }
+        },
+        {
+            watch: [slug],
         }
     )
 
