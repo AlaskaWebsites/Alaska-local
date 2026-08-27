@@ -2,13 +2,15 @@
   "slug": "clinica-sorriso",
   "name": "Clínica Sorriso",
   "description": "Odontologia moderna com foco em estética, implantes e saúde bucal.",
-  "logo": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200&h=200&fit=crop&q=80",
+  "logo": "/tenants/clinica-sorriso/logo.png",
   "banner": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11966665555",
   "address": "Rua da Saúde, 321 - Centro",
   "currency": "R$",
   "deliveryFee": 0,
   "minOrderValue": 0,
+  "template": "pro",
+  "businessCategory": "pro",
   "theme": "health",
   "openingHours": {
     "open": "08:00",
@@ -21,16 +23,16 @@
       "icon": "stethoscope",
       "products": [
         {
-          "id": "avaliacao-odontologica",
-          "name": "Avaliação Inicial + Check-up Digital",
-          "description": "Exame clínico detalhado, diagnóstico preventivo e plano de tratamento personalizado.",
-          "price": 80.00,
-          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&h=350&fit=crop&q=80",
+          "id": "avaliacao-geral",
+          "name": "Avaliação Clínica Geral + Check-up Digital",
+          "description": "Exame visual minucioso, mapeamento da saúde gengival, diagnóstico e plano de tratamento personalizado.",
+          "price": 100.0,
+          "image": "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&h=600&fit=crop&q=80",
           "available": true,
           "optionGroups": [
             {
-              "id": "periodo-preferencia",
-              "title": "Período de Preferência para Atendimento",
+              "id": "periodo-preferencial",
+              "title": "Período de Preferência",
               "required": true,
               "min": 1,
               "max": 1,
@@ -42,38 +44,35 @@
           ]
         },
         {
-          "id": "profilaxia-limpeza",
+          "id": "limpeza-completa",
           "name": "Limpeza Completa (Profilaxia + Remoção de Tártaro)",
-          "description": "Raspagem ultrassônica, polimento coronário e aplicação tópica de flúor.",
-          "price": 140.00,
-          "image": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "description": "Remoção ultrassônica de tártaro e placa bacteriana, polimento dental com pasta profilática e aplicação de flúor.",
+          "price": 150.0,
+          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&h=600&fit=crop&q=80",
+          "available": true
         }
       ]
     },
     {
-      "id": "estetica-clareamento",
+      "id": "estetica-dental",
       "name": "Estética & Clareamento",
       "icon": "sparkles",
       "products": [
         {
           "id": "clareamento-caseiro",
           "name": "Clareamento Dental Caseiro Supervisionado",
-          "description": "Moldeiras de silicone sob medida + kit de gel clareador para uso domiciliar com acompanhamento.",
-          "price": 380.00,
-          "image": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "description": "Confecção de moldeiras personalizadas de silicone + 4 seringas de gel clareador de alta eficiência.",
+          "price": 450.0,
+          "image": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=600&fit=crop&q=80",
+          "available": true
         },
         {
           "id": "restauracao-estetica",
           "name": "Restauração Estética em Resina",
-          "description": "Reconstrução anatômica com resina composta de alta resistência na cor exata do dente.",
-          "price": 120.00,
-          "image": "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "description": "Reconstrução anatômica de dentes fraturados ou substituição de restaurações escuras por resina com cor natural.",
+          "price": 180.0,
+          "image": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&h=600&fit=crop&q=80",
+          "available": true
         }
       ]
     }
