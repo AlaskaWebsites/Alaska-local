@@ -69,9 +69,9 @@
                 </div>
 
                 <!-- Opcionais / Adicionais Escolhidos -->
-                <div v-if="item.options.length > 0" class="mt-1 space-y-0.5 pl-6">
+                <div v-if="getCartItemOptions(item).length > 0" class="mt-1 space-y-0.5 pl-6">
                   <p
-                    v-for="opt in item.options"
+                    v-for="opt in getCartItemOptions(item)"
                     :key="opt.id"
                     class="text-[11px] text-slate-500 flex items-center justify-between"
                   >
@@ -83,8 +83,8 @@
                 </div>
 
                 <!-- Observação do Item -->
-                <p v-if="item.notes" class="text-[11px] text-slate-400 italic mt-1 pl-6">
-                  "{{ item.notes }}"
+                <p v-if="getCartItemNotes(item)" class="text-[11px] text-slate-400 italic mt-1 pl-6">
+                  "{{ getCartItemNotes(item) }}"
                 </p>
 
                 <p class="font-bold text-xs mt-2 pl-6" :class="themeClasses.primaryText">
@@ -142,11 +142,11 @@
               <button
                 type="button"
                 role="radio"
-                :aria-checked="form.deliveryType === 'takeaway'"
+                :aria-checked="form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'"
                 @click="form.deliveryType = 'takeaway'"
                 :class="[
                   'py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer',
-                  form.deliveryType === 'takeaway'
+                  form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'
                     ? 'bg-white text-slate-900 shadow-xs'
                     : 'text-slate-500 hover:text-slate-800'
                 ]"
@@ -203,7 +203,7 @@
                 <div class="relative flex items-center">
                   <input
                     id="checkout-cep"
-                    v-model="form.address.cep"
+                    v-model="formAddress.cep"
                     @input="onCepInput"
                     @blur="onCepBlur"
                     type="text"
@@ -216,7 +216,7 @@
                   <div v-if="isLoadingCep" class="absolute right-3 text-slate-400 pointer-events-none">
                     <Loader2 class="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
                   </div>
-                  <div v-else-if="form.address.street && !cepError" class="absolute right-3 text-emerald-600 pointer-events-none">
+                  <div v-else-if="formAddress.street && !cepError" class="absolute right-3 text-emerald-600 pointer-events-none">
                     <Check class="w-3.5 h-3.5" aria-hidden="true" />
                   </div>
                 </div>
@@ -230,7 +230,7 @@
                 <div class="col-span-2 space-y-1">
                   <input
                     id="checkout-street"
-                    v-model="form.address.street"
+                    v-model="formAddress.street"
                     type="text"
                     placeholder="Rua / Avenida *"
                     class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
@@ -242,7 +242,7 @@
                   <input
                     id="checkout-number"
                     ref="numberInputRef"
-                    v-model="form.address.number"
+                    v-model="formAddress.number"
                     type="text"
                     placeholder="Nº *"
                     class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
@@ -256,7 +256,7 @@
               <div class="grid grid-cols-2 gap-2">
                 <input
                   id="checkout-neighborhood"
-                  v-model="form.address.neighborhood"
+                  v-model="formAddress.neighborhood"
                   type="text"
                   placeholder="Bairro *"
                   class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
@@ -265,7 +265,7 @@
                 />
                 <input
                   id="checkout-complement"
-                  v-model="form.address.complement"
+                  v-model="formAddress.complement"
                   type="text"
                   placeholder="Complemento (Apto, Bloco)"
                   class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
@@ -434,6 +434,29 @@ const form = useLocalStorage<CheckoutFormData>('alaska_checkout_profile', {
   mergeDefaults: true
 })
 
+// Garantia defensiva de inicialização de address para perfis pré-existentes no localStorage
+const formAddress = computed(() => {
+  if (!form.value.address) {
+    form.value.address = {
+      cep: '',
+      street: '',
+      number: '',
+      neighborhood: '',
+      complement: ''
+    }
+  }
+  return form.value.address
+})
+
+// Helpers para compatibilidade total entre itens do carrinho (options vs selectedOptions, notes vs observation)
+function getCartItemOptions(item: any): any[] {
+  return item.options || item.selectedOptions || []
+}
+
+function getCartItemNotes(item: any): string {
+  return item.notes || item.observation || ''
+}
+
 // 6. Consulta Automática de CEP (ViaCEP)
 const { isLoadingCep, cepError, lookupCep } = useCep()
 
@@ -443,11 +466,11 @@ async function triggerCepSearch(rawCep?: string) {
   if (clean.length === 8) {
     const address = await lookupCep(clean)
     if (address) {
-      form.value.address.street = address.street
-      form.value.address.neighborhood = address.neighborhood
-      form.value.address.city = address.city
-      form.value.address.state = address.state
-      form.value.address.cep = address.cep
+      formAddress.value.street = address.street
+      formAddress.value.neighborhood = address.neighborhood
+      formAddress.value.city = address.city
+      formAddress.value.state = address.state
+      formAddress.value.cep = address.cep
 
       // Micro-UX: Move o cursor automaticamente para o campo de número da residência
       await nextTick()
@@ -459,7 +482,7 @@ async function triggerCepSearch(rawCep?: string) {
 function onCepInput(e: Event) {
   const target = e.target as HTMLInputElement
   const formatted = formatCep(target.value)
-  form.value.address.cep = formatted
+  formAddress.value.cep = formatted
 
   const clean = sanitizeDigits(formatted)
   if (clean.length === 8) {
@@ -468,8 +491,8 @@ function onCepInput(e: Event) {
 }
 
 function onCepBlur() {
-  if (form.value.address.cep) {
-    triggerCepSearch(form.value.address.cep)
+  if (formAddress.value.cep) {
+    triggerCepSearch(formAddress.value.cep)
   }
 }
 
@@ -483,7 +506,7 @@ const subtotal = computed(() => {
 })
 
 const deliveryFee = computed(() => {
-  if (form.value.deliveryType === 'takeaway') return 0
+  if (form.value.deliveryType === 'takeaway' || (form.value.deliveryType as string) === 'pickup') return 0
   return props.tenant?.deliveryFee || 0
 })
 
@@ -493,13 +516,13 @@ const orderTotal = computed(() => {
 
 // 8. Validação do Formulário
 const isFormValid = computed(() => {
-  if (!form.value.customerName.trim()) return false
+  if (!form.value.customerName?.trim()) return false
   if (props.items.length === 0) return false
 
   if (form.value.deliveryType === 'delivery') {
-    if (!form.value.address.street.trim()) return false
-    if (!form.value.address.number.trim()) return false
-    if (!form.value.address.neighborhood.trim()) return false
+    if (!formAddress.value.street?.trim()) return false
+    if (!formAddress.value.number?.trim()) return false
+    if (!formAddress.value.neighborhood?.trim()) return false
   }
 
   return true
