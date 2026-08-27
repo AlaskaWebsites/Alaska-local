@@ -2,88 +2,95 @@
   "slug": "barbearia-style",
   "name": "Barbearia Style",
   "description": "Cortes modernos, barba com toalha quente, pigmentação e estética masculina.",
-  "logo": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=200&h=200&fit=crop&q=80",
+  "logo": "/tenants/barbearia-style/logo.png",
   "banner": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1200&h=400&fit=crop&q=80",
   "phoneWhatsApp": "11977776666",
   "address": "Rua das Barbearias, 456 - Centro",
   "currency": "R$",
   "deliveryFee": 0,
   "minOrderValue": 0,
+  "template": "hub",
+  "businessCategory": "hub",
   "theme": "barber",
   "openingHours": {
     "open": "09:00",
-    "close": "19:00"
+    "close": "20:00"
   },
   "categories": [
     {
-      "id": "servicos-principais",
-      "name": "Cortes & Serviços",
+      "id": "cortes-cabelo",
+      "name": "Cortes & Cabelo",
       "icon": "scissors",
       "products": [
         {
-          "id": "corte-degrade-navalhado",
+          "id": "corte-social",
+          "name": "Corte Social Clássico",
+          "description": "Corte na tesoura e máquina, acabamento com navalhete e finalização com pomada matte.",
+          "price": 35.0,
+          "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&h=600&fit=crop&q=80",
+          "available": true
+        },
+        {
+          "id": "corte-degrade",
           "name": "Corte Degradê / Fade Navalhado",
-          "description": "Lavagem, corte moderno personalizado na tesoura/máquina, finalização com pomada e alinhamento.",
-          "price": 45.00,
-          "image": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": [
-            {
-              "id": "profissional-barbearia",
-              "title": "Barbeiro de Preferência",
-              "required": false,
-              "min": 0,
-              "max": 1,
-              "options": [
-                { "id": "barbeiro-qualquer", "name": "Qualquer Profissional Disponível", "price": 0, "maxQuantity": 1 },
-                { "id": "barbeiro-lucas", "name": "Lucas (Master)", "price": 0, "maxQuantity": 1 },
-                { "id": "barbeiro-marcos", "name": "Marcos (Fade Specialist)", "price": 0, "maxQuantity": 1 }
-              ]
-            }
-          ]
+          "description": "Degradê suave (Skin Fade, Mid Fade ou Low Fade) com acabamento navalhado de alta precisão.",
+          "price": 45.0,
+          "image": "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=600&fit=crop&q=80",
+          "available": true
         },
         {
-          "id": "barboterapia-completa",
-          "name": "Barba Terapia com Toalha Quente",
-          "description": "Esfoliação facial, toalha quente aromática, óleo hidratante e desenho de barba na navalha.",
-          "price": 35.00,
-          "image": "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
-        },
-        {
-          "id": "combo-corte-barba",
-          "name": "Combo VIP: Corte + Barba + Sobrancelha",
-          "description": "O pacote completo com desconto: Corte degradê, barboterapia relaxante e alinhamento de sobrancelha.",
-          "price": 70.00,
-          "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "id": "corte-infantil",
+          "name": "Corte Infantil (Até 12 anos)",
+          "description": "Atendimento paciente e especializado para os pequenos, com acabamento seguro e penteado estilizado.",
+          "price": 35.0,
+          "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=600&fit=crop&q=80",
+          "available": true
         }
       ]
     },
     {
-      "id": "tratamentos-quimica",
-      "name": "Química & Tratamentos",
+      "id": "barba-terapia",
+      "name": "Barba & Cuidados",
       "icon": "sparkles",
       "products": [
         {
-          "id": "pigmentacao-barba-cabelo",
-          "name": "Pigmentação de Barba / Cabelo",
-          "description": "Disfarce de falhas e realce dos contornos com acabamento natural.",
-          "price": 25.00,
-          "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "id": "barba-terapia-tradicional",
+          "name": "Barba Terapia com Toalha Quente",
+          "description": "Higienização facial, toalha quente com óleos essenciais, desenho com navalhete e pós-barba refrescante.",
+          "price": 35.0,
+          "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=600&fit=crop&q=80",
+          "available": true
         },
         {
-          "id": "selagem-alisamento",
-          "name": "Selagem / Alinhamento dos Fios",
-          "description": "Redução de volume e hidratação profunda para cabelos rebeldes.",
-          "price": 60.00,
-          "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=500&h=350&fit=crop&q=80",
-          "available": true,
-          "optionGroups": []
+          "id": "barba-express",
+          "name": "Aparação de Barba Express",
+          "description": "Alinhamento na máquina e acabamento rápido nas bochechas e pescoço.",
+          "price": 20.0,
+          "image": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&h=600&fit=crop&q=80",
+          "available": true
+        },
+        {
+          "id": "pigmentacao-barba",
+          "name": "Pigmentação de Barba / Cabelo",
+          "description": "Disfarce de fios brancos e falhas com tintura natural e efeito ultra realista.",
+          "price": 30.0,
+          "image": "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?w=600&h=600&fit=crop&q=80",
+          "available": true
+        }
+      ]
+    },
+    {
+      "id": "combos-vip",
+      "name": "Combos Promocionais",
+      "icon": "flame",
+      "products": [
+        {
+          "id": "combo-corte-barba",
+          "name": "Combo VIP: Corte + Barba + Sobrancelha",
+          "description": "Experiência completa! Corte degradê ou clássico + barboterapia com toalha quente + design de sobrancelha.",
+          "price": 70.0,
+          "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=600&fit=crop&q=80",
+          "available": true
         }
       ]
     }
