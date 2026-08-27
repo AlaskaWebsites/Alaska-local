@@ -10,7 +10,7 @@
       @click="emit('close')"
     >
       <div
-        class="bg-white text-slate-800 w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-200 sm:shadow-2xl"
+        class="bg-white text-slate-800 w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-lg flex flex-col overflow-hidden sm:rounded-3xl sm:border sm:border-slate-200 sm:shadow-2xl"
         @click.stop
       >
         <!-- Header do Modal -->
@@ -122,57 +122,113 @@
             </div>
           </section>
 
-          <!-- 3. Seleção de Data & Horário (Slot Picker) -->
-          <section aria-labelledby="booking-datetime-title" class="space-y-3 pt-2 border-t border-slate-100">
-            <h3 id="booking-datetime-title" class="font-bold text-xs uppercase tracking-wider text-slate-500">
-              3. Data & Horário Desejado *
-            </h3>
+          <!-- 3. Seleção de Data & Horário (Calendário Contínuo & Slot Picker) -->
+          <section aria-labelledby="booking-datetime-title" class="space-y-3.5 pt-2 border-t border-slate-100">
+            <div class="flex items-center justify-between">
+              <h3 id="booking-datetime-title" class="font-bold text-xs uppercase tracking-wider text-slate-500">
+                3. Data & Horário Desejado *
+              </h3>
 
-            <!-- Seletor de Dias em Pílula -->
-            <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar" role="tablist" aria-label="Selecione o dia">
+              <!-- Filtro / Navegação de Mês -->
+              <div v-if="availableMonths.length > 1" class="flex items-center gap-1">
+                <button
+                  v-for="m in availableMonths"
+                  :key="m.key"
+                  type="button"
+                  @click="selectedMonthFilter = m.key"
+                  class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border"
+                  :class="selectedMonthFilter === m.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'"
+                >
+                  {{ m.label }} {{ m.year }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Seletor de Dias em Pílula (30 Dias Contínuos) -->
+            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist" aria-label="Selecione o dia para o agendamento">
               <button
-                v-for="day in availableDays"
+                v-for="day in filteredDays"
                 :key="day.dateStr"
                 type="button"
                 role="tab"
+                :disabled="day.isClosed"
                 :aria-selected="selectedDate === day.dateStr"
-                @click="selectedDate = day.dateStr"
-                class="px-3.5 py-2 rounded-2xl border text-center shrink-0 transition-all cursor-pointer shadow-2xs"
-                :class="selectedDate === day.dateStr ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'"
+                :aria-disabled="day.isClosed"
+                @click="!day.isClosed && selectDay(day.dateStr)"
+                class="px-3.5 py-2.5 rounded-2xl border text-center shrink-0 transition-all shadow-2xs flex flex-col items-center justify-center min-w-[62px]"
+                :class="[
+                  day.isClosed
+                    ? 'opacity-40 bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed line-through'
+                    : selectedDate === day.dateStr
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm scale-102 cursor-pointer'
+                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 cursor-pointer'
+                ]"
               >
-                <span class="text-[10px] font-bold block opacity-80 uppercase">{{ day.weekDay }}</span>
-                <span class="font-black text-xs block">{{ day.displayDate }}</span>
+                <span class="text-[10px] font-bold block uppercase tracking-tight"
+                  :class="selectedDate === day.dateStr ? 'text-slate-300' : (day.isClosed ? 'text-slate-400' : 'text-slate-500')">
+                  {{ day.weekDay }}
+                </span>
+                <span class="font-black text-xs block mt-0.5">
+                  {{ day.displayDate }}
+                </span>
+                <span v-if="day.isClosed" class="text-[8px] font-bold uppercase mt-0.5 text-red-500 block">
+                  Fechado
+                </span>
               </button>
             </div>
 
-            <!-- Grade de Horários (Slots Dinâmicos) -->
-            <div v-if="timeSlots.length > 0" class="space-y-1.5 pt-1">
-              <span class="text-[11px] font-bold text-slate-600 block">Horários Disponíveis:</span>
+            <!-- Grade de Horários com Bloqueios Reais (Disponíveis vs Ocupados) -->
+            <div v-if="timeSlots.length > 0" class="space-y-2 pt-1">
+              <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <span class="font-bold text-slate-700">Horários para {{ selectedDate }}:</span>
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center gap-1 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Livre
+                  </span>
+                  <span class="flex items-center gap-1 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-slate-300"></span> Ocupado
+                  </span>
+                </div>
+              </div>
+
               <div class="grid grid-cols-4 sm:grid-cols-6 gap-2" role="group" aria-label="Horários disponíveis">
                 <button
                   v-for="slot in timeSlots"
                   :key="slot.time"
                   type="button"
-                  @click="selectedTime = slot.time"
-                  class="py-2 px-1 text-center font-bold text-xs rounded-xl border transition-all cursor-pointer shadow-2xs"
-                  :class="selectedTime === slot.time
-                    ? [themeClasses.primaryBg, 'text-white border-transparent shadow-xs scale-102']
-                    : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'"
-                  :aria-label="`Selecionar horário ${slot.time}`"
+                  :disabled="!slot.available"
+                  :aria-disabled="!slot.available"
+                  @click="slot.available && (selectedTime = slot.time)"
+                  class="py-2.5 px-1 text-center font-bold text-xs rounded-xl border transition-all shadow-2xs relative"
+                  :class="[
+                    !slot.available
+                      ? slot.reason === 'past'
+                        ? 'opacity-40 bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed line-through'
+                        : 'opacity-45 bg-red-50/70 text-red-500 border-red-100 cursor-not-allowed line-through'
+                      : selectedTime === slot.time
+                        ? [themeClasses.primaryBg, 'text-white border-transparent shadow-sm scale-102 cursor-pointer']
+                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 cursor-pointer'
+                  ]"
+                  :aria-label="slot.available ? `Horário ${slot.time} disponível` : `Horário ${slot.time} indisponível (${slot.reason === 'past' ? 'Passado' : 'Ocupado'})`"
                 >
-                  {{ slot.time }}
+                  <span>{{ slot.time }}</span>
                 </button>
               </div>
             </div>
-            <div v-else class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-xs">
-              Nenhum horário livre para agendamento online hoje. Escolha outro dia ou consulte pelo WhatsApp.
+
+            <!-- Estado de Dia Fechado -->
+            <div v-else class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-800 text-xs space-y-1">
+              <p class="font-bold">⚠️ Estabelecimento fechado nesta data.</p>
+              <p class="text-[11px] text-amber-700 leading-relaxed">
+                Selecione outro dia no calendário acima para visualizar os horários disponíveis.
+              </p>
             </div>
           </section>
 
           <!-- 4. Dados do Cliente -->
           <section aria-labelledby="booking-client-title" class="space-y-3 pt-2 border-t border-slate-100">
             <h3 id="booking-client-title" class="font-bold text-xs uppercase tracking-wider text-slate-500">
-              4. Seus Dados
+              4. Seus Dados para Confirmação
             </h3>
 
             <div class="space-y-2.5">
@@ -203,12 +259,12 @@
               </div>
 
               <div class="space-y-1">
-                <label for="booking-notes" class="font-bold text-slate-700 block">Observações / Procedimento Desejado (Opcional)</label>
+                <label for="booking-notes" class="font-bold text-slate-700 block">Observações / Preferências (Opcional)</label>
                 <textarea
                   id="booking-notes"
                   v-model="notes"
                   rows="2"
-                  placeholder="Ex: Primeira vez, corte específico, sensibilidade..."
+                  placeholder="Ex: Primeira vez na barbearia, corte específico, sensibilidade..."
                   class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all resize-none"
                   :class="themeClasses.focusRing"
                 ></textarea>
@@ -223,7 +279,7 @@
             <div>
               <span class="text-slate-500 block text-[11px]">Duração & Horário</span>
               <span class="text-slate-900 font-extrabold">
-                {{ selectedTime ? `${selectedTime} (${totalDuration} min)` : 'Selecione um horário' }}
+                {{ selectedTime ? `${selectedDate} às ${selectedTime} (${totalDuration} min)` : 'Selecione um horário' }}
               </span>
             </div>
             <div class="text-right">
@@ -284,18 +340,30 @@ if (import.meta.client) {
   })
 }
 
-// 3. Composable de Lógica de Agendamento
+// 3. Composable de Lógica de Agendamento com Suporte a 30 Dias e Bloqueios
 const {
   selectedServices,
   selectedProfessional,
   selectedDate,
   selectedTime,
+  selectedMonthFilter,
+  availableMonths,
+  filteredDays,
+  timeSlots,
   totalDuration,
   totalPrice,
   toggleService,
-  generateTimeSlots,
   formatBookingWhatsAppMessage,
-} = useBookingSlots()
+} = useBookingSlots({
+  openTime: props.tenant.openingHours?.open || '09:00',
+  closeTime: props.tenant.openingHours?.close || '20:00',
+  totalDays: 30,
+})
+
+function selectDay(dateStr: string) {
+  selectedDate.value = dateStr
+  selectedTime.value = '' // Reseta o horário ao trocar de dia
+}
 
 // 4. Extração de Serviços e Profissionais do Tenant
 const availableServices = computed<BookingService[]>(() => {
@@ -335,54 +403,12 @@ watch(
   { immediate: true }
 )
 
-// 6. Geração de Dias Disponíveis (Hoje + Próximos 5 Dias)
-const availableDays = computed(() => {
-  const days: { dateStr: string; displayDate: string; weekDay: string }[] = []
-  const weekDaysLabels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
-  const now = new Date()
-
-  for (let i = 0; i < 6; i++) {
-    const d = new Date(now)
-    d.setDate(now.getDate() + i)
-
-    const day = String(d.getDate()).padStart(2, '0')
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const year = d.getFullYear()
-    const dateStr = `${day}/${month}/${year}`
-
-    days.push({
-      dateStr,
-      displayDate: `${day}/${month}`,
-      weekDay: i === 0 ? 'Hoje' : i === 1 ? 'Amanhã' : weekDaysLabels[d.getDay()],
-    })
-  }
-  return days
-})
-
-// Auto-seleciona o primeiro dia disponível
-watch(
-  availableDays,
-  (days) => {
-    if (!selectedDate.value && days.length > 0) {
-      selectedDate.value = days[0].dateStr
-    }
-  },
-  { immediate: true }
-)
-
-// 7. Geração de Slots de Horários baseados em OpeningHours
-const timeSlots = computed(() => {
-  const open = props.tenant.openingHours?.open || '09:00'
-  const close = props.tenant.openingHours?.close || '20:00'
-  return generateTimeSlots(open, close, 30)
-})
-
-// 8. Persistência de Dados do Cliente
+// 6. Persistência de Dados do Cliente
 const customerName = useLocalStorage('alaska_booking_name', '')
 const customerPhone = useLocalStorage('alaska_booking_phone', '')
 const notes = ref('')
 
-// 9. Validação do Formulário de Agendamento
+// 7. Validação do Formulário de Agendamento
 const isBookingValid = computed(() => {
   if (selectedServices.value.length === 0) return false
   if (!selectedDate.value) return false
@@ -392,7 +418,7 @@ const isBookingValid = computed(() => {
   return true
 })
 
-// 10. Despacho Estruturado para o WhatsApp
+// 8. Despacho Estruturado para o WhatsApp
 function submitBooking() {
   if (!isBookingValid.value || !props.tenant) return
 
