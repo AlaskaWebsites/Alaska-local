@@ -122,30 +122,58 @@
             </div>
           </section>
 
-          <!-- 3. Seleção de Data & Horário (Calendário Contínuo & Slot Picker) -->
+          <!-- 3. Seleção de Data & Horário (Calendário Contínuo com Navegação Desktop/Mobile) -->
           <section aria-labelledby="booking-datetime-title" class="space-y-3.5 pt-2 border-t border-slate-100">
             <div class="flex items-center justify-between">
               <h3 id="booking-datetime-title" class="font-bold text-xs uppercase tracking-wider text-slate-500">
                 3. Data & Horário Desejado *
               </h3>
 
-              <!-- Filtro / Navegação de Mês -->
-              <div v-if="availableMonths.length > 1" class="flex items-center gap-1">
+              <!-- Controles: Mês e Setas de Navegação Horizontal no Desktop -->
+              <div class="flex items-center gap-1.5">
+                <div v-if="availableMonths.length > 1" class="flex items-center gap-1 mr-1">
+                  <button
+                    v-for="m in availableMonths"
+                    :key="m.key"
+                    type="button"
+                    @click="selectedMonthFilter = m.key"
+                    class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border"
+                    :class="selectedMonthFilter === m.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'"
+                  >
+                    {{ m.label }} {{ m.year }}
+                  </button>
+                </div>
+
+                <!-- Botões de Navegação Horizontal das Pílulas de Dias -->
                 <button
-                  v-for="m in availableMonths"
-                  :key="m.key"
                   type="button"
-                  @click="selectedMonthFilter = m.key"
-                  class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border"
-                  :class="selectedMonthFilter === m.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'"
+                  @click="scrollDays('left')"
+                  class="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer border border-slate-200 shadow-2xs active:scale-95"
+                  aria-label="Rolar dias para a esquerda"
+                  title="Dias anteriores"
                 >
-                  {{ m.label }} {{ m.year }}
+                  <ChevronLeft class="w-3.5 h-3.5" aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  @click="scrollDays('right')"
+                  class="p-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer border border-slate-200 shadow-2xs active:scale-95"
+                  aria-label="Rolar dias para a direita"
+                  title="Próximos dias"
+                >
+                  <ChevronRight class="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
             </div>
 
-            <!-- Seletor de Dias em Pílula (30 Dias Contínuos) -->
-            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist" aria-label="Selecione o dia para o agendamento">
+            <!-- Seletor de Dias em Pílula com Suporte a Mouse Wheel e Scroll Suave -->
+            <div
+              ref="daysContainerRef"
+              @wheel.prevent="handleDaysWheel"
+              class="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
+              role="tablist"
+              aria-label="Selecione o dia para o agendamento"
+            >
               <button
                 v-for="day in filteredDays"
                 :key="day.dateStr"
@@ -309,7 +337,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
-import { Calendar, X, Send } from 'lucide-vue-next'
+import { Calendar, X, Send, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useBookingSlots } from '~/composables/useBookingSlots'
@@ -359,6 +387,22 @@ const {
   closeTime: props.tenant.openingHours?.close || '20:00',
   totalDays: 30,
 })
+
+// Referência do container de dias para navegação desktop
+const daysContainerRef = ref<HTMLElement | null>(null)
+
+function scrollDays(direction: 'left' | 'right') {
+  if (!daysContainerRef.value) return
+  const offset = direction === 'left' ? -240 : 240
+  daysContainerRef.value.scrollBy({ left: offset, behavior: 'smooth' })
+}
+
+function handleDaysWheel(e: WheelEvent) {
+  if (!daysContainerRef.value) return
+  // Converte a rolagem vertical da rodinha do mouse em rolagem horizontal suave nos dias
+  const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX
+  daysContainerRef.value.scrollLeft += delta
+}
 
 function selectDay(dateStr: string) {
   selectedDate.value = dateStr
