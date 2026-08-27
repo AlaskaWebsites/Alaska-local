@@ -1,3 +1,4 @@
+<!-- pages/index.vue -->
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-900 pb-16">
     <!-- Header e Apresentação -->
@@ -50,7 +51,7 @@
           v-for="store in filteredTenants"
           :key="store.slug"
           :to="`/${store.slug}`"
-          :aria-label="`Acessar demonstração de ${store.name}. ${getStoreCategoryLabel(store.businessCategory || store.template)}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
+          :aria-label="`Acessar demonstração de ${store.name}. ${getStoreCategoryLabel(resolveCategory(store))}${store.reviews ? `. Avaliação ${store.reviews.score.toFixed(1)} de 5 estrelas` : ''}`"
           class="group bg-white rounded-2xl border border-slate-200 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]"
           :class="getStoreBorderHover(store.theme)"
         >
@@ -68,16 +69,16 @@
 
             <!-- Badge de Categoria de Negócio -->
             <span class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm backdrop-blur-md"
-              :class="getCategoryBadgeClass(store.businessCategory || store.template)">
-              {{ getStoreCategoryLabel(store.businessCategory || store.template) }}
+              :class="getCategoryBadgeClass(resolveCategory(store))">
+              {{ getStoreCategoryLabel(resolveCategory(store)) }}
             </span>
           </div>
 
-          <!-- Conteúdo e Informações do Card -->
+          <!-- Informações e Corpo do Card -->
           <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
             <div>
-              <div class="flex items-center justify-between gap-2">
-                <h2 class="font-bold text-base text-slate-900 transition-colors truncate"
+              <div class="flex items-start justify-between gap-2">
+                <h2 class="font-bold text-base text-slate-900 group-hover:text-slate-700 transition-colors line-clamp-1"
                   :class="getStoreTitleHover(store.theme)">
                   {{ store.name }}
                 </h2>
@@ -97,7 +98,7 @@
             <!-- Botão de Ação -->
             <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold"
               :class="getStoreTextHover(store.theme)">
-              <span>{{ getStoreActionText(store.businessCategory || store.template) }}</span>
+              <span>{{ getStoreActionText(resolveCategory(store)) }}</span>
               <ChevronRight class="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </div>
           </div>
@@ -124,23 +125,24 @@ const activeCategory = ref<FilterCategory>('all')
 
 // 1. Carregamento de Todos os Arquivos JSON de Tenants
 const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<string, { default: any }>
+
 const tenantsList = computed<Tenant[]>(() => {
   const list: Tenant[] = []
-  Object.values(files).forEach((mod) => {
-    try {
-      const parsed = TenantSchema.parse(mod.default || mod)
-      list.push(parsed)
-    } catch (e) {
-      console.error('Erro ao validar tenant:', e)
+  for (const path in files) {
+    const raw = files[path].default || files[path]
+    const parsed = TenantSchema.safeParse(raw)
+    if (parsed.success) {
+      list.push(parsed.data)
     }
-  })
+  }
   return list
 })
 
 function resolveCategory(tenant: Tenant): BusinessCategory {
   if (tenant.businessCategory) return tenant.businessCategory
   if (tenant.slug === 'bella-donna' || tenant.slug === 'karine-finardi') return 'shop'
-  if (tenant.slug === 'barbearia-style' || tenant.slug === 'clinica-sorriso') return 'hub'
+  if (tenant.slug === 'barbearia-style') return 'hub'
+  if (tenant.slug === 'clinica-sorriso') return 'pro'
   if (tenant.template === 'hub' || tenant.template === 'booking') return 'hub'
   if (tenant.template === 'pro') return 'pro'
   return 'menu'
@@ -178,7 +180,7 @@ function getStoreCategoryLabel(cat?: string): string {
     case 'hub':
       return '💈 Serviços & Agenda'
     case 'pro':
-      return '⚖️ Institucional & Pro'
+      return '🦷 Consultas & Pro'
     default:
       return '🍔 Cardápio & Delivery'
   }
@@ -191,7 +193,7 @@ function getCategoryBadgeClass(cat?: string): string {
     case 'hub':
       return 'bg-amber-950/80 text-amber-200 border border-amber-800'
     case 'pro':
-      return 'bg-blue-950/80 text-blue-200 border border-blue-800'
+      return 'bg-teal-950/80 text-teal-200 border border-teal-800'
     default:
       return 'bg-red-950/80 text-red-200 border border-red-800'
   }
@@ -204,7 +206,7 @@ function getStoreActionText(cat?: string): string {
     case 'hub':
       return 'Ver serviços e agendar'
     case 'pro':
-      return 'Acessar perfil institucional'
+      return 'Agendar consulta / avaliação'
     default:
       return 'Acessar cardápio completo'
   }
@@ -226,13 +228,13 @@ function getStoreTitleHover(theme?: string): string {
 function getStoreBorderHover(theme?: string): string {
   switch (theme) {
     case 'barber':
-      return 'hover:border-amber-300'
+      return 'hover:border-amber-400'
     case 'health':
-      return 'hover:border-teal-300'
+      return 'hover:border-teal-400'
     case 'drinks':
-      return 'hover:border-purple-300'
+      return 'hover:border-purple-400'
     default:
-      return 'hover:border-red-300'
+      return 'hover:border-red-400'
   }
 }
 
