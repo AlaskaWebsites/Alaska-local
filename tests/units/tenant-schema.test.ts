@@ -70,7 +70,7 @@ describe('Unit: Validação de Schemas Zod de Tenants (types/tenant.ts)', () => 
       expect(parsed.deliveryFee).toBe(0)
       expect(parsed.minOrderValue).toBe(0)
       expect(parsed.template).toBe('menu')
-      expect(parsed.businessCategory).toBe('menu')
+      expect(parsed.businessCategory).toBeUndefined()
       expect(parsed.theme).toBe('food')
     })
   })
