@@ -2,11 +2,11 @@ You are an expert software architect specializing in TypeScript, NestJS 11, Nuxt
 
 ## Project Context: Alaska Local
 
-Alaska Local is a multi-tenant SaaS platform for local merchants (restaurants, barbershops, salons, clinics) providing:
+Alaska Local is a multi-tenant SaaS platform for local merchants (restaurants, barbershops, salons, clinics, boutiques, liquor stores) providing:
 - Organic presence on Google Maps
-- Digital catalog with custom domains
-- Direct WhatsApp orders without transaction commissions
-- Sub-modules: Alaska Menu (food/delivery) and Alaska Hub (service providers)
+- Digital catalog with custom domains (Alaska Menu, Alaska Hub, Alaska Pro, Alaska Shop)
+- Direct WhatsApp orders & bookings without transaction commissions
+- Responsive Mobile-First PWA and SSR Nuxt 3 frontend
 
 ## Architecture Principles
 
@@ -25,77 +25,53 @@ Alaska Local is a multi-tenant SaaS platform for local merchants (restaurants, b
   - Standard: [slug].alaska.app
   - Custom: CNAME pointing to Vercel
 
-### Evolution Stages
-1. **Stage 1** (0-5 clients): Static Nuxt 3 + JSON files, zero infra cost
-2. **Stage 2** (6-15 clients): NestJS backend + PostgreSQL/Supabase + Clean Architecture
-3. **Stage 3** (15+ clients): Full SaaS with payment webhooks, thermal printing, scheduling
+### Technology Stack
+- Nuxt 3 + Vue 3 (Composition API `<script setup lang="ts">`)
+- Tailwind CSS (Mobile-First, W3C WCAG accessibility)
+- Pinia + VueUse (`useLocalStorage` multi-tenant)
+- Zod for contract validation
+- Vitest for automated testing
 
-## Technology Stack (Strict)
+---
 
-### Validation
-- **REQUIRED**: Use Zod exclusively for all validation (env vars, DTOs, inputs)
-- **PROHIBITED**: class-validator, Joi, or any other validation libraries
+## Strict TypeScript & Frontend Guidelines for AI Agents (ANTI-ERROR RULES)
 
-### Testing
-- **REQUIRED**: Vitest for all tests (unit and E2E)
-- **REQUIRED**: Unit tests for all use-cases in src/core/application/use-cases/
-- **PROHIBITED**: Jest (migrated to Vitest)
+### 1. Index Signature & Array Destructuring Safety (`noUncheckedIndexedAccess`)
+- **PROHIBITED**: Accessing array indices directly without fallback (e.g. `const [h, m] = str.split(':')` then `h * 60 + m` causes TS18048).
+- **REQUIRED**: Always provide fallback defaults when accessing arrays or destructuring:
+  ```typescript
+  // CORRECT:
+  const [hours = 0, minutes = 0] = time.split(':').map(Number)
+  const month = MONTH_SHORTS[monthIndex] || ''
+  const preset = presets[index % presets.length] || []
+  ```
 
-### Backend (Stage 2+)
-- NestJS 11 (strictly version 11, no deprecated versions)
-- PostgreSQL/Supabase with Row-Level Security (RLS)
-- Redis + BullMQ for async jobs (AOF persistence, noeviction policy)
-- Docker Compose for local development
+### 2. DOM APIs vs CSS Property Confusion
+- **PROHIBITED**: Passing CSS logical properties (like `inset-inline-start`) into JavaScript DOM methods like `scrollBy()` or `scrollTo()`.
+- **REQUIRED**: Use standard DOM `ScrollToOptions`:
+  ```typescript
+  // CORRECT:
+  element.scrollBy({ left: offset, behavior: 'smooth' })
+  ```
 
-### Frontend (Stage 1+)
-- Nuxt 3 with TypeScript
-- Tailwind CSS for styling
-- Mobile-first design
-- Server middleware for tenant resolution
+### 3. SSR-Safe Null/Undefined Checks
+- **PROHIBITED**: Direct `.length` accesses in Vue templates without optional chaining/fallbacks (e.g., `v-if="items.length > 0"` causes 500 error if `items` is undefined during SSR).
+- **REQUIRED**:
+  ```html
+  <!-- CORRECT: -->
+  <div v-if="(items?.length || 0) > 0">
+  <div v-for="item in (items || [])" :key="item.id">
+  ```
 
-## Code Quality Standards
+### 4. Image Fallbacks & Anti-404
+- **REQUIRED**: Always attach `@error="handleImageError($event, tenant?.theme)"` on all `<img>` tags.
+- **REQUIRED**: Use `~/utils/images` fallback SVG Data URIs instead of external URLs for placeholders.
 
-### TypeScript
-- Strict mode enabled (no implicit any, no unsafe assignments)
-- Prefer `unknown` over `any` when type is uncertain
-- Validate `unknown` types with Zod before use
+### 5. Contract Consistency (Zod & Interfaces)
+- When mapping JSON data to domain models (like `BookingService` or `CartItem`), ensure optional fields (`professionalIds?: string[]`, `notes?: string`) have safe defaults (`professionalIds: (prod as any).professionalIds || []`).
 
-### File Organization
-```
-src/
-├── core/                    # Pure business logic (framework-agnostic)
-│   ├── domain/             # Entities and Value Objects
-│   └── application/        # Use Cases and Ports
-└── infrastructure/         # Framework integration
-    └── framework/
-        ├── nestjs/         # NestJS-specific code
-        └── nuxt/           # Nuxt-specific code
-```
+---
 
-### Git Workflow
-- Feature branches: `feature/description`
-- PRs required for merging to develop
-- Main branch triggers auto-deploy to production
-- Develop branch for integration testing
-
-## Before Making Changes
-
-1. **ALWAYS** read ADRs in `docs/adrs/` before architectural decisions
-2. **ALWAYS** check current project stage (1, 2, or 3) before proposing features
-3. **NEVER** implement Stage 3 features when project is in Stage 1 or 2
-4. **ALWAYS** propose Vitest tests for new use-cases
-5. **NEVER** use decorators (@Injectable, @Controller) in src/core/
-
-## Communication Style
-
-- Be direct and technical
-- If uncertain about NestJS 11 or Nuxt 3 integration, admit it and suggest checking official docs
-- Never hallucinate methods or APIs
-- Consider business context (local merchants, WhatsApp integration, Google Maps SEO)
-
-## Critical Rules
-
-- **FAIL FAST**: Environment variables validated with Zod at bootstrap
-- **DOTFILES**: Never commit .cursor/, .devin/, .windsurf/ folders (blocked by pre-commit hook)
-- **ISOLATION**: Core layer must not import @nestjs/common, database libraries, or framework code
-- **TESTING**: No code in src/core/application/use-cases/ without corresponding Vitest test
+## Testing & Verification
+- **ALWAYS** run `npx vitest run` to verify that all unit tests pass before considering a feature complete.
+- **NEVER** leave broken types or failing tests.
