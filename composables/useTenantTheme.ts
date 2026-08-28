@@ -45,17 +45,17 @@ const BARBER_THEME: ThemeColors = {
 }
 
 const HEALTH_THEME: ThemeColors = {
-  primaryText: 'text-blue-600',
-  primaryTextHover: 'hover:text-blue-700',
-  primaryBg: 'bg-blue-600',
-  primaryBgHover: 'hover:bg-blue-700',
-  primaryBorder: 'border-blue-600',
-  buttonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white',
-  badgeBg: 'bg-blue-50',
-  badgeText: 'text-blue-700',
-  badgeBorder: 'border-blue-200',
-  categoryIndicator: 'bg-blue-500',
-  focusRing: 'focus:ring-blue-500'
+  primaryText: 'text-teal-600',
+  primaryTextHover: 'hover:text-teal-700',
+  primaryBg: 'bg-teal-600',
+  primaryBgHover: 'hover:bg-teal-700',
+  primaryBorder: 'border-teal-600',
+  buttonPrimary: 'bg-teal-600 hover:bg-teal-700 text-white',
+  badgeBg: 'bg-teal-50',
+  badgeText: 'text-teal-700',
+  badgeBorder: 'border-teal-200',
+  categoryIndicator: 'bg-teal-500',
+  focusRing: 'focus:ring-teal-500'
 }
 
 const DRINKS_THEME: ThemeColors = {
@@ -100,6 +100,20 @@ const VIOLET_THEME: ThemeColors = {
   focusRing: 'focus:ring-violet-500'
 }
 
+const BLUE_THEME: ThemeColors = {
+  primaryText: 'text-blue-600',
+  primaryTextHover: 'hover:text-blue-700',
+  primaryBg: 'bg-blue-600',
+  primaryBgHover: 'hover:bg-blue-700',
+  primaryBorder: 'border-blue-600',
+  buttonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white',
+  badgeBg: 'bg-blue-50',
+  badgeText: 'text-blue-700',
+  badgeBorder: 'border-blue-200',
+  categoryIndicator: 'bg-blue-500',
+  focusRing: 'focus:ring-blue-500'
+}
+
 const EMERALD_THEME: ThemeColors = {
   primaryText: 'text-emerald-600',
   primaryTextHover: 'hover:text-emerald-700',
@@ -137,7 +151,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
   rose: ROSE_THEME,
   amber: DRINKS_THEME,
   violet: VIOLET_THEME,
-  blue: HEALTH_THEME,
+  blue: BLUE_THEME,
   emerald: EMERALD_THEME,
   slate: SLATE_THEME
 }
