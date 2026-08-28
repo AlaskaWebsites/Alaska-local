@@ -1,59 +1,61 @@
 // types/booking.ts
 import { z } from 'zod'
 
-export const ProfessionalSchema = z.object({
+// 1. Schema de Profissional / Prestador
+export const BookingProfessionalSchema = z.object({
   id: z.string(),
   name: z.string(),
-  role: z.string().optional().default('Profissional'),
-  avatar: z.string().optional(),
-  available: z.boolean().default(true),
+  role: z.string().optional().default('Especialista'),
+  avatar: z.string().optional().default(''),
+  available: z.boolean().default(true)
 })
 
+// 2. Schema de Serviço com Duração e Profissionais Habilitados
 export const BookingServiceSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional().default(''),
-  price: z.number().min(0),
-  durationMinutes: z.number().min(5).default(30),
-  professionalIds: z.array(z.string()).optional().default([]),
+  price: z.number(),
+  durationMinutes: z.number().default(30),
+  image: z.string().optional(),
+  professionalIds: z.array(z.string()).optional().default([])
 })
 
+// 3. Schema de Slot de Horário
 export const BookingSlotSchema = z.object({
-  time: z.string().regex(/^\d{2}:\d{2}$/),
+  id: z.string(),
+  time: z.string(), // Formato HH:mm
   available: z.boolean().default(true),
-  reason: z.enum(['available', 'booked', 'past', 'closed']).optional().default('available'),
+  period: z.enum(['morning', 'afternoon', 'night']).default('morning')
 })
 
+// 4. Schema de Dia de Agendamento
 export const BookingDaySchema = z.object({
-  dateStr: z.string(), // DD/MM/YYYY
-  isoDate: z.string(), // YYYY-MM-DD
+  date: z.string(), // Formato YYYY-MM-DD
+  dayOfWeek: z.string(), // seg, ter, qua...
   dayNumber: z.number(),
   monthName: z.string(),
-  monthShort: z.string(),
-  year: z.number(),
-  displayDate: z.string(), // DD/MM
-  weekDay: z.string(), // Hoje, Amanhã, Seg, Ter...
   isToday: z.boolean().default(false),
-  isTomorrow: z.boolean().default(false),
-  isClosed: z.boolean().default(false),
+  isTomorrow: z.boolean().optional().default(false),
+  available: z.boolean().default(true)
 })
 
-export const BookingAppointmentPayloadSchema = z.object({
-  tenantName: z.string(),
-  customerName: z.string().min(2),
-  customerPhone: z.string().min(10),
-  date: z.string(),
-  time: z.string(),
-  professional: ProfessionalSchema.optional(),
-  services: z.array(BookingServiceSchema).min(1),
-  totalDurationMinutes: z.number().min(0),
-  totalPrice: z.number().min(0),
-  paymentMethod: z.string().default('Pix'),
-  notes: z.string().optional(),
+// 5. Schema da Requisição / Estado de Agendamento
+export const BookingRequestSchema = z.object({
+  service: BookingServiceSchema,
+  professional: BookingProfessionalSchema.optional(),
+  date: z.string(), // YYYY-MM-DD
+  time: z.string(), // HH:mm
+  customerName: z.string().min(2, 'Nome é obrigatório'),
+  customerPhone: z.string().min(10, 'Telefone WhatsApp é obrigatório'),
+  notes: z.string().optional().default(''),
+  paymentMode: z.enum(['on_service', 'pix_deposit', 'pix_full']).optional().default('on_service'),
+  depositAmount: z.number().optional().default(0),
+  paymentMethod: z.enum(['local', 'pix']).optional().default('local')
 })
 
-export type Professional = z.infer<typeof ProfessionalSchema>
+export type BookingProfessional = z.infer<typeof BookingProfessionalSchema>
 export type BookingService = z.infer<typeof BookingServiceSchema>
 export type BookingSlot = z.infer<typeof BookingSlotSchema>
 export type BookingDay = z.infer<typeof BookingDaySchema>
-export type BookingAppointmentPayload = z.infer<typeof BookingAppointmentPayloadSchema>
+export type BookingRequest = z.infer<typeof BookingRequestSchema>

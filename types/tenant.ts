@@ -1,104 +1,92 @@
 // types/tenant.ts
 import { z } from 'zod'
 
-// 1. Opcionais e Variações de Produtos
+// 1. Schemas de Opcionais e Variações
 export const OptionSchema = z.object({
   id: z.string(),
   name: z.string(),
-  price: z.number().min(0).default(0),
-  maxQuantity: z.number().optional().default(1),
+  price: z.number().default(0),
+  maxQuantity: z.number().optional().default(1)
 })
 
 export const OptionGroupSchema = z.object({
   id: z.string(),
   title: z.string(),
   required: z.boolean().default(false),
-  min: z.number().optional().default(0),
-  max: z.number().optional().default(1),
-  options: z.array(OptionSchema),
+  min: z.number().default(0),
+  max: z.number().default(1),
+  options: z.array(OptionSchema).default([])
 })
 
-// 2. Produtos do Catálogo
+// 2. Schema de Produtos
 export const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional().default(''),
-  price: z.number().min(0, 'Preço não pode ser negativo'),
+  price: z.number(),
   image: z.string().optional().default(''),
   available: z.boolean().default(true),
-  optionGroups: z.array(OptionGroupSchema).optional().default([]),
+  optionGroups: z.array(OptionGroupSchema).optional().default([])
 })
 
-// 3. Categorias de Produtos
+// 3. Schema de Categorias
 export const CategorySchema = z.object({
   id: z.string(),
   name: z.string(),
   icon: z.string().optional(),
-  products: z.array(ProductSchema).default([]),
+  products: z.array(ProductSchema).default([])
 })
 
-// 4. Horários de Funcionamento
+// 4. Schema de Horários de Funcionamento
 export const OpeningHoursSchema = z.object({
-  open: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
-  close: z.string().regex(/^\d{2}:\d{2}$/, 'Formato de horário inválido, use HH:mm'),
+  open: z.string(),
+  close: z.string()
 })
 
-// 5. Links e Serviços Institucionais (Alaska Hub & Pro)
-export const LinkSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  url: z.string(),
-  icon: z.string().optional(),
-  color: z.string().optional(),
+// 5. Schema de Prova Social (Reviews iFood-Style)
+export const ReviewBadgeSchema = z.object({
+  icon: z.string(),
+  label: z.string(),
+  status: z.enum(['success', 'warning', 'neutral']).default('success')
 })
 
-export const ServiceSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  price: z.number().min(0),
+export const ServiceQualitySchema = z.object({
+  level: z.number().min(1).max(5).default(5),
+  experienceLabel: z.string().default('Excelente'),
   description: z.string().optional(),
+  badges: z.array(ReviewBadgeSchema).optional().default([])
 })
 
-// 6. Avaliações (iFood Style)
-export const ReviewItemSchema = z.object({
+export const ReviewCommentSchema = z.object({
   id: z.string(),
   author: z.string(),
   rating: z.number().min(1).max(5),
   date: z.string(),
   comment: z.string(),
-  itemsOrdered: z.array(z.string()).optional(),
-})
-
-export const ServiceBadgeSchema = z.object({
-  icon: z.enum(['star', 'chat-alert', 'check-doc']),
-  label: z.string(),
-  status: z.enum(['success', 'warning', 'neutral']),
-})
-
-export const ServiceQualitySchema = z.object({
-  level: z.number().min(1).max(5),
-  experienceLabel: z.string(),
-  description: z.string(),
-  badges: z.array(ServiceBadgeSchema),
+  itemsOrdered: z.array(z.string()).optional().default([])
 })
 
 export const StoreReviewsSchema = z.object({
-  score: z.number().min(0).max(5),
-  totalReviews: z.number(),
-  serviceQuality: ServiceQualitySchema,
-  distribution: z.record(z.string(), z.number()).or(
-    z.object({
-      5: z.number().default(0),
-      4: z.number().default(0),
-      3: z.number().default(0),
-      2: z.number().default(0),
-      1: z.number().default(0),
-    })
-  ),
-  comments: z.array(ReviewItemSchema),
+  score: z.number().min(0).max(5).default(5),
+  totalReviews: z.number().default(0),
+  serviceQuality: ServiceQualitySchema.optional(),
+  distribution: z.record(z.string(), z.number()).optional().default({}),
+  comments: z.array(ReviewCommentSchema).optional().default([])
 })
 
-// 7. Tema e Identidade Cromática por Segmento
+// 6. Schema de Configuração de Pix Direto (Estágio 1)
+export const PixKeyTypeSchema = z.enum(['cpf', 'cnpj', 'email', 'phone', 'random']).default('phone')
+
+export const PixConfigSchema = z.object({
+  key: z.string(),
+  keyType: PixKeyTypeSchema.optional().default('phone'),
+  beneficiary: z.string().optional(),
+  city: z.string().optional().default('SAO PAULO'),
+  allowTestCent: z.boolean().optional().default(true),
+  depositPercentage: z.number().min(0).max(100).optional().default(30)
+})
+
+// 7. Temas e Cores
 export const TenantThemeSchema = z.enum(['food', 'barber', 'health', 'drinks', 'default']).default('food')
 
 // 8. Categorias Canônicas de Negócio
@@ -111,7 +99,7 @@ export const TenantSchema = z.object({
   description: z.string().optional().default(''),
   logo: z.string().optional().default(''),
   banner: z.string().optional().default(''),
-  phoneWhatsApp: z.string().transform((val) => val.replace(/\D/g, '')), // Sanitiza removendo caracteres não numéricos
+  phoneWhatsApp: z.string(),
   address: z.string().optional().default(''),
   currency: z.string().default('R$'),
   deliveryFee: z.number().default(0),
@@ -120,30 +108,30 @@ export const TenantSchema = z.object({
   businessCategory: BusinessCategorySchema.optional(),
   theme: TenantThemeSchema.optional().default('food'),
   openingHours: OpeningHoursSchema.optional(),
+  pix: PixConfigSchema.optional(),
+  pixKey: z.string().optional(),
+  pixKeyType: PixKeyTypeSchema.optional(),
+  pixBeneficiary: z.string().optional(),
+  pixCity: z.string().optional(),
   categories: z.array(CategorySchema).optional().default([]),
   reviews: StoreReviewsSchema.optional(),
-  links: z.array(LinkSchema).optional().default([]),
-  services: z.array(ServiceSchema).optional().default([]),
-  // Campos adicionais para aba Informações / Showcase
-  category: z.string().optional().default(''),
-  distance: z.string().optional().default(''),
-  priceRange: z.string().optional().default(''),
-  paymentMethods: z.array(z.string()).optional().default([]),
+  paymentMethods: z.array(z.string()).optional().default(['Pix', 'Cartão de Crédito', 'Cartão de Débito', 'Dinheiro']),
+  distance: z.string().optional(),
+  priceRange: z.string().optional().default('$$')
 })
 
-// Tipos TypeScript inferidos automaticamente
+// Tipos Inferidos do Zod
 export type Option = z.infer<typeof OptionSchema>
 export type OptionGroup = z.infer<typeof OptionGroupSchema>
-export type ProductOption = Option
 export type Product = z.infer<typeof ProductSchema>
 export type Category = z.infer<typeof CategorySchema>
 export type OpeningHours = z.infer<typeof OpeningHoursSchema>
-export type ReviewItem = z.infer<typeof ReviewItemSchema>
-export type ServiceBadge = z.infer<typeof ServiceBadgeSchema>
-export type ServiceQuality = z.infer<typeof ServiceQualitySchema>
 export type StoreReviews = z.infer<typeof StoreReviewsSchema>
+export type ServiceQuality = z.infer<typeof ServiceQualitySchema>
+export type ReviewBadge = z.infer<typeof ReviewBadgeSchema>
+export type ReviewComment = z.infer<typeof ReviewCommentSchema>
+export type PixKeyType = z.infer<typeof PixKeyTypeSchema>
+export type PixConfig = z.infer<typeof PixConfigSchema>
 export type TenantTheme = z.infer<typeof TenantThemeSchema>
 export type BusinessCategory = z.infer<typeof BusinessCategorySchema>
-export type Link = z.infer<typeof LinkSchema>
-export type Service = z.infer<typeof ServiceSchema>
 export type Tenant = z.infer<typeof TenantSchema>

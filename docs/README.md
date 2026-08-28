@@ -19,6 +19,7 @@ Os ADRs registram o contexto, alternativas consideradas e justificativas técnic
 - [ADR 009: Protocolo de Despacho de Pedidos Estruturados via WhatsApp](./adrs/009-protocolo-despacho-whatsapp-e-venda-hibrida.md) — Sanitização E.164 (+55), formato markdown determinístico e Pix D+0.
 - [ADR 010: Motor de Busca Client-Side Zero Latência e Normalização Unicode](./adrs/010-busca-client-side-zero-latencia-e-normalizacao-unicode.md) — Pesquisa reativa instantânea ignorando acentos e cedilhas.
 - [ADR 011: Persistência de Carrinho com Namespacing no LocalStorage](./adrs/011-persistencia-carrinho-namespaced-localstorage.md) — Isolamento de sacola por tenant e segurança contra erros de SSR.
+- [ADR 012: Arquitetura de Pagamentos Pix no Estágio 1](./adrs/012-arquitetura-pagamentos-pix-estagio-1.md) — Geração de BR Code EMV, CRC-16, teste de 1 centavo e sinal de agendamento.
 
 ---
 
