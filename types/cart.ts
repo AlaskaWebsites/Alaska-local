@@ -1,8 +1,8 @@
 // types/cart.ts
 import { z } from 'zod'
-import type { Product, ProductOption } from './tenant'
+import type { Product, Option, ProductOption } from './tenant'
 
-export type DeliveryType = 'delivery' | 'takeaway'
+export type DeliveryType = 'delivery' | 'takeaway' | 'pickup'
 
 export type PaymentMethod = 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
 
@@ -21,22 +21,33 @@ export interface CheckoutFormData {
     customerPhone?: string
     deliveryType: DeliveryType
     address: Address
-    paymentMethod: PaymentMethod
+    paymentMethod: PaymentMethod | string
     changeFor?: number | null
     notes?: string
 }
 
 export interface CartItem {
+    id?: string
     product: Product
     quantity: number
-    selectedOptions: Record<string, string | string[]>
-    options: ProductOption[]
+    selectedOptions?: Record<string, string | string[]> | Option[] | ProductOption[] | any
+    options?: (Option | ProductOption)[] | any[]
     notes?: string
+    observation?: string
     unitPrice: number
 }
 
 export interface CartState {
     items: CartItem[]
+    deliveryType: DeliveryType
+    deliveryFee: number
+    customerName: string
+    customerPhone?: string
+    address: Address
+    paymentMethod: PaymentMethod
+    changeFor?: number | null
+    subtotal: number
+    total: number
 }
 
 /**
