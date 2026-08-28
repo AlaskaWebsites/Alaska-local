@@ -34,6 +34,7 @@ export const BookingDaySchema = z.object({
   displayDate: z.string(), // DD/MM
   weekDay: z.string(), // Hoje, Amanhã, Seg, Ter...
   isToday: z.boolean().default(false),
+  isTomorrow: z.boolean().default(false),
   isClosed: z.boolean().default(false),
 })
 
@@ -48,7 +49,7 @@ export const BookingAppointmentPayloadSchema = z.object({
   totalDurationMinutes: z.number().min(0),
   totalPrice: z.number().min(0),
   paymentMethod: z.string().default('Pix'),
-  notes: z.string().optional().default(''),
+  notes: z.string().optional(),
 })
 
 export type Professional = z.infer<typeof ProfessionalSchema>
