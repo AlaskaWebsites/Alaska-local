@@ -383,8 +383,8 @@ const {
   toggleService,
   formatBookingWhatsAppMessage,
 } = useBookingSlots({
-  openTime: props.tenant.openingHours?.open || '09:00',
-  closeTime: props.tenant.openingHours?.close || '20:00',
+  openTime: props.tenant?.openingHours?.open || '09:00',
+  closeTime: props.tenant?.openingHours?.close || '20:00',
   totalDays: 30,
 })
 
@@ -413,13 +413,14 @@ function selectDay(dateStr: string) {
 const availableServices = computed<BookingService[]>(() => {
   const services: BookingService[] = []
   props.tenant.categories?.forEach((cat) => {
-    cat.products.forEach((prod) => {
+    cat.products?.forEach((prod) => {
       services.push({
         id: prod.id,
         name: prod.name,
-        description: prod.description,
+        description: prod.description || '',
         price: prod.price,
         durationMinutes: (prod as any).durationMinutes || (cat.name.toLowerCase().includes('barba') ? 30 : 40),
+        professionalIds: (prod as any).professionalIds || [],
       })
     })
   })
@@ -477,7 +478,7 @@ function submitBooking() {
     totalDurationMinutes: totalDuration.value,
     totalPrice: totalPrice.value,
     paymentMethod: 'Pix no Local / Balcão',
-    notes: notes.value.trim() || undefined,
+    notes: notes.value.trim() || '',
   })
 
   const phone = props.tenant.phoneWhatsApp.replace(/\D/g, '')
