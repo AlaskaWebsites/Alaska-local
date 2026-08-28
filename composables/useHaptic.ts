@@ -2,11 +2,15 @@
 import { ref } from 'vue'
 
 /**
- * Aciona feedback tátil no dispositivo via Vibration API (se suportado pelo navegador e hardware).
+ * Utilitário puro e SSR-safe para acionar vibração tátil via Vibration API do navegador móvel.
  * Retorna true se a vibração foi acionada com sucesso, ou false caso a API não seja suportada/disponível.
  */
 export function triggerHaptic(pattern: number | number[] | readonly number[] = 30): boolean {
-    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+        return false
+    }
+
+    if (typeof navigator.vibrate !== 'function') {
         return false
     }
 
@@ -18,47 +22,64 @@ export function triggerHaptic(pattern: number | number[] | readonly number[] = 3
 }
 
 /**
- * Padrões pré-definidos de vibração para consistência de UX
+ * Padrões de feedback tátil pré-configurados
  */
 export const hapticPatterns = {
-    /** Toque sutil para seleções rápidas e botões secundários */
+    /** Toque suave (30ms) ao adicionar itens à sacola */
+    tap: 30,
+    /** Impacto leve (20ms) para seleções rápidas e filtros */
     light: 20,
-    /** Toque padrão para adicionar ao carrinho ou selecionar opções */
-    medium: 35,
-    /** Toque mais firme para ações de destaque (ex: abrir sacola, confirmar) */
-    heavy: 50,
-    /** Vibração em pulso duplo para confirmação de pedido / sucesso */
+    /** Impacto médio (50ms) para ações importantes */
+    medium: 50,
+    /** Padrão de confirmação de sucesso [30ms vibra, 50ms pausa, 30ms vibra] */
     success: [30, 50, 30] as const,
-    /** Vibração de erro ou bloqueio de validação */
+    /** Padrão de erro ou alerta [50ms vibra, 50ms pausa, 50ms vibra] */
     error: [50, 50, 50] as const,
 }
 
 /**
- * Composable reativo para suporte e acionamento de feedback tátil mobile
+ * Composable Reativo para Feedback Tátil (Vibration API)
  */
 export function useHaptic() {
     const isSupported = ref(
+        typeof window !== 'undefined' &&
         typeof navigator !== 'undefined' &&
         typeof navigator.vibrate === 'function'
     )
 
-    const vibrate = (pattern?: number | number[] | readonly number[]) => triggerHaptic(pattern)
+    function vibrate(pattern: number | number[] | readonly number[] = hapticPatterns.tap): boolean {
+        return triggerHaptic(pattern)
+    }
 
-    const vibrateLight = () => triggerHaptic(hapticPatterns.light)
-    const vibrateMedium = () => triggerHaptic(hapticPatterns.medium)
-    const vibrateHeavy = () => triggerHaptic(hapticPatterns.heavy)
-    const vibrateSuccess = () => triggerHaptic(hapticPatterns.success)
-    const vibrateError = () => triggerHaptic(hapticPatterns.error)
+    function lightImpact(): boolean {
+        return triggerHaptic(hapticPatterns.light)
+    }
+
+    function mediumImpact(): boolean {
+        return triggerHaptic(hapticPatterns.medium)
+    }
+
+    function successFeedback(): boolean {
+        return triggerHaptic(hapticPatterns.success)
+    }
+
+    function errorFeedback(): boolean {
+        return triggerHaptic(hapticPatterns.error)
+    }
 
     return {
         isSupported,
-        triggerHaptic,
         vibrate,
-        vibrateLight,
-        vibrateMedium,
-        vibrateHeavy,
-        vibrateSuccess,
-        vibrateError,
+        lightImpact,
+        mediumImpact,
+        successFeedback,
+        errorFeedback,
+        vibrateLight: lightImpact,
+        vibrateMedium: mediumImpact,
+        vibrateSuccess: successFeedback,
+        vibrateError: errorFeedback,
+        triggerHaptic,
+        hapticPatterns,
         patterns: hapticPatterns,
     }
 }
