@@ -1,7 +1,7 @@
 // utils/whatsapp.ts
 import type { Tenant } from '~/types/tenant'
 import type { CartState } from '~/types/cart'
-import { generatePixPayload, getTenantPixConfig } from '~/utils/pix'
+import { getTenantPixConfig } from '~/utils/pix'
 
 function formatMoney(value: number): string {
   return `R$ ${value.toFixed(2)}`
@@ -17,7 +17,7 @@ export function generateWhatsAppOrderUrl(tenant: Tenant, cart: CartState): strin
   const lines: string[] = []
 
   // 1. Cabeçalho
-  lines.push(`🍔 *NOVO PEDIDO — ${tenant.name.toUpperCase()}*`)
+  lines.push(`🍔 *NOVO PEDIDO - ${tenant.name.toUpperCase()}*`)
   lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
 
   // 2. Itens do Pedido
@@ -31,13 +31,13 @@ export function generateWhatsAppOrderUrl(tenant: Tenant, cart: CartState): strin
     const options = (item as any).options || (item as any).selectedOptions || []
     for (const opt of options) {
       const optPrice = opt.price > 0 ? ` (+${formatMoney(opt.price)})` : ''
-      lines.push(`  └ ${opt.name}${optPrice}`)
+      lines.push(`  ${opt.name}${optPrice}`)
     }
 
     // Observação do item
     const obs = (item as any).observation || (item as any).notes || ''
     if (obs) {
-      lines.push(`  └ Obs: "${obs}"`)
+      lines.push(`  Obs: "${obs}"`)
     }
   }
 
@@ -46,13 +46,13 @@ export function generateWhatsAppOrderUrl(tenant: Tenant, cart: CartState): strin
 
   // 3. Resumo Financeiro
   lines.push(`💰 *RESUMO FINANCEIRO:*`)
-  lines.push(`• Subtotal: ${formatMoney(cart.subtotal)}`)
+  lines.push(`Subtotal: ${formatMoney(cart.subtotal)}`)
 
   if (cart.deliveryType === 'delivery') {
-    lines.push(`• Taxa de Entrega: ${formatMoney(cart.deliveryFee || 0)}`)
-    lines.push(`*TOTAL: ${formatMoney(cart.total)}*`)
+    lines.push(`Taxa de Entrega: ${formatMoney(cart.deliveryFee || 0)}`)
+    lines.push(`TOTAL: ${formatMoney(cart.total)}`)
   } else {
-    lines.push(`*TOTAL (RETIRADA): ${formatMoney(cart.total)}*`)
+    lines.push(`TOTAL (RETIRADA): ${formatMoney(cart.total)}`)
   }
 
   lines.push(``)
@@ -75,7 +75,8 @@ export function generateWhatsAppOrderUrl(tenant: Tenant, cart: CartState): strin
     if (addr.city) lines.push(`• Cidade: ${addr.city}`)
     if (addr.reference) lines.push(`• Ref: ${addr.reference}`)
   } else {
-    lines.push(`🏬 *MODALIDADE:* RETIRADA NO BALCÃO`)
+    lines.push(`🏬 *RETIRADA NO BALCÃO:*`)
+    lines.push(`• Retirada direta no estabelecimento`)
   }
 
   lines.push(``)
