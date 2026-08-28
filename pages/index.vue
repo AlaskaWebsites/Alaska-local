@@ -2,16 +2,16 @@
 <template>
   <div class="min-h-screen bg-slate-50 text-slate-900 pb-16">
     <!-- Header e Apresentação -->
-    <header class="bg-white border-b border-slate-200 py-12 px-4 sm:px-6">
-      <div class="max-w-4xl mx-auto text-center space-y-3">
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
+    <header class="bg-white border-b border-slate-200/80 py-12 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto text-center space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
           <Sparkles class="w-3.5 h-3.5 text-amber-500" aria-hidden="true" />
-          <span>Ecossistema Multi-Tenant Alaska Local</span>
+          <span>Ecossistema Alaska Local</span>
         </div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Vitrines Digitais & Cardápios Locais
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
+          Vitrines Digitais & Catálogos Online
         </h1>
-        <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
+        <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Demonstrações interativas de alta conversão para comércios, lojas e prestadores de serviços com fechamento direto no WhatsApp.
         </p>
 
@@ -55,16 +55,22 @@
           class="group bg-white rounded-2xl border border-slate-200 hover:shadow-md shadow-sm transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer active:scale-[0.99]"
           :class="getStoreBorderHover(store.theme)"
         >
-          <!-- Banner Superior da Loja -->
-          <div class="relative h-36 w-full bg-slate-100 overflow-hidden">
-            <img v-if="store.banner" :src="store.banner" :alt="`Banner de ${store.name}`"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
-
-            <!-- Logo da Loja -->
-            <div class="absolute bottom-3 left-3 flex items-center gap-2.5">
-              <img :src="store.logo || '/logo.png'" :alt="`Logo de ${store.name}`"
-                class="w-12 h-12 rounded-xl bg-white p-0.5 shadow-md object-cover border border-white/50" />
+          <!-- Imagem / Banner do Card -->
+          <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+            <img
+              v-if="store.banner || store.logo"
+              :src="store.banner || store.logo"
+              :alt="store.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+              @error="handleImageError($event, store.theme)"
+            />
+            <div
+              v-else
+              class="w-full h-full flex items-center justify-center font-bold text-3xl bg-slate-100"
+              :class="getStoreTextColor(store.theme)"
+            >
+              {{ store.name.charAt(0) }}
             </div>
 
             <!-- Badge de Categoria de Negócio -->
@@ -82,14 +88,11 @@
                   :class="getStoreTitleHover(store.theme)">
                   {{ store.name }}
                 </h2>
-
-                <!-- Avaliação Prova Social -->
-                <div v-if="store.reviews" class="flex items-center gap-1 shrink-0 text-xs font-bold text-slate-700 bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200">
+                <div v-if="store.reviews" class="flex items-center gap-1 text-xs font-bold text-amber-500 shrink-0">
                   <Star class="w-3.5 h-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                   <span>{{ store.reviews.score.toFixed(1) }}</span>
                 </div>
               </div>
-
               <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
                 {{ store.description }}
               </p>
@@ -104,20 +107,16 @@
           </div>
         </NuxtLink>
       </div>
-
-      <!-- Estado Vazio (caso não haja lojas na categoria) -->
-      <div v-if="filteredTenants.length === 0" class="text-center py-16 space-y-3">
-        <p class="text-base font-bold text-slate-700">Nenhum modelo cadastrado nesta categoria ainda.</p>
-        <p class="text-xs text-slate-500">Estamos desenvolvendo novas demonstrações para esta vertical.</p>
-      </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { TenantSchema } from '~/types/tenant'
+import type { Tenant, BusinessCategory } from '~/types/tenant'
+import { handleImageError } from '~/utils/images'
 import { Sparkles, Star, ChevronRight } from 'lucide-vue-next'
-import { TenantSchema, type Tenant, type BusinessCategory } from '~/types/tenant'
 
 type FilterCategory = 'all' | BusinessCategory
 
@@ -141,47 +140,52 @@ const tenantsList = computed<Tenant[]>(() => {
 function resolveCategory(tenant: Tenant): BusinessCategory {
   if (tenant.businessCategory) return tenant.businessCategory
   if (tenant.slug === 'bella-donna' || tenant.slug === 'karine-finardi') return 'shop'
-  if (tenant.slug === 'barbearia-style' || tenant.slug === 'barbearia-dom-pedro') return 'hub'
+  if (tenant.slug === 'barbearia-style') return 'hub'
   if (tenant.slug === 'clinica-sorriso') return 'pro'
   if (tenant.template === 'hub' || tenant.template === 'booking') return 'hub'
   if (tenant.template === 'pro') return 'pro'
-  if (tenant.template === 'shop') return 'shop'
   return 'menu'
 }
 
-// 2. Abas de Filtros com Contagem Reativa
-const filterTabs = computed(() => {
-  const allCount = tenantsList.value.length
-  const menuCount = tenantsList.value.filter((t) => resolveCategory(t) === 'menu').length
-  const shopCount = tenantsList.value.filter((t) => resolveCategory(t) === 'shop').length
-  const hubCount = tenantsList.value.filter((t) => resolveCategory(t) === 'hub').length
-  const proCount = tenantsList.value.filter((t) => resolveCategory(t) === 'pro').length
+// 2. Abas Dinâmicas de Filtro com Contagens Reais
+const filterTabs = computed(() => [
+  { id: 'all' as const, label: 'Todas as Lojas', emoji: '🌟', count: tenantsList.value.length },
+  { id: 'menu' as const, label: 'Food & Delivery', emoji: '🍔', count: tenantsList.value.filter((t) => resolveCategory(t) === 'menu').length },
+  { id: 'shop' as const, label: 'Lojas & Boutiques', emoji: '🛍️', count: tenantsList.value.filter((t) => resolveCategory(t) === 'shop').length },
+  { id: 'hub' as const, label: 'Barbearias & Serviços', emoji: '💈', count: tenantsList.value.filter((t) => resolveCategory(t) === 'hub').length },
+  { id: 'pro' as const, label: 'Clínicas & Profissionais', emoji: '🦷', count: tenantsList.value.filter((t) => resolveCategory(t) === 'pro').length },
+])
 
-  return [
-    { id: 'all' as FilterCategory, label: 'Todos', emoji: '🌟', count: allCount },
-    { id: 'menu' as FilterCategory, label: 'Cardápios & Delivery', emoji: '🍔', count: menuCount },
-    { id: 'shop' as FilterCategory, label: 'Lojas & Vitrines', emoji: '🛍️', count: shopCount },
-    { id: 'hub' as FilterCategory, label: 'Serviços & Agenda', emoji: '💈', count: hubCount },
-    { id: 'pro' as FilterCategory, label: 'Profissionais & Pro', emoji: '⚖️', count: proCount },
-  ]
-})
-
-// 3. Filtragem Reativa do Showcase
+// 3. Estabelecimentos Filtrados pela Categoria Selecionada
 const filteredTenants = computed(() => {
   if (activeCategory.value === 'all') {
     return tenantsList.value
   }
-  return tenantsList.value.filter((t) => resolveCategory(t) === activeCategory.value)
+  return tenantsList.value.filter((tenant) => resolveCategory(tenant) === activeCategory.value)
 })
+
+// 4. Helpers de Estilização por Tema e Categoria
+function getStoreTextColor(theme?: string): string {
+  switch (theme) {
+    case 'barber':
+      return 'text-amber-500'
+    case 'health':
+      return 'text-teal-600'
+    case 'drinks':
+      return 'text-purple-600'
+    default:
+      return 'text-red-600'
+  }
+}
 
 function getStoreCategoryLabel(cat?: string): string {
   switch (cat) {
     case 'shop':
-      return '🛍️ Loja & Vitrine'
+      return '🛍️ Vitrine & Catálogo'
     case 'hub':
       return '💈 Serviços & Agenda'
     case 'pro':
-      return '⚖️ Consultas & Pro'
+      return '🦷 Consultas & Pro'
     default:
       return '🍔 Cardápio & Delivery'
   }
@@ -190,7 +194,7 @@ function getStoreCategoryLabel(cat?: string): string {
 function getCategoryBadgeClass(cat?: string): string {
   switch (cat) {
     case 'shop':
-      return 'bg-purple-950/80 text-purple-200 border border-purple-800'
+      return 'bg-pink-950/80 text-pink-200 border border-pink-800'
     case 'hub':
       return 'bg-amber-950/80 text-amber-200 border border-amber-800'
     case 'pro':
@@ -203,7 +207,7 @@ function getCategoryBadgeClass(cat?: string): string {
 function getStoreActionText(cat?: string): string {
   switch (cat) {
     case 'shop':
-      return 'Ver vitrine de peças'
+      return 'Ver vitrine e produtos'
     case 'hub':
       return 'Ver serviços e agendar'
     case 'pro':
@@ -251,14 +255,4 @@ function getStoreTextHover(theme?: string): string {
       return 'text-red-600'
   }
 }
-
-useHead({
-  title: 'Alaska Local — Vitrines, Lojas e Cardápios Digitais',
-  meta: [
-    {
-      name: 'description',
-      content: 'Soluções digitais completas para food service, boutiques de moda, semijoias, clínicas e prestadores de serviços locais.'
-    }
-  ]
-})
 </script>
