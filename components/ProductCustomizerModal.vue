@@ -128,12 +128,23 @@ function handleAdd() {
     if (!props.product || !isProductConfigValid.value) return
 
     const allSelectedOptions: Option[] = []
-    selectedOptions.value.forEach((opts) => allSelectedOptions.push(...opts))
+    const selectedOptionsRecord: Record<string, string | string[]> = {}
+
+    selectedOptions.value.forEach((opts, groupId) => {
+        allSelectedOptions.push(...opts)
+        if (opts.length === 1) {
+            selectedOptionsRecord[groupId] = opts[0].name
+        } else if (opts.length > 1) {
+            selectedOptionsRecord[groupId] = opts.map((o) => o.name)
+        }
+    })
 
     emit('add-to-cart', {
         product: props.product,
         quantity: productQuantity.value,
-        selectedOptions: allSelectedOptions,
+        selectedOptions: selectedOptionsRecord,
+        options: allSelectedOptions,
+        notes: productObservation.value.trim() || undefined,
         observation: productObservation.value.trim(),
         unitPrice: calculateProductTotal(),
     })
