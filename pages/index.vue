@@ -3,7 +3,7 @@
   <div class="min-h-screen bg-slate-50 text-slate-900 pb-16">
     <!-- Header e Apresentação -->
     <header class="bg-white border-b border-slate-200/80 py-12 px-4 sm:px-6">
-      <div class="max-w-4xl mx-auto text-center space-y-4">
+      <div class="max-w-5xl mx-auto text-center space-y-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700">
           <Sparkles class="w-3.5 h-3.5 text-amber-500" aria-hidden="true" />
           <span>Ecossistema Alaska Local</span>
@@ -15,8 +15,8 @@
           Demonstrações interativas de alta conversão para comércios, lojas e prestadores de serviços com fechamento direto no WhatsApp.
         </p>
 
-        <!-- Filtros por Categoria de Negócio (Semântica de Tablist W3C - Anti-Layout Shift) -->
-        <div class="flex items-center justify-start sm:justify-center gap-2 pt-4 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist"
+        <!-- Filtros por Categoria de Negócio (Semântica de Tablist W3C - Anti-Layout Shift & Anti-Clipping Desktop) -->
+        <div class="flex items-center justify-start sm:justify-center flex-nowrap sm:flex-wrap gap-2 pt-4 overflow-x-auto sm:overflow-x-visible no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist"
           aria-label="Filtrar demonstrações por categoria de negócio">
           <button
             v-for="tab in filterTabs"
