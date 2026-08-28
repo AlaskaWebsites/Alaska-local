@@ -3,16 +3,16 @@ import { computed, isRef, type Ref } from 'vue'
 import type { Tenant, TenantTheme } from '~/types/tenant'
 
 export interface ThemeColors {
-    // Cores de texto
+    // Cores de Texto
     primaryText: string
     primaryTextHover: string
 
-    // Cores de fundo e botões principais
+    // Cores de Fundo
     primaryBg: string
     primaryBgHover: string
     buttonPrimary: string
 
-    // Bordas e contornos
+    // Bordas
     primaryBorder: string
     primaryBorderHover: string
 
@@ -26,42 +26,36 @@ export interface ThemeColors {
     badgeText: string
     badgeBorder: string
 
-    // Efeitos visuais (Glow e Seleção)
-    glowEffect: string
-    selectionClass: string
-
-    // Indicador de Categoria
+    // Indicador da Categoria
     categoryIndicator: string
 }
 
-export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
-    // 🍔 1. Alimentação & Food Service (iFood Red)
-    food: {
-        primaryText: 'text-red-600',
-        primaryTextHover: 'hover:text-red-500',
-        primaryBg: 'bg-red-600',
-        primaryBgHover: 'hover:bg-red-500',
-        buttonPrimary: 'bg-red-600 hover:bg-red-500 active:scale-[0.98] text-white',
-        primaryBorder: 'border-red-500',
-        primaryBorderHover: 'hover:border-red-500',
-        accentClass: 'accent-red-600',
-        selectedOptionClass: 'border-red-500 bg-red-50/60',
-        focusRing: 'focus:ring-2 focus:ring-red-500 focus:border-red-500',
-        badgeBg: 'bg-red-50',
-        badgeText: 'text-red-700',
-        badgeBorder: 'border-red-200',
-        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(239,68,68,0.15),transparent)]',
-        selectionClass: 'selection:bg-red-600 selection:text-white',
-        categoryIndicator: 'bg-red-600',
-    },
+const RED_THEME: ThemeColors = {
+    primaryText: 'text-red-600',
+    primaryTextHover: 'hover:text-red-700',
+    primaryBg: 'bg-red-600',
+    primaryBgHover: 'hover:bg-red-700',
+    buttonPrimary: 'bg-red-600 hover:bg-red-700 text-white',
+    primaryBorder: 'border-red-600',
+    primaryBorderHover: 'hover:border-red-500',
+    accentClass: 'accent-red-600',
+    selectedOptionClass: 'border-red-500 bg-red-50/60',
+    focusRing: 'focus:ring-2 focus:ring-red-500 focus:border-red-500',
+    badgeBg: 'bg-red-50',
+    badgeText: 'text-red-700',
+    badgeBorder: 'border-red-200',
+    categoryIndicator: 'bg-red-600',
+}
 
-    // ✂️ 2. Barbearia, Salões & Serviços (Âmbar Vintage & Ouro)
+export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
+    default: RED_THEME,
+    food: RED_THEME,
     barber: {
-        primaryText: 'text-amber-500',
-        primaryTextHover: 'hover:text-amber-400',
+        primaryText: 'text-amber-600',
+        primaryTextHover: 'hover:text-amber-700',
         primaryBg: 'bg-amber-500',
-        primaryBgHover: 'hover:bg-amber-400',
-        buttonPrimary: 'bg-amber-500 hover:bg-amber-400 active:scale-[0.98] text-slate-950 font-black',
+        primaryBgHover: 'hover:bg-amber-600',
+        buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-white',
         primaryBorder: 'border-amber-500',
         primaryBorderHover: 'hover:border-amber-500',
         accentClass: 'accent-amber-500',
@@ -70,19 +64,15 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         badgeBg: 'bg-amber-50',
         badgeText: 'text-amber-800',
         badgeBorder: 'border-amber-200',
-        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(245,158,11,0.15),transparent)]',
-        selectionClass: 'selection:bg-amber-500 selection:text-slate-950',
         categoryIndicator: 'bg-amber-500',
     },
-
-    // 🦷 3. Saúde, Odonto & Clínicas (Teal Médico & Verde-Água Confiança)
     health: {
         primaryText: 'text-teal-600',
-        primaryTextHover: 'hover:text-teal-500',
+        primaryTextHover: 'hover:text-teal-700',
         primaryBg: 'bg-teal-600',
-        primaryBgHover: 'hover:bg-teal-500',
-        buttonPrimary: 'bg-teal-600 hover:bg-teal-500 active:scale-[0.98] text-white font-bold',
-        primaryBorder: 'border-teal-500',
+        primaryBgHover: 'hover:bg-teal-700',
+        buttonPrimary: 'bg-teal-600 hover:bg-teal-700 text-white',
+        primaryBorder: 'border-teal-600',
         primaryBorderHover: 'hover:border-teal-500',
         accentClass: 'accent-teal-600',
         selectedOptionClass: 'border-teal-500 bg-teal-50/60',
@@ -90,19 +80,15 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         badgeBg: 'bg-teal-50',
         badgeText: 'text-teal-800',
         badgeBorder: 'border-teal-200',
-        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(13,148,136,0.15),transparent)]',
-        selectionClass: 'selection:bg-teal-600 selection:text-white',
         categoryIndicator: 'bg-teal-600',
     },
-
-    // 🍷 4. Adegas & Distribuidoras (Roxo & Violeta Neon)
     drinks: {
         primaryText: 'text-purple-600',
-        primaryTextHover: 'hover:text-purple-500',
+        primaryTextHover: 'hover:text-purple-700',
         primaryBg: 'bg-purple-600',
-        primaryBgHover: 'hover:bg-purple-500',
-        buttonPrimary: 'bg-purple-600 hover:bg-purple-500 active:scale-[0.98] text-white',
-        primaryBorder: 'border-purple-500',
+        primaryBgHover: 'hover:bg-purple-700',
+        buttonPrimary: 'bg-purple-600 hover:bg-purple-700 text-white',
+        primaryBorder: 'border-purple-600',
         primaryBorderHover: 'hover:border-purple-500',
         accentClass: 'accent-purple-600',
         selectedOptionClass: 'border-purple-500 bg-purple-50/60',
@@ -110,37 +96,26 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
         badgeBg: 'bg-purple-50',
         badgeText: 'text-purple-800',
         badgeBorder: 'border-purple-200',
-        glowEffect: 'bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(168,85,247,0.15),transparent)]',
-        selectionClass: 'selection:bg-purple-600 selection:text-white',
         categoryIndicator: 'bg-purple-600',
     },
 }
 
 export function useTenantTheme(
-    tenantOrTheme?: Ref<Tenant | TenantTheme | null | undefined> | Tenant | TenantTheme | null
+    tenantSource?: Ref<Tenant | TenantTheme | null | undefined> | Tenant | TenantTheme | null
 ) {
-    const currentTheme = computed<TenantTheme>(() => {
-        const raw = isRef(tenantOrTheme) ? tenantOrTheme.value : tenantOrTheme
-
+    const activeTheme = computed<TenantTheme>(() => {
+        const raw = isRef(tenantSource) ? tenantSource.value : tenantSource
         if (!raw) return 'food'
-
-        if (typeof raw === 'string') {
-            return (raw as TenantTheme) in THEME_PRESETS ? (raw as TenantTheme) : 'food'
-        }
-
-        if (typeof raw === 'object' && 'theme' in raw && raw.theme) {
-            return (raw.theme as TenantTheme) in THEME_PRESETS ? raw.theme : 'food'
-        }
-
-        return 'food'
+        if (typeof raw === 'string') return (raw as TenantTheme) || 'food'
+        return raw.theme || 'food'
     })
 
     const themeClasses = computed<ThemeColors>(() => {
-        return THEME_PRESETS[currentTheme.value] || THEME_PRESETS.food
+        return THEME_PRESETS[activeTheme.value] || THEME_PRESETS.food
     })
 
     return {
-        theme: currentTheme,
+        activeTheme,
         themeClasses,
     }
 }
