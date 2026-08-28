@@ -4,7 +4,7 @@
     <!-- 1. Banner de Capa Hero -->
     <div class="relative h-48 sm:h-64 w-full bg-slate-900 overflow-hidden">
       <img v-if="tenant.banner" :src="tenant.banner" :alt="`Banner de ${tenant.name}`"
-        class="w-full h-full object-cover opacity-80" @error="handleImageError($event, tenant.theme)" />
+        class="w-full h-full object-cover opacity-80" @error="handleImageError($event, tenant?.theme)" />
       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
 
       <!-- Botão Voltar para o Início / Showcase -->
@@ -32,7 +32,7 @@
             <!-- Logo Flutuante com Fallback -->
             <div class="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl bg-white p-1 shadow-md border border-slate-100 shrink-0 overflow-hidden">
               <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logo de ${tenant.name}`"
-                class="w-full h-full object-cover rounded-xl" @error="handleImageError($event, tenant.theme)" />
+                class="w-full h-full object-cover rounded-xl" @error="handleImageError($event, tenant?.theme)" />
               <div v-else class="w-full h-full flex items-center justify-center font-bold text-2xl"
                 :class="themeClasses.primaryText">
                 {{ tenant.name ? tenant.name.charAt(0) : 'A' }}
@@ -67,13 +67,13 @@
               <span class="text-slate-400 font-normal">({{ tenant.reviews.totalReviews || 0 }})</span>
             </button>
 
-            <!-- Status Aberto/Fechado (Abre Modal de Informações) -->
+            <!-- Status Aberto/Fechado (Abre Modal de Informações) com Badge Dinâmico -->
             <button @click="isInfoOpen = true"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border shadow-2xs transition-all cursor-pointer"
               :class="isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100/80' : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100/80'"
-              :aria-label="`Loja ${isOpen ? 'Aberta agora' : 'Fechada no momento'}. Clique para ver horários e endereço`">
+              :aria-label="`${openingAriaLabel || (isOpen ? 'Loja aberta' : 'Loja fechada')}. Clique para ver horários e endereço`">
               <Clock class="w-3.5 h-3.5" aria-hidden="true" />
-              <span>{{ isOpen ? 'Aberto agora' : 'Fechado' }}</span>
+              <span>{{ statusText }}</span>
             </button>
 
             <!-- Botão de Agendamento Rápido no Header (Apenas para Serviços/Clínicas) -->
@@ -105,7 +105,7 @@
 
           <div class="flex items-center gap-2">
             <Phone class="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
-            <a :href="`https://wa.me/55${(tenant.phoneWhatsApp || '').replace(/\D/g, '')}`" target="_blank"
+            <a :href="`https://wa.me/55${(tenant.phoneWhatsApp || '').replace(/\\D/g, '')}`" target="_blank"
               class="font-bold hover:underline" :class="themeClasses.primaryText">
               WhatsApp Direto
             </a>
@@ -257,7 +257,7 @@
       </section>
     </main>
 
-    <!-- 8. Modal de Customização de Produto (Food / Shop) -->
+    <!-- 8. Modal Customizador de Produto (Alaska Menu & Shop) -->
     <ProductCustomizerModal :product="selectedProduct" :tenant="tenant" :is-open="!!selectedProduct"
       @close="closeProductModal" @add-to-cart="handleAddProductToCart" />
 
@@ -342,8 +342,8 @@ const { tenant, slug } = useTenant()
 // 2. Tema Dinâmico
 const { themeClasses } = useTenantTheme(tenant)
 
-// 3. Cálculo de Aberto/Fechado
-const { isOpen } = useOpeningHours(tenant)
+// 3. Horário de Funcionamento (Aberto / Fechado com Badge Dinâmico)
+const { isOpen, statusText, ariaLabel: openingAriaLabel } = useOpeningHours(tenant)
 
 // 4. Compartilhamento e Toast
 const isCopied = ref(false)

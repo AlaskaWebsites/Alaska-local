@@ -49,8 +49,8 @@ onUnmounted(() => {
   }
 })
 
-// 3. Status e Horários
-const { isOpen: isOpenNow } = useOpeningHours(toRef(props, 'tenant'))
+// 3. Status e Horários Dinâmicos
+const { isOpen: isOpenNow, statusBadgeLabel, formattedOpeningHours } = useOpeningHours(toRef(props, 'tenant'))
 
 const formatOpeningHours = computed(() => {
   if (!props.tenant.openingHours) return null
@@ -78,7 +78,7 @@ const formatOpeningHours = computed(() => {
           </button>
         </div>
 
-        <!-- Conteúdo com Rolagem Suave -->
+        <!-- Conteúdo Rolável -->
         <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-6">
           <!-- 1. Identidade e Sobre -->
           <section aria-labelledby="store-identity-title" class="space-y-3">
@@ -101,7 +101,7 @@ const formatOpeningHours = computed(() => {
                 </p>
                 <div class="flex items-center gap-2 mt-2 text-[11px] font-semibold" :class="themeClasses.primaryText">
                   <ShieldCheck class="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Estabelecimento Verificado no Alaska Local</span>
+                  <span>Ambiente Seguro & Verificado</span>
                 </div>
               </div>
             </div>
@@ -120,13 +120,13 @@ const formatOpeningHours = computed(() => {
                 <span role="status"
                   :class="isOpenNow ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'"
                   class="px-2.5 py-0.5 rounded-full text-xs font-bold border">
-                  {{ isOpenNow ? '🟢 Aberto agora' : '🕒 Fechado no momento' }}
+                  {{ statusBadgeLabel }}
                 </span>
               </div>
 
               <div class="flex items-center justify-between border-t border-slate-200 pt-2.5 text-xs">
                 <span class="text-slate-500">Atendimento Hoje:</span>
-                <span class="font-bold text-slate-900">{{ formatOpeningHours || 'Consulte no WhatsApp' }}</span>
+                <span class="font-bold text-slate-900">{{ formattedOpeningHours || formatOpeningHours || 'Consulte no WhatsApp' }}</span>
               </div>
             </div>
           </section>
@@ -210,6 +210,18 @@ const formatOpeningHours = computed(() => {
               </div>
             </div>
           </section>
+        </div>
+
+        <!-- Footer do Modal -->
+        <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+          <span class="text-xs text-slate-500">
+            Dúvidas ou encomendas especiais?
+          </span>
+          <a :href="`https://wa.me/55${(tenant.phoneWhatsApp || '').replace(/\\D/g, '')}`" target="_blank"
+            class="px-4 py-2 rounded-xl text-xs font-bold text-white transition-all shadow-sm active:scale-95 flex items-center gap-1.5 cursor-pointer"
+            :class="themeClasses.buttonPrimary">
+            Chamar no WhatsApp
+          </a>
         </div>
       </div>
     </div>
