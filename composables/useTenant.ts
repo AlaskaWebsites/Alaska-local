@@ -4,7 +4,7 @@ import { TenantSchema, type Tenant } from '~/types/tenant'
 
 /**
  * Composable reativo e SSR-safe para resolução de Tenant pelo slug da rota ou customizado.
- * Retorna referências reativas síncronas sem envolver a chamada em Promise desnecessária.
+ * Retorna referências reativas síncronas com tipagem estrita Ref<Tenant | null>.
  */
 export function useTenant(customSlug?: string | Ref<string | null | undefined>) {
     const route = useRoute()
@@ -15,12 +15,12 @@ export function useTenant(customSlug?: string | Ref<string | null | undefined>) 
             const val = isRef(customSlug) ? customSlug.value : customSlug
             if (val) return String(val).toLowerCase()
         }
-        return (route.params.slug as string)?.toLowerCase() || 'hamburgueria-x'
+        return (route?.params?.slug as string)?.toLowerCase() || 'hamburgueria-x'
     })
 
-    const { data: tenant, pending, error } = useAsyncData<Tenant | null>(
+    const { data: tenant, pending, error, refresh } = useAsyncData<Tenant | null>(
         `tenant-${slug.value}`,
-        () => {
+        async () => {
             try {
                 const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<
                     string,
@@ -62,9 +62,10 @@ export function useTenant(customSlug?: string | Ref<string | null | undefined>) 
     )
 
     return {
-        tenant,
+        tenant: tenant as Ref<Tenant | null>,
         slug,
         pending,
         error,
+        refresh,
     }
 }
