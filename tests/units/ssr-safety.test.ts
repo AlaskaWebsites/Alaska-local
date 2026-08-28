@@ -1,5 +1,5 @@
 // tests/units/ssr-safety.test.ts
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { ref } from 'vue'
 import {
     useProductSearch,
@@ -38,15 +38,15 @@ describe('SSR Safety & Defensive Guardrails against undefined / null', () => {
                     id: 'c1',
                     name: 'Bebidas',
                     products: [
-                        { id: 'p1', name: 'Vinho', description: 'Tinto', price: 50, available: true },
-                        { id: 'p2', name: 'Cerveja', description: 'Lager', price: 10, available: true }
+                        { id: 'p1', name: 'Vinho', description: 'Tinto', price: 50, available: true, image: '', optionGroups: [] },
+                        { id: 'p2', name: 'Cerveja', description: 'Lager', price: 10, available: true, image: '', optionGroups: [] }
                     ]
                 },
                 {
                     id: 'c2',
                     name: 'Destilados',
                     products: [
-                        { id: 'p3', name: 'Gin', description: 'London Dry', price: 80, available: true }
+                        { id: 'p3', name: 'Gin', description: 'London Dry', price: 80, available: true, image: '', optionGroups: [] }
                     ]
                 }
             ]
@@ -63,16 +63,16 @@ describe('SSR Safety & Defensive Guardrails against undefined / null', () => {
                     id: 'c1',
                     name: 'Vinhos',
                     products: [
-                        { id: 'p1', name: 'Cabernet Sauvignon', description: 'Vinho Tinto Seco', price: 89.9, available: true },
-                        { id: 'p2', name: 'Heineken 350ml', description: 'Cerveja Puro Malte', price: 6.5, available: true }
+                        { id: 'p1', name: 'Cabernet Sauvignon', description: 'Vinho Tinto Seco', price: 89.9, available: true, image: '', optionGroups: [] },
+                        { id: 'p2', name: 'Heineken 350ml', description: 'Cerveja Puro Malte', price: 6.5, available: true, image: '', optionGroups: [] }
                     ]
                 }
             ]
 
             const filtered = filterCategoriesByQuery(categories, 'cabernet')
             expect(filtered.length).toBe(1)
-            expect(filtered[0].products.length).toBe(1)
-            expect(filtered[0].products[0].name).toBe('Cabernet Sauvignon')
+            expect(filtered[0]?.products?.length).toBe(1)
+            expect(filtered[0]?.products?.[0]?.name).toBe('Cabernet Sauvignon')
         })
 
         it('isProductMatchingQuery handles products with and without optionGroups', () => {
@@ -84,7 +84,9 @@ describe('SSR Safety & Defensive Guardrails against undefined / null', () => {
                 name: 'Cerveja Corona',
                 description: '330ml gelada',
                 price: 9.9,
-                available: true
+                available: true,
+                image: '',
+                optionGroups: [],
             }
             expect(isProductMatchingQuery(productWithoutOptions, 'corona')).toBe(true)
             expect(isProductMatchingQuery(productWithoutOptions, 'whisky')).toBe(false)
@@ -95,6 +97,7 @@ describe('SSR Safety & Defensive Guardrails against undefined / null', () => {
                 description: 'Garrafa 1L',
                 price: 120,
                 available: true,
+                image: '',
                 optionGroups: [
                     {
                         id: 'g1',
@@ -103,8 +106,8 @@ describe('SSR Safety & Defensive Guardrails against undefined / null', () => {
                         min: 0,
                         max: 2,
                         options: [
-                            { id: 'o1', name: 'Red Bull Melancia', price: 15 },
-                            { id: 'o2', name: 'Monster Tropical', price: 12 }
+                            { id: 'o1', name: 'Red Bull Melancia', price: 15, maxQuantity: 1 },
+                            { id: 'o2', name: 'Monster Tropical', price: 12, maxQuantity: 1 }
                         ]
                     }
                 ]
