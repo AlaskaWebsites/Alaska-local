@@ -113,8 +113,10 @@ export const useCartStore = defineStore('cart', {
             (state.items || []).reduce((acc: number, item: CartItem) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0),
 
         total: (state): number => {
+            const list = state.items || []
+            if (list.length === 0) return 0
             const fee = state.deliveryType === 'delivery' ? (state.deliveryFee || 0) : 0
-            const sub = (state.items || []).reduce((acc: number, item: CartItem) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0)
+            const sub = list.reduce((acc: number, item: CartItem) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0)
             return sub + fee
         },
     },
@@ -130,6 +132,14 @@ export const useCartStore = defineStore('cart', {
         removeItem(index: number) {
             if (this.items && index >= 0 && index < this.items.length) {
                 this.items.splice(index, 1)
+            }
+        },
+        updateQuantity(index: number, quantity: number) {
+            if (!this.items || index < 0 || index >= this.items.length) return
+            if (quantity <= 0) {
+                this.removeItem(index)
+            } else {
+                this.items[index].quantity = quantity
             }
         },
         clearCart() {
