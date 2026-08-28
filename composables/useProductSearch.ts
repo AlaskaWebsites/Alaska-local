@@ -17,27 +17,29 @@ export function normalizeSearchText(text?: string | null): string {
 
 /**
  * Verifica se um produto corresponde ao termo de busca no nome, descrição ou opcionais.
+ * Realiza normalização automática e defensiva do termo de busca internamente.
  */
-export function isProductMatchingQuery(product: Product | null | undefined, normalizedQuery: string): boolean {
-    if (!normalizedQuery) return true
+export function isProductMatchingQuery(product: Product | null | undefined, rawQuery: string): boolean {
+    const queryNorm = normalizeSearchText(rawQuery)
+    if (!queryNorm) return true
     if (!product) return false
 
     const nameNorm = normalizeSearchText(product.name)
     const descNorm = normalizeSearchText(product.description)
 
-    if (nameNorm.includes(normalizedQuery) || descNorm.includes(normalizedQuery)) {
+    if (nameNorm.includes(queryNorm) || descNorm.includes(queryNorm)) {
         return true
     }
 
     // Busca também nos grupos e nomes dos opcionais com checagem defensiva
     if (product.optionGroups && Array.isArray(product.optionGroups) && product.optionGroups.length > 0) {
         for (const group of product.optionGroups) {
-            if (group && group.title && normalizeSearchText(group.title).includes(normalizedQuery)) {
+            if (group && group.title && normalizeSearchText(group.title).includes(queryNorm)) {
                 return true
             }
             if (group && Array.isArray(group.options)) {
                 for (const option of group.options) {
-                    if (option && option.name && normalizeSearchText(option.name).includes(normalizedQuery)) {
+                    if (option && option.name && normalizeSearchText(option.name).includes(queryNorm)) {
                         return true
                     }
                 }
