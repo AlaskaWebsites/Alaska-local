@@ -59,6 +59,20 @@ const HEALTH_THEME: ThemeColors = {
 }
 
 const DRINKS_THEME: ThemeColors = {
+  primaryText: 'text-purple-600',
+  primaryTextHover: 'hover:text-purple-700',
+  primaryBg: 'bg-purple-600',
+  primaryBgHover: 'hover:bg-purple-700',
+  primaryBorder: 'border-purple-600',
+  buttonPrimary: 'bg-purple-600 hover:bg-purple-700 text-white',
+  badgeBg: 'bg-purple-50',
+  badgeText: 'text-purple-800',
+  badgeBorder: 'border-purple-200',
+  categoryIndicator: 'bg-purple-500',
+  focusRing: 'focus:ring-purple-500'
+}
+
+const AMBER_THEME: ThemeColors = {
   primaryText: 'text-amber-600',
   primaryTextHover: 'hover:text-amber-700',
   primaryBg: 'bg-amber-600',
@@ -149,7 +163,7 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
   health: HEALTH_THEME,
   drinks: DRINKS_THEME,
   rose: ROSE_THEME,
-  amber: DRINKS_THEME,
+  amber: AMBER_THEME,
   violet: VIOLET_THEME,
   blue: BLUE_THEME,
   emerald: EMERALD_THEME,
