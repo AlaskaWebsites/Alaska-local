@@ -114,147 +114,150 @@
       </div>
     </header>
 
-    <!-- 4. Campo de Busca de Produtos em Tempo Real -->
-    <div class="max-w-4xl mx-auto px-4 mt-6">
-      <ProductSearchInput v-model="searchQuery" :theme="tenant?.theme" @clear="clearSearch" />
-    </div>
+    <!-- 3. Landmark Principal (<main>) Garantido e Acessível -->
+    <main id="main-content" class="max-w-4xl mx-auto px-4 mt-6 space-y-8" aria-label="Catálogo e Produtos da Loja">
+      <!-- Campo de Busca de Produtos em Tempo Real -->
+      <div>
+        <ProductSearchInput v-model="searchQuery" :theme="tenant?.theme" @clear="clearSearch" />
 
-    <!-- Contagem de Resultados da Busca -->
-    <div v-if="isSearching && hasResults"
-      class="max-w-4xl mx-auto px-4 mt-3 flex items-center justify-between text-xs text-slate-600 animate-in fade-in duration-150">
-      <span>
-        Encontrado{{ totalResultsCount === 1 ? '' : 's' }} <strong>{{ totalResultsCount }}</strong> item{{ totalResultsCount === 1 ? '' : 's' }} para "<strong class="text-slate-900">{{ searchQuery }}</strong>"
-      </span>
-      <button @click="clearSearch" class="font-bold text-xs hover:underline cursor-pointer"
-        :class="themeClasses.primaryText">
-        Limpar busca
-      </button>
-    </div>
-
-    <!-- Estado Vazio da Busca -->
-    <div v-if="isSearching && !hasResults"
-      class="max-w-4xl mx-auto px-4 mt-8 py-12 text-center bg-white rounded-3xl border border-slate-200/80 shadow-sm space-y-3 animate-in fade-in duration-200">
-      <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-        <Search class="w-6 h-6" aria-hidden="true" />
-      </div>
-      <h3 class="font-bold text-base text-slate-900">Nenhum item encontrado</h3>
-      <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-        Não encontramos nenhum item correspondente a "<strong class="text-slate-800">{{ searchQuery }}</strong>". Tente buscar por outros termos.
-      </p>
-      <button @click="clearSearch" class="px-5 py-2.5 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer shadow-sm active:scale-95"
-        :class="themeClasses.buttonPrimary">
-        Limpar busca e ver tudo
-      </button>
-    </div>
-
-    <!-- 5. Seção Destaques (Ocultada quando em busca ativa) -->
-    <section v-if="!isSearching && (featuredProducts?.length || 0) > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
-      aria-labelledby="featured-title">
-      <div class="flex items-center justify-between">
-        <h2 id="featured-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <Sparkles class="w-4 h-4 text-amber-500" aria-hidden="true" />
-          <span>{{ isServiceStore ? 'Serviços Mais Procurados' : 'Destaques & Mais Pedidos' }}</span>
-        </h2>
-
-        <!-- Controles de Navegação Horizontal -->
-        <div class="flex items-center gap-1.5">
-          <button @click="scrollCarousel('left')"
-            class="p-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
-            aria-label="Rolar destaques para esquerda">
-            <ChevronLeft class="w-4 h-4" aria-hidden="true" />
+        <!-- Contagem de Resultados da Busca -->
+        <div v-if="isSearching && hasResults"
+          class="mt-3 flex items-center justify-between text-xs text-slate-600 animate-in fade-in duration-150">
+          <span>
+            Encontrado{{ totalResultsCount === 1 ? '' : 's' }} <strong>{{ totalResultsCount }}</strong> item{{ totalResultsCount === 1 ? '' : 's' }} para "<strong class="text-slate-900">{{ searchQuery }}</strong>"
+          </span>
+          <button @click="clearSearch" class="font-bold text-xs hover:underline cursor-pointer"
+            :class="themeClasses.primaryText">
+            Limpar busca
           </button>
-          <button @click="scrollCarousel('right')"
-            class="p-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
-            aria-label="Rolar destaques para direita">
-            <ChevronRight class="w-4 h-4" aria-hidden="true" />
+        </div>
+
+        <!-- Estado Vazio da Busca -->
+        <div v-if="isSearching && !hasResults"
+          class="mt-8 py-12 text-center bg-white rounded-3xl border border-slate-200/80 shadow-sm space-y-3 animate-in fade-in duration-200">
+          <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+            <Search class="w-6 h-6" aria-hidden="true" />
+          </div>
+          <h3 class="font-bold text-base text-slate-900">Nenhum item encontrado</h3>
+          <p class="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+            Não encontramos nenhum item correspondente a "<strong class="text-slate-800">{{ searchQuery }}</strong>". Tente buscar por outros termos.
+          </p>
+          <button @click="clearSearch" class="px-5 py-2.5 rounded-2xl text-xs font-bold text-white transition-all cursor-pointer shadow-sm active:scale-95"
+            :class="themeClasses.buttonPrimary">
+            Limpar busca e ver tudo
           </button>
         </div>
       </div>
 
-      <!-- Carrossel de Cards com Snap Scroll -->
-      <div ref="carouselRef"
-        class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div v-for="product in (featuredProducts || [])" :key="product.id"
-          @click="handleProductClick(product)"
-          class="shrink-0 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
-          <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
-            <img v-if="product.image" :src="product.image" :alt="product.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
-              @error="handleImageError($event, tenant?.theme)" />
-          </div>
-
-          <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
-            <div>
-              <h3 class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-slate-700 transition-colors">
-                {{ product.name }}
-              </h3>
-              <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
-                {{ product.description }}
-              </p>
-            </div>
-
-            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-              <span class="font-extrabold text-xs" :class="themeClasses.primaryText">
-                {{ formatCurrency(product.price) }}
-              </span>
-              <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border transition-all"
-                :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
-                {{ isServiceStore ? 'Agendar' : (((product?.optionGroups?.length || 0) > 0) ? 'Montar' : '+ Adicionar') }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 6. Barra Fixa de Categorias -->
-    <CategoryTabs v-if="(filteredCategories?.length || 0) > 0" :categories="filteredCategories || []" :theme="tenant?.theme" class="mt-6" />
-
-    <!-- 7. Catálogo Completo de Produtos / Serviços -->
-    <main v-if="(filteredCategories?.length || 0) > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo completo">
-      <section v-for="category in (filteredCategories || [])" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
-        :aria-labelledby="`cat-title-${category.id}`">
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-4 rounded-full" :class="themeClasses.categoryIndicator" aria-hidden="true"></span>
-          <h2 :id="`cat-title-${category.id}`" class="text-lg font-extrabold text-slate-900">
-            {{ category.name }}
+      <!-- Seção Destaques (Ocultada quando em busca ativa) -->
+      <section v-if="!isSearching && (featuredProducts?.length || 0) > 0" class="space-y-3.5"
+        aria-labelledby="featured-title">
+        <div class="flex items-center justify-between">
+          <h2 id="featured-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <Sparkles class="w-4 h-4 text-amber-500" aria-hidden="true" />
+            <span>{{ isServiceStore ? 'Serviços Mais Procurados' : 'Destaques & Mais Pedidos' }}</span>
           </h2>
+
+          <!-- Controles de Navegação Horizontal -->
+          <div class="flex items-center gap-1.5">
+            <button @click="scrollCarousel('left')"
+              class="p-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
+              aria-label="Rolar destaques para esquerda">
+              <ChevronLeft class="w-4 h-4" aria-hidden="true" />
+            </button>
+            <button @click="scrollCarousel('right')"
+              class="p-1.5 rounded-full bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer shadow-2xs"
+              aria-label="Rolar destaques para direita">
+              <ChevronRight class="w-4 h-4" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div v-for="product in (category.products || [])" :key="product.id"
+        <!-- Carrossel de Cards com Snap Scroll -->
+        <div ref="carouselRef"
+          class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div v-for="product in (featuredProducts || [])" :key="product.id"
             @click="handleProductClick(product)"
-            class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex gap-3.5 cursor-pointer group active:scale-[0.99]">
-            <div class="flex-1 flex flex-col justify-between">
+            class="shrink-0 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
+            <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
+              <img v-if="product.image" :src="product.image" :alt="product.name"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
+                @error="handleImageError($event, tenant?.theme)" />
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
               <div>
-                <h3 class="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors line-clamp-1">
+                <h3 class="font-bold text-xs text-slate-900 line-clamp-1 group-hover:text-slate-700 transition-colors">
                   {{ product.name }}
                 </h3>
-                <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                <p class="text-[11px] text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">
                   {{ product.description }}
                 </p>
               </div>
 
-              <div class="flex items-center gap-2 mt-3">
-                <span class="font-extrabold text-sm" :class="themeClasses.primaryText">
+              <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                <span class="font-extrabold text-xs" :class="themeClasses.primaryText">
                   {{ formatCurrency(product.price) }}
                 </span>
-                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border"
+                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border transition-all"
                   :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
                   {{ isServiceStore ? 'Agendar' : (((product?.optionGroups?.length || 0) > 0) ? 'Montar' : '+ Adicionar') }}
                 </span>
               </div>
             </div>
-
-            <!-- Imagem do Produto / Serviço -->
-            <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
-              <img v-if="product.image" :src="product.image" :alt="product.name"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
-                @error="handleImageError($event, tenant?.theme)" />
-            </div>
           </div>
         </div>
       </section>
+
+      <!-- Barra Fixa de Categorias -->
+      <CategoryTabs v-if="(filteredCategories?.length || 0) > 0" :categories="filteredCategories || []" :theme="tenant?.theme" />
+
+      <!-- Catálogo Completo de Produtos / Serviços -->
+      <div v-if="(filteredCategories?.length || 0) > 0" class="space-y-10">
+        <section v-for="category in (filteredCategories || [])" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
+          :aria-labelledby="`cat-title-${category.id}`">
+          <div class="flex items-center gap-2">
+            <span class="w-1.5 h-4 rounded-full" :class="themeClasses.categoryIndicator" aria-hidden="true"></span>
+            <h2 :id="`cat-title-${category.id}`" class="text-lg font-extrabold text-slate-900">
+              {{ category.name }}
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div v-for="product in (category.products || [])" :key="product.id"
+              @click="handleProductClick(product)"
+              class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex gap-3.5 cursor-pointer group active:scale-[0.99]">
+              <div class="flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors line-clamp-1">
+                    {{ product.name }}
+                  </h3>
+                  <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                    {{ product.description }}
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-2 mt-3">
+                  <span class="font-extrabold text-sm" :class="themeClasses.primaryText">
+                    {{ formatCurrency(product.price) }}
+                  </span>
+                  <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border"
+                    :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
+                    {{ isServiceStore ? 'Agendar' : (((product?.optionGroups?.length || 0) > 0) ? 'Montar' : '+ Adicionar') }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Imagem do Produto / Serviço -->
+              <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
+                <img v-if="product.image" :src="product.image" :alt="product.name"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
+                  @error="handleImageError($event, tenant?.theme)" />
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
 
     <!-- 8. Modal Customizador de Produto (Alaska Menu & Shop) -->
