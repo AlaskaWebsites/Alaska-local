@@ -6,9 +6,9 @@ import type { Category, Product } from '~/types'
  * Remove acentos, diacríticos e converte para minúsculas para busca insensível a caracteres especiais.
  * Ex: "Degradê / Pão" -> "degrade / pao"
  */
-export function normalizeSearchText(text?: string): string {
+export function normalizeSearchText(text?: string | null): string {
     if (!text) return ''
-    return text
+    return String(text)
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
@@ -18,26 +18,28 @@ export function normalizeSearchText(text?: string): string {
 /**
  * Verifica se um produto corresponde ao termo de busca no nome, descrição ou opcionais.
  */
-export function isProductMatchingQuery(product: Product, query: string): boolean {
-    const q = normalizeSearchText(query)
-    if (!q) return true
+export function isProductMatchingQuery(product: Product | null | undefined, normalizedQuery: string): boolean {
+    if (!normalizedQuery) return true
+    if (!product) return false
 
     const nameNorm = normalizeSearchText(product.name)
     const descNorm = normalizeSearchText(product.description)
 
-    if (nameNorm.includes(q) || descNorm.includes(q)) {
+    if (nameNorm.includes(normalizedQuery) || descNorm.includes(normalizedQuery)) {
         return true
     }
 
-    // Busca também nos grupos e nomes dos opcionais
-    if (product.optionGroups && product.optionGroups.length > 0) {
+    // Busca também nos grupos e nomes dos opcionais com checagem defensiva
+    if (product.optionGroups && Array.isArray(product.optionGroups) && product.optionGroups.length > 0) {
         for (const group of product.optionGroups) {
-            if (normalizeSearchText(group.title).includes(q)) {
+            if (group && group.title && normalizeSearchText(group.title).includes(normalizedQuery)) {
                 return true
             }
-            for (const option of group.options) {
-                if (normalizeSearchText(option.name).includes(q)) {
-                    return true
+            if (group && Array.isArray(group.options)) {
+                for (const option of group.options) {
+                    if (option && option.name && normalizeSearchText(option.name).includes(normalizedQuery)) {
+                        return true
+                    }
                 }
             }
         }
@@ -49,14 +51,17 @@ export function isProductMatchingQuery(product: Product, query: string): boolean
 /**
  * Filtra categorias e produtos preservando a estrutura apenas para os itens correspondentes.
  */
-export function filterCategoriesByQuery(categories: Category[], query: string): Category[] {
+export function filterCategoriesByQuery(categories?: Category[] | null, query?: string | null): Category[] {
+    if (!categories || !Array.isArray(categories)) return []
     const normalizedQuery = normalizeSearchText(query)
     if (!normalizedQuery) return categories
 
     const result: Category[] = []
 
     for (const category of categories) {
-        const matchingProducts = category.products.filter((product) =>
+        if (!category) continue
+        const catProducts = Array.isArray(category.products) ? category.products : []
+        const matchingProducts = catProducts.filter((product) =>
             isProductMatchingQuery(product, normalizedQuery)
         )
 
@@ -72,10 +77,14 @@ export function filterCategoriesByQuery(categories: Category[], query: string): 
 }
 
 /**
- * Conta o total de produtos em uma lista de categorias.
+ * Conta o total de produtos em uma lista de categorias de forma defensiva contra nulos/indefinidos.
  */
-export function countTotalProducts(categories: Category[]): number {
-    return categories.reduce((total, category) => total + category.products.length, 0)
+export function countTotalProducts(categories?: Category[] | null): number {
+    if (!categories || !Array.isArray(categories)) return 0
+    return categories.reduce((total, category) => {
+        const catProducts = category && Array.isArray(category.products) ? category.products : []
+        return total + catProducts.length
+    }, 0)
 }
 
 /**
@@ -86,11 +95,11 @@ export function useProductSearch(
 ) {
     const searchQuery = ref('')
 
-    const isSearching = computed(() => searchQuery.value.trim().length > 0)
+    const isSearching = computed(() => (searchQuery.value?.trim().length || 0) > 0)
 
     const filteredCategories = computed<Category[]>(() => {
         const raw = isRef(categoriesSource) ? categoriesSource.value : categoriesSource
-        if (!raw || raw.length === 0) return []
+        if (!raw || !Array.isArray(raw) || raw.length === 0) return []
 
         if (!isSearching.value) return raw
 
@@ -102,7 +111,7 @@ export function useProductSearch(
     })
 
     const hasResults = computed(() => {
-        return totalResultsCount.value > 0
+        return (totalResultsCount.value || 0) > 0
     })
 
     function clearSearch() {
