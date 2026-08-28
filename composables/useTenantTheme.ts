@@ -51,8 +51,8 @@ export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
     default: RED_THEME,
     food: RED_THEME,
     barber: {
-        primaryText: 'text-amber-600',
-        primaryTextHover: 'hover:text-amber-700',
+        primaryText: 'text-amber-500',
+        primaryTextHover: 'hover:text-amber-600',
         primaryBg: 'bg-amber-500',
         primaryBgHover: 'hover:bg-amber-600',
         buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-white',
