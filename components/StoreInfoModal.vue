@@ -1,90 +1,61 @@
 <!-- components/StoreInfoModal.vue -->
 <script setup lang="ts">
-import { computed, toRef, onMounted, onUnmounted } from "vue";
-import { useBodyScrollLock } from "~/composables/useBodyScrollLock";
-import { useTenantTheme } from "~/composables/useTenantTheme";
+import { computed, toRef, onMounted, onUnmounted } from 'vue'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
+import { useTenantTheme } from '~/composables/useTenantTheme'
+import { useOpeningHours } from '~/composables/useOpeningHours'
+import { formatCurrency } from '~/utils/formatters'
+import { handleImageError } from '~/utils/images'
 import {
   X,
-  MapPin,
   Clock,
+  MapPin,
   CreditCard,
-  DollarSign,
-  Info,
-  ExternalLink,
   Navigation,
-  ChevronRight,
-  ShieldCheck,
-  Truck,
-} from "lucide-vue-next";
-import type { Tenant } from "~/types/tenant";
+  ShieldCheck
+} from 'lucide-vue-next'
+import type { Tenant } from '~/types'
 
 const props = defineProps<{
-  tenant: Tenant;
-  isOpen: boolean;
-}>();
+  tenant: Tenant
+  isOpen: boolean
+}>()
 
 const emit = defineEmits<{
-  (e: "close"): void;
-}>();
+  (e: 'close'): void
+}>()
 
-// 1. Tema Dinâmico por Segmento
-const { themeClasses } = useTenantTheme(toRef(props, "tenant"));
+// 1. Tema Dinâmico
+const { themeClasses } = useTenantTheme(toRef(props, 'tenant'))
 
-// 2. Trava de Rolagem de Fundo (Body Scroll Lock)
-useBodyScrollLock(toRef(props, "isOpen"));
+// 2. Trava de Scroll e Acessibilidade ESC
+useBodyScrollLock(toRef(props, 'isOpen'))
 
-// 3. Fechamento com Tecla ESC no Desktop
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === "Escape" && props.isOpen) {
-    emit("close");
+  if (e.key === 'Escape' && props.isOpen) {
+    emit('close')
   }
-};
+}
 
 onMounted(() => {
   if (import.meta.client) {
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown)
   }
-});
+})
 
 onUnmounted(() => {
   if (import.meta.client) {
-    window.removeEventListener("keydown", handleKeyDown);
+    window.removeEventListener('keydown', handleKeyDown)
   }
-});
+})
 
-// Formatação monetária
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+// 3. Status e Horários
+const { isOpen: isOpenNow } = useOpeningHours(toRef(props, 'tenant'))
 
-// Verifica se a loja está aberta no momento (com suporte a virada de meia-noite)
-const isOpenNow = computed(() => {
-  if (!props.tenant.openingHours) return null;
-
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  const [openHours, openMinutes] = props.tenant.openingHours.open.split(":").map(Number);
-  const [closeHours, closeMinutes] = props.tenant.openingHours.close.split(":").map(Number);
-
-  const openMinutesTotal = (openHours || 0) * 60 + (openMinutes || 0);
-  const closeMinutesTotal = (closeHours || 0) * 60 + (closeMinutes || 0);
-
-  if (closeMinutesTotal < openMinutesTotal) {
-    return currentMinutes >= openMinutesTotal || currentMinutes < closeMinutesTotal;
-  }
-
-  return currentMinutes >= openMinutesTotal && currentMinutes < closeMinutesTotal;
-});
-
-// Formata o horário de funcionamento para exibição
 const formatOpeningHours = computed(() => {
-  if (!props.tenant.openingHours) return null;
-  return `${props.tenant.openingHours.open} às ${props.tenant.openingHours.close}`;
-});
+  if (!props.tenant.openingHours) return null
+  return `${props.tenant.openingHours.open} às ${props.tenant.openingHours.close}`
+})
 </script>
 
 <template>
@@ -113,7 +84,8 @@ const formatOpeningHours = computed(() => {
           <section aria-labelledby="store-identity-title" class="space-y-3">
             <div class="flex items-center gap-3.5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <div class="h-16 w-16 rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shrink-0 shadow-2xs">
-                <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="h-full w-full object-cover" />
+                <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name" class="h-full w-full object-cover"
+                  @error="handleImageError($event, tenant?.theme)" />
                 <div v-else class="h-full w-full flex items-center justify-center font-bold text-lg"
                   :class="themeClasses.primaryText">
                   {{ tenant.name.charAt(0) }}
