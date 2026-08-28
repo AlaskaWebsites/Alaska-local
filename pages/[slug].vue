@@ -178,7 +178,7 @@
           class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
           <div v-for="product in (featuredProducts || [])" :key="product.id"
             @click="handleProductClick(product)"
-            class="shrink-0 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
+            class="shrink-0 w-64 sm:w-68 md:w-72 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
             <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
               <img v-if="product.image" :src="product.image" :alt="product.name"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
@@ -465,3 +465,16 @@ function scrollCarousel(direction: 'left' | 'right') {
   carouselRef.value.scrollBy({ left: offset, behavior: 'smooth' })
 }
 </script>
+
+<style scoped>
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+</style>
