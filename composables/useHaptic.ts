@@ -6,11 +6,7 @@ import { ref } from 'vue'
  * Retorna true se a vibração foi acionada com sucesso, ou false caso a API não seja suportada/disponível.
  */
 export function triggerHaptic(pattern: number | number[] | readonly number[] = 30): boolean {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
-        return false
-    }
-
-    if (typeof navigator.vibrate !== 'function') {
+    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') {
         return false
     }
 
@@ -42,7 +38,6 @@ export const hapticPatterns = {
  */
 export function useHaptic() {
     const isSupported = ref(
-        typeof window !== 'undefined' &&
         typeof navigator !== 'undefined' &&
         typeof navigator.vibrate === 'function'
     )
