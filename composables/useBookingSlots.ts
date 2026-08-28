@@ -189,37 +189,43 @@ export function calculateTotalPrice(services: BookingService[]): number {
 }
 
 /**
- * Formata a mensagem final de agendamento para o WhatsApp com quebras de linha e emojis profissionais.
+ * Formata a mensagem de agendamento estruturada para despacho no WhatsApp.
  */
 export function formatBookingWhatsAppMessage(payload: BookingAppointmentPayload): string {
-  const servicesList = (payload.services || [])
-    .map((s) => `• *${s.name}* (${s.durationMinutes} min) - ${formatCurrency(s.price)}`)
-    .join('\n')
+  const lines: string[] = []
 
-  const profLine = payload.professional
-    ? `💈 *Profissional:* ${payload.professional.name}\n`
-    : ''
+  lines.push(`💈 *NOVO AGENDAMENTO — ${payload.tenantName.toUpperCase()}*`)
+  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+  lines.push(`📅 *DATA & HORÁRIO:*`)
+  lines.push(`• Data: ${payload.date}`)
+  lines.push(`• Horário: ${payload.time}`)
 
-  const notesLine = payload.notes
-    ? `📝 *Obs:* "${payload.notes}"\n`
-    : ''
+  if (payload.professional) {
+    lines.push(`• Profissional: ${payload.professional.name} (${payload.professional.role || 'Especialista'})`)
+  } else {
+    lines.push(`• Profissional: Qualquer disponível`)
+  }
 
-  return (
-    `📅 *NOVO AGENDAMENTO - ${payload.tenantName.toUpperCase()}*\n\n` +
-    `Olá! Gostaria de confirmar meu agendamento:\n\n` +
-    `📆 *Data:* ${payload.date}\n` +
-    `⏰ *Horário:* ${payload.time}\n` +
-    profLine +
-    `⏳ *Duração Estimada:* ${payload.totalDurationMinutes} minutos\n\n` +
-    `✂️ *Serviços Selecionados:*\n` +
-    `${servicesList}\n\n` +
-    `💰 *VALOR TOTAL:* ${formatCurrency(payload.totalPrice)}\n` +
-    `💳 *Pagamento:* ${payload.paymentMethod}\n\n` +
-    `👤 *Cliente:* ${payload.customerName}\n` +
-    `📱 *WhatsApp:* ${payload.customerPhone}\n` +
-    notesLine +
-    `\n_Enviado através do Alaska Local_`
-  )
+  lines.push(``)
+  lines.push(`✂️ *SERVIÇOS ESCOLHIDOS:*`)
+  payload.services.forEach((service) => {
+    lines.push(`• ${service.name} (${service.durationMinutes} min) — ${formatCurrency(service.price)}`)
+  })
+
+  lines.push(``)
+  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+  lines.push(`⏱️ Duração Estimada: ${payload.totalDurationMinutes} minutos`)
+  lines.push(`*VALOR TOTAL: ${formatCurrency(payload.totalPrice)}*`)
+  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
+  lines.push(`👤 *CLIENTE:* ${payload.customerName}`)
+  lines.push(`📱 *WHATSAPP:* ${payload.customerPhone}`)
+  lines.push(`💳 *PAGAMENTO:* ${payload.paymentMethod}`)
+
+  if (payload.notes) {
+    lines.push(`💬 *OBSERVAÇÕES:* "${payload.notes}"`)
+  }
+
+  return lines.join('\n')
 }
 
 /**
