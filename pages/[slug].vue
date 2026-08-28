@@ -35,7 +35,7 @@
                 class="w-full h-full object-cover rounded-xl" @error="handleImageError($event, tenant.theme)" />
               <div v-else class="w-full h-full flex items-center justify-center font-bold text-2xl"
                 :class="themeClasses.primaryText">
-                {{ tenant.name.charAt(0) }}
+                {{ tenant.name ? tenant.name.charAt(0) : 'A' }}
               </div>
             </div>
 
@@ -50,7 +50,7 @@
                   {{ isServiceStore ? '💈 Serviços & Agenda' : (tenant.businessCategory === 'shop' ? '🛍️ Vitrine & Catálogo' : '🍔 Cardápio & Delivery') }}
                 </span>
               </div>
-              <p class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
+              <p v-if="tenant.description" class="text-xs sm:text-sm text-slate-500 line-clamp-2 leading-relaxed">
                 {{ tenant.description }}
               </p>
             </div>
@@ -61,10 +61,10 @@
             <!-- Nota de Avaliações (Abre Modal de Reviews) -->
             <button v-if="tenant.reviews" @click="isReviewsOpen = true"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-slate-800 font-bold text-xs shadow-2xs hover:bg-amber-100/80 transition-all cursor-pointer"
-              :aria-label="`Avaliação ${tenant.reviews.score.toFixed(1)} de 5 estrelas. Ver ${tenant.reviews.totalReviews} avaliações`">
+              :aria-label="`Avaliação ${(tenant.reviews.score || 5).toFixed(1)} de 5 estrelas. Ver ${tenant.reviews.totalReviews || 0} avaliações`">
               <Star class="w-4 h-4 fill-amber-400 text-amber-400" aria-hidden="true" />
-              <span>{{ tenant.reviews.score.toFixed(1) }}</span>
-              <span class="text-slate-400 font-normal">({{ tenant.reviews.totalReviews }})</span>
+              <span>{{ (tenant.reviews.score || 5).toFixed(1) }}</span>
+              <span class="text-slate-400 font-normal">({{ tenant.reviews.totalReviews || 0 }})</span>
             </button>
 
             <!-- Status Aberto/Fechado (Abre Modal de Informações) -->
@@ -116,7 +116,7 @@
 
     <!-- 4. Campo de Busca de Produtos em Tempo Real -->
     <div class="max-w-4xl mx-auto px-4 mt-6">
-      <ProductSearchInput v-model="searchQuery" :theme="tenant.theme" @clear="clearSearch" />
+      <ProductSearchInput v-model="searchQuery" :theme="tenant?.theme" @clear="clearSearch" />
     </div>
 
     <!-- Contagem de Resultados da Busca -->
@@ -148,7 +148,7 @@
     </div>
 
     <!-- 5. Seção Destaques (Ocultada quando em busca ativa) -->
-    <section v-if="!isSearching && featuredProducts.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
+    <section v-if="!isSearching && (featuredProducts?.length || 0) > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-3.5"
       aria-labelledby="featured-title">
       <div class="flex items-center justify-between">
         <h2 id="featured-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
@@ -174,13 +174,13 @@
       <!-- Carrossel de Cards com Snap Scroll -->
       <div ref="carouselRef"
         class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-        <div v-for="product in featuredProducts" :key="product.id"
+        <div v-for="product in (featuredProducts || [])" :key="product.id"
           @click="handleProductClick(product)"
           class="shrink-0 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
           <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
             <img v-if="product.image" :src="product.image" :alt="product.name"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
-              @error="handleImageError($event, tenant.theme)" />
+              @error="handleImageError($event, tenant?.theme)" />
           </div>
 
           <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
@@ -199,7 +199,7 @@
               </span>
               <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border transition-all"
                 :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
-                {{ isServiceStore ? 'Agendar' : (product.optionGroups?.length ? 'Montar' : '+ Adicionar') }}
+                {{ isServiceStore ? 'Agendar' : (((product?.optionGroups?.length || 0) > 0) ? 'Montar' : '+ Adicionar') }}
               </span>
             </div>
           </div>
@@ -208,11 +208,11 @@
     </section>
 
     <!-- 6. Barra Fixa de Categorias -->
-    <CategoryTabs v-if="filteredCategories.length > 0" :categories="filteredCategories" :theme="tenant.theme" class="mt-6" />
+    <CategoryTabs v-if="(filteredCategories?.length || 0) > 0" :categories="filteredCategories || []" :theme="tenant?.theme" class="mt-6" />
 
     <!-- 7. Catálogo Completo de Produtos / Serviços -->
-    <main v-if="filteredCategories.length > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo completo">
-      <section v-for="category in filteredCategories" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
+    <main v-if="(filteredCategories?.length || 0) > 0" class="max-w-4xl mx-auto px-4 mt-8 space-y-10" aria-label="Catálogo completo">
+      <section v-for="category in (filteredCategories || [])" :key="category.id" :id="category.id" class="space-y-4 scroll-mt-24"
         :aria-labelledby="`cat-title-${category.id}`">
         <div class="flex items-center gap-2">
           <span class="w-1.5 h-4 rounded-full" :class="themeClasses.categoryIndicator" aria-hidden="true"></span>
@@ -222,7 +222,7 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div v-for="product in category.products" :key="product.id"
+          <div v-for="product in (category.products || [])" :key="product.id"
             @click="handleProductClick(product)"
             class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-md transition-all duration-200 flex gap-3.5 cursor-pointer group active:scale-[0.99]">
             <div class="flex-1 flex flex-col justify-between">
@@ -241,7 +241,7 @@
                 </span>
                 <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border"
                   :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
-                  {{ isServiceStore ? 'Agendar' : (product.optionGroups?.length ? 'Montar' : '+ Adicionar') }}
+                  {{ isServiceStore ? 'Agendar' : (((product?.optionGroups?.length || 0) > 0) ? 'Montar' : '+ Adicionar') }}
                 </span>
               </div>
             </div>
@@ -250,7 +250,7 @@
             <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
               <img v-if="product.image" :src="product.image" :alt="product.name"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
-                @error="handleImageError($event, tenant.theme)" />
+                @error="handleImageError($event, tenant?.theme)" />
             </div>
           </div>
         </div>
@@ -262,7 +262,7 @@
       @close="closeProductModal" @add-to-cart="handleAddProductToCart" />
 
     <!-- 9. Barra Fixa Inferior da Sacola (Apenas se houver itens) -->
-    <div v-if="cartItems.length > 0" role="region" aria-label="Resumo da sacola de compras"
+    <div v-if="(cartItems?.length || 0) > 0" role="region" aria-label="Resumo da sacola de compras"
       class="fixed bottom-0 left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl z-40">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div>
@@ -283,14 +283,14 @@
     </div>
 
     <!-- 10. Drawer Lateral da Sacola -->
-    <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cartItems" @close="isCartDrawerOpen = false"
+    <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cartItems || []" @close="isCartDrawerOpen = false"
       @remove-item="removeCartItem" @clear-cart="clearCart" />
 
     <!-- 11. Modais de Informações e Reviews -->
-    <StoreReviewsModal v-if="tenant.reviews" :reviews="tenant.reviews" :theme="tenant.theme" :is-open="isReviewsOpen"
+    <StoreReviewsModal v-if="tenant?.reviews" :reviews="tenant.reviews" :theme="tenant?.theme" :is-open="isReviewsOpen"
       @close="isReviewsOpen = false" />
 
-    <StoreInfoModal :tenant="tenant" :is-open="isInfoOpen" @close="isInfoOpen = false" />
+    <StoreInfoModal v-if="tenant" :tenant="tenant" :is-open="isInfoOpen" @close="isInfoOpen = false" />
 
     <!-- 12. Modal de Agendamento de Serviços (Alaska Hub & Pro) -->
     <BookingModal v-if="tenant" :is-open="isBookingOpen" :tenant="tenant" :initial-service="selectedBookingService"
@@ -348,13 +348,13 @@ const { isOpen } = useOpeningHours(tenant)
 // 4. Compartilhamento e Toast
 const isCopied = ref(false)
 function shareStore() {
-  if (navigator.share) {
+  if (typeof navigator !== 'undefined' && navigator.share) {
     navigator.share({
       title: tenant.value?.name,
       text: tenant.value?.description,
       url: window.location.href
     }).catch(() => {})
-  } else {
+  } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
     navigator.clipboard.writeText(window.location.href)
     isCopied.value = true
     setTimeout(() => {
@@ -375,9 +375,9 @@ const {
 
 // 6. Carrinho Persistente Multi-Tenant via LocalStorage (useCart)
 const {
-  cartItems,
-  addToCart,
-  removeCartItem,
+  items: cartItems,
+  addItem: addToCart,
+  removeItem: removeCartItem,
   clearCart,
   totalItemsCount,
   cartSubtotal
@@ -434,17 +434,21 @@ function closeProductModal() {
 }
 
 function handleAddProductToCart(item: CartItem) {
-  addToCart(item)
+  if (typeof addToCart === 'function') {
+    addToCart(item)
+  }
   closeProductModal()
 }
 
-// 9. Destaques Dinâmicos
+// 9. Destaques Dinâmicos com iterador seguro
 const featuredProducts = computed(() => {
-  if (!tenant?.value) return []
+  if (!tenant?.value?.categories || !Array.isArray(tenant.value.categories)) return []
   const all: Product[] = []
-  tenant.value.categories?.forEach((cat) => {
-    all.push(...cat.products)
-  })
+  for (const cat of tenant.value.categories) {
+    if (cat && Array.isArray(cat.products)) {
+      all.push(...cat.products)
+    }
+  }
   return all.slice(0, 6)
 })
 
