@@ -42,10 +42,13 @@ const MONTH_SHORTS = [
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
 /**
- * Converte horário HH:mm em minutos a partir da meia-noite.
+ * Converte horário HH:mm em minutos a partir da meia-noite de forma segura contra noUncheckedIndexedAccess.
  */
-export function timeToMinutes(timeStr: string): number {
-  const [hours, minutes] = timeStr.split(':').map(Number)
+export function timeToMinutes(time: string): number {
+  if (!time) return 0
+  const parts = time.split(':')
+  const hours = Number(parts[0] || 0)
+  const minutes = Number(parts[1] || 0)
   return hours * 60 + minutes
 }
 
@@ -53,9 +56,9 @@ export function timeToMinutes(timeStr: string): number {
  * Converte minutos a partir da meia-noite em string formatada HH:mm.
  */
 export function minutesToTime(minutes: number): string {
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 }
 
 /**
@@ -82,15 +85,15 @@ export function generateBookingDays(
 
     const isToday = i === 0
     const isTomorrow = i === 1
-    const weekDay = isToday ? 'Hoje' : isTomorrow ? 'Amanhã' : WEEK_DAYS[d.getDay()]
+    const weekDay = isToday ? 'Hoje' : isTomorrow ? 'Amanhã' : (WEEK_DAYS[d.getDay()] || 'Dia')
     const isClosed = closedDaysOfWeek.includes(d.getDay())
 
     days.push({
       dateStr: dayStr,
       isoDate,
       dayNumber: dayNum,
-      monthName: MONTH_NAMES[monthIndex],
-      monthShort: MONTH_SHORTS[monthIndex],
+      monthName: MONTH_NAMES[monthIndex] || 'Mês',
+      monthShort: MONTH_SHORTS[monthIndex] || 'Mês',
       year,
       displayDate,
       weekDay,
@@ -106,14 +109,15 @@ export function generateBookingDays(
  * Retorna slots ocupados determinísticos para simulação realista em demonstrações.
  */
 export function getMockBookedSlotsForDate(dateStr: string): string[] {
-  const dayNum = parseInt(dateStr.split('/')[0], 10) || 1
+  const dayNum = parseInt(dateStr.split('/')[0] || '1', 10) || 1
   const presets: string[][] = [
     ['10:00', '11:30', '15:00', '17:30'],
     ['09:30', '14:00', '16:00', '18:30'],
     ['10:30', '11:00', '14:30', '16:30', '19:00'],
     ['09:00', '13:30', '15:30', '17:00'],
   ]
-  return presets[dayNum % presets.length]
+  const presetIndex = dayNum % presets.length
+  return presets[presetIndex] || []
 }
 
 export interface GenerateTimeSlotsOptions {
@@ -171,57 +175,51 @@ export function generateTimeSlots(
 }
 
 /**
- * Calcula a duração total somando os serviços selecionados.
+ * Calcula a duração total somada de múltiplos serviços.
  */
 export function calculateTotalDuration(services: BookingService[]): number {
-  return services.reduce((acc, s) => acc + s.durationMinutes, 0)
+  return (services || []).reduce((acc, s) => acc + (s?.durationMinutes || 30), 0)
 }
 
 /**
- * Calcula o valor total somando os serviços selecionados.
+ * Calcula o preço total somado de múltiplos serviços.
  */
 export function calculateTotalPrice(services: BookingService[]): number {
-  return services.reduce((acc, s) => acc + s.price, 0)
+  return (services || []).reduce((acc, s) => acc + (s?.price || 0), 0)
 }
 
 /**
- * Formata a mensagem de agendamento estruturada para despacho no WhatsApp.
+ * Formata a mensagem final de agendamento para o WhatsApp com quebras de linha e emojis profissionais.
  */
 export function formatBookingWhatsAppMessage(payload: BookingAppointmentPayload): string {
-  const lines: string[] = []
+  const servicesList = (payload.services || [])
+    .map((s) => `• *${s.name}* (${s.durationMinutes} min) - ${formatCurrency(s.price)}`)
+    .join('\n')
 
-  lines.push(`💈 *NOVO AGENDAMENTO — ${payload.tenantName.toUpperCase()}*`)
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`📅 *DATA & HORÁRIO:*`)
-  lines.push(`• Data: ${payload.date}`)
-  lines.push(`• Horário: ${payload.time}`)
+  const profLine = payload.professional
+    ? `💈 *Profissional:* ${payload.professional.name}\n`
+    : ''
 
-  if (payload.professional) {
-    lines.push(`• Profissional: ${payload.professional.name} (${payload.professional.role || 'Especialista'})`)
-  } else {
-    lines.push(`• Profissional: Qualquer disponível`)
-  }
+  const notesLine = payload.notes
+    ? `📝 *Obs:* "${payload.notes}"\n`
+    : ''
 
-  lines.push(``)
-  lines.push(`✂️ *SERVIÇOS ESCOLHIDOS:*`)
-  payload.services.forEach((service) => {
-    lines.push(`• ${service.name} (${service.durationMinutes} min) — ${formatCurrency(service.price)}`)
-  })
-
-  lines.push(``)
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`⏱️ Duração Estimada: ${payload.totalDurationMinutes} minutos`)
-  lines.push(`*VALOR TOTAL: ${formatCurrency(payload.totalPrice)}*`)
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`👤 *CLIENTE:* ${payload.customerName}`)
-  lines.push(`📱 *WHATSAPP:* ${payload.customerPhone}`)
-  lines.push(`💳 *PAGAMENTO:* ${payload.paymentMethod}`)
-
-  if (payload.notes) {
-    lines.push(`💬 *OBSERVAÇÕES:* "${payload.notes}"`)
-  }
-
-  return lines.join('\n')
+  return (
+    `📅 *NOVO AGENDAMENTO - ${payload.tenantName.toUpperCase()}*\n\n` +
+    `Olá! Gostaria de confirmar meu agendamento:\n\n` +
+    `📆 *Data:* ${payload.date}\n` +
+    `⏰ *Horário:* ${payload.time}\n` +
+    profLine +
+    `⏳ *Duração Estimada:* ${payload.totalDurationMinutes} minutos\n\n` +
+    `✂️ *Serviços Selecionados:*\n` +
+    `${servicesList}\n\n` +
+    `💰 *VALOR TOTAL:* ${formatCurrency(payload.totalPrice)}\n` +
+    `💳 *Pagamento:* ${payload.paymentMethod}\n\n` +
+    `👤 *Cliente:* ${payload.customerName}\n` +
+    `📱 *WhatsApp:* ${payload.customerPhone}\n` +
+    notesLine +
+    `\n_Enviado através do Alaska Local_`
+  )
 }
 
 /**
@@ -294,9 +292,9 @@ export function useBookingSlots(options?: {
   const totalPrice = computed(() => calculateTotalPrice(selectedServices.value))
 
   function toggleService(service: BookingService) {
-    const index = selectedServices.value.findIndex((s) => s.id === service.id)
-    if (index >= 0) {
-      selectedServices.value.splice(index, 1)
+    const idx = selectedServices.value.findIndex((s) => s.id === service.id)
+    if (idx >= 0) {
+      selectedServices.value.splice(idx, 1)
     } else {
       selectedServices.value.push(service)
     }
