@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare",
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "husky"
   },
   "dependencies": {
     "@lucide/vue": "^1.33.0",
