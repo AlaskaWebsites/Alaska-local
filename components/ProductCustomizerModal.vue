@@ -4,6 +4,7 @@ import { ref, computed, toRef, watch, onMounted, onUnmounted } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { formatCurrency } from '~/utils/formatters'
+import { handleImageError } from '~/utils/images'
 import { X, Star, Plus, Minus, Check, AlertCircle } from 'lucide-vue-next'
 import type { Tenant, Product, OptionGroup, Option, CartItem } from '~/types'
 
@@ -151,7 +152,7 @@ function handleAdd() {
                 <!-- Header da Foto -->
                 <div class="relative h-60 sm:h-52 w-full bg-slate-100 shrink-0">
                     <img v-if="product.image" :src="product.image" :alt="product.name"
-                        class="w-full h-full object-cover" />
+                        class="w-full h-full object-cover" @error="handleImageError($event, tenant?.theme)" />
 
                     <!-- Botão Fechar -->
                     <button @click="emit('close')"
@@ -164,7 +165,7 @@ function handleAdd() {
                     <div
                         class="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md rounded-full py-1 px-3 shadow-md flex items-center gap-2 border border-slate-200 text-[11px]">
                         <img v-if="tenant.logo" :src="tenant.logo" :alt="tenant.name"
-                            class="w-4 h-4 rounded-full object-cover" />
+                            class="w-4 h-4 rounded-full object-cover" @error="handleImageError($event, tenant?.theme)" />
                         <span class="font-bold text-slate-900 truncate max-w-[130px]">{{ tenant.name }}</span>
                         <span class="text-slate-300" aria-hidden="true">•</span>
                         <span class="flex items-center gap-0.5 font-bold text-amber-500">
