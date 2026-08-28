@@ -334,7 +334,7 @@ import {
   Calendar,
   Search
 } from 'lucide-vue-next'
-import type { Product, CartItem, BookingService } from '~/types'
+import type { Product, CartItem, BookingService, Tenant } from '~/types'
 
 // 1. Resolução do Tenant Atual (Retorna referências reativas síncronas)
 const { tenant, slug } = useTenant()
@@ -414,9 +414,10 @@ function handleProductClick(product: Product) {
     selectedBookingService.value = {
       id: product.id,
       name: product.name,
-      description: product.description,
+      description: product.description || '',
       price: product.price,
       durationMinutes: 35,
+      professionalIds: [],
     }
     isBookingOpen.value = true
   } else {
