@@ -17,7 +17,7 @@ export function normalizeSearchText(text?: string | null): string {
 
 /**
  * Verifica se um produto corresponde ao termo de busca no nome, descrição ou opcionais.
- * Realiza normalização automática e defensiva do termo de busca internamente.
+ * Normaliza internamente o termo de busca para garantir case/accent insensitivity.
  */
 export function isProductMatchingQuery(product: Product | null | undefined, rawQuery: string): boolean {
     const queryNorm = normalizeSearchText(rawQuery)
