@@ -3,9 +3,6 @@ import { ref } from 'vue'
 import { ViaCepResponseSchema, type ViaCepResponse } from '~/types'
 import { sanitizeDigits, formatCep } from '~/utils/formatters'
 
-// Re-exporta utilitários para compatibilidade total com imports nomeados estáticos
-export { formatCep, sanitizeDigits }
-
 export interface ParsedAddress {
   cep: string
   street: string
