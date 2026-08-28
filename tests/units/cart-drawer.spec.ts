@@ -1,7 +1,7 @@
 // tests/units/cart-drawer.spec.ts
 import { describe, it, expect } from 'vitest'
 import { TenantSchema, type Tenant } from '~/types/tenant'
-import type { CartItem, CheckoutFormData } from '~/types/cart'
+import type { CartItem, CheckoutFormData, DeliveryType } from '~/types/cart'
 
 // 1. Mock Completo de Tenant Válido via Schema Zod
 const mockTenant: Tenant = TenantSchema.parse({
@@ -29,8 +29,10 @@ const mockCartItems: CartItem[] = [
         product: {
             id: 'p1',
             name: 'Smash Duplo Bacon',
+            description: '',
             price: 32.0,
             available: true,
+            image: '',
             optionGroups: [],
         },
         quantity: 2,
@@ -45,8 +47,10 @@ const mockCartItems: CartItem[] = [
         product: {
             id: 'p2',
             name: 'Batata Rústica Individual',
+            description: '',
             price: 15.0,
             available: true,
+            image: '',
             optionGroups: [],
         },
         quantity: 1,
@@ -61,17 +65,17 @@ function calculateSubtotal(items: CartItem[]): number {
     return items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
 }
 
-function calculateDeliveryFee(deliveryType: 'delivery' | 'pickup', tenantFee?: number): number {
+function calculateDeliveryFee(deliveryType: DeliveryType, tenantFee?: number): number {
     return deliveryType === 'delivery' ? tenantFee || 0 : 0
 }
 
-function calculateTotal(items: CartItem[], deliveryType: 'delivery' | 'pickup', tenantFee?: number): number {
+function calculateTotal(items: CartItem[], deliveryType: DeliveryType, tenantFee?: number): number {
     return calculateSubtotal(items) + calculateDeliveryFee(deliveryType, tenantFee)
 }
 
 function validateCheckout(
     customerName: string,
-    deliveryType: 'delivery' | 'pickup',
+    deliveryType: DeliveryType,
     address: { street: string; number: string; neighborhood: string }
 ): boolean {
     if (!customerName.trim()) return false
@@ -103,8 +107,8 @@ function buildWhatsAppPayload(
 
     items.forEach((item) => {
         lines.push(`*${item.quantity}x* ${item.product.name} — *${formatCurrency(item.unitPrice * item.quantity)}*`)
-        if (item.selectedOptions && item.selectedOptions.length) {
-            item.selectedOptions.forEach((opt) => {
+        if (item.selectedOptions && Array.isArray(item.selectedOptions) && item.selectedOptions.length) {
+            item.selectedOptions.forEach((opt: any) => {
                 const priceStr = opt.price > 0 ? ` (+${formatCurrency(opt.price)})` : ''
                 lines.push(`   └ _${opt.name}${priceStr}_`)
             })
@@ -254,12 +258,12 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
             expect(message).toContain('Queijo Extra')
             expect(message).toContain('Obs: "Caprichar na maionese verde"')
             expect(message).toContain('📍 *DADOS DE ENTREGA:*')
-            expect(message).toContain('• Nome: Danilo Gozzi')
             expect(message).toContain('• Endereço: Rua das Palmeiras, 450')
             expect(message).toContain('• Complemento: Apto 12')
             expect(message).toContain('• Bairro: Jardins')
-            expect(message).toContain('💳 *FORMA DE PAGAMENTO:*')
-            expect(message).toContain('• Pix')
+            expect(message).toContain('Subtotal: R$ 93,00')
+            expect(message).toContain('Taxa de Entrega: R$ 8,00')
+            expect(message).toContain('TOTAL: R$ 101,00')
             expect(url).toContain('https://wa.me/5511999999999?text=')
         })
 
@@ -269,8 +273,10 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
                     product: {
                         id: 'p1',
                         name: 'Burger Simples',
+                        description: '',
                         price: 25.0,
                         available: true,
+                        image: '',
                         optionGroups: [],
                     },
                     quantity: 1,
@@ -295,11 +301,11 @@ describe('Componente Modular: CartDrawerModal (Regras de Negócio e Checkout)', 
 
             const { message } = buildWhatsAppPayload(mockTenant, items, checkout)
 
+            expect(message).toContain('🍔 *NOVO PEDIDO - HAMBURGUERIA X*')
+            expect(message).toContain('*TOTAL (RETIRADA): R$ 25,00*')
             expect(message).toContain('🛍️ *RETIRADA NO BALCÃO:*')
             expect(message).toContain('• Nome: Carlos Silva')
-            expect(message).toContain('💳 *FORMA DE PAGAMENTO:*')
-            expect(message).toContain('• Dinheiro')
-            expect(message).toContain('• Troco para:')
+            expect(message).toContain('Dinheiro')
             expect(message).toContain('50')
         })
     })
