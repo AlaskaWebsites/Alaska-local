@@ -115,6 +115,7 @@ export function useTenantTheme(
     })
 
     return {
+        theme: activeTheme,
         activeTheme,
         themeClasses,
     }
