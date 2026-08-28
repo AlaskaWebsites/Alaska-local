@@ -20,7 +20,7 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
 
     const storageKey = computed(() => `alaska_cart_${tenantSlug.value}`)
 
-    // Armazenamento reativo e persistente no localStorage via VueUse (SSR-safe)
+    // Armazenamento reativo e persistente no localStorage via VueUse (SSR-safe com fallback de array vazio)
     const items = useLocalStorage<CartItem[]>(storageKey.value, [], {
         mergeDefaults: true,
         listenToStorageChanges: true,
@@ -29,17 +29,21 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
     function addItem(item: CartItem) {
         // Feedback tátil sutil no mobile ao adicionar item à sacola
         triggerHaptic(30)
+        if (!items.value) {
+            items.value = []
+        }
         items.value.push(item)
     }
 
     function removeItem(index: number) {
+        if (!items.value) return
         if (index >= 0 && index < items.value.length) {
             items.value.splice(index, 1)
         }
     }
 
     function updateItemQuantity(index: number, quantity: number) {
-        if (index < 0 || index >= items.value.length) return
+        if (!items.value || index < 0 || index >= items.value.length) return
         if (quantity <= 0) {
             removeItem(index)
         } else {
@@ -52,16 +56,17 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
     }
 
     const totalItemsCount = computed(() => {
-        return items.value.reduce((acc, item) => acc + item.quantity, 0)
+        return (items.value || []).reduce((acc, item) => acc + (item?.quantity || 0), 0)
     })
 
     const cartSubtotal = computed(() => {
-        return items.value.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+        return (items.value || []).reduce((acc, item) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0)
     })
 
-    const isEmpty = computed(() => items.value.length === 0)
+    const isEmpty = computed(() => (items.value?.length || 0) === 0)
 
     return {
+        // Nomes padrão
         items,
         addItem,
         removeItem,
@@ -71,6 +76,11 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
         cartSubtotal,
         isEmpty,
         storageKey,
+
+        // Aliases de conveniência defensiva para compatibilidade e desestruturação nos templates
+        cartItems: items,
+        addToCart: addItem,
+        removeCartItem: removeItem,
     }
 }
 
@@ -80,11 +90,12 @@ export function useCart(tenantSource?: Ref<Tenant | string | null | undefined> |
 export const useCartStore = defineStore('cart', {
     state: () => ({
         items: [] as CartItem[],
-        deliveryType: 'delivery' as DeliveryType,
-        deliveryFee: 0,
         customerName: '',
         customerPhone: '',
+        deliveryType: 'delivery' as DeliveryType,
+        deliveryFee: 5.0,
         address: {
+            cep: '',
             street: '',
             number: '',
             neighborhood: '',
@@ -96,14 +107,14 @@ export const useCartStore = defineStore('cart', {
 
     getters: {
         totalItems: (state): number =>
-            state.items.reduce((acc: number, item: CartItem) => acc + item.quantity, 0),
+            (state.items || []).reduce((acc: number, item: CartItem) => acc + (item?.quantity || 0), 0),
 
         subtotal: (state): number =>
-            state.items.reduce((acc: number, item: CartItem) => acc + item.unitPrice * item.quantity, 0),
+            (state.items || []).reduce((acc: number, item: CartItem) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0),
 
         total: (state): number => {
-            const fee = state.deliveryType === 'delivery' ? state.deliveryFee : 0
-            const sub = state.items.reduce((acc: number, item: CartItem) => acc + item.unitPrice * item.quantity, 0)
+            const fee = state.deliveryType === 'delivery' ? (state.deliveryFee || 0) : 0
+            const sub = (state.items || []).reduce((acc: number, item: CartItem) => acc + (item?.unitPrice || 0) * (item?.quantity || 0), 0)
             return sub + fee
         },
     },
@@ -111,10 +122,15 @@ export const useCartStore = defineStore('cart', {
     actions: {
         addItem(item: CartItem) {
             triggerHaptic(30)
+            if (!this.items) {
+                this.items = []
+            }
             this.items.push(item)
         },
         removeItem(index: number) {
-            this.items.splice(index, 1)
+            if (this.items && index >= 0 && index < this.items.length) {
+                this.items.splice(index, 1)
+            }
         },
         clearCart() {
             this.items = []
