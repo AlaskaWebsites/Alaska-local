@@ -86,8 +86,20 @@ export const PixConfigSchema = z.object({
   depositPercentage: z.number().min(0).max(100).optional().default(30)
 })
 
-// 7. Temas e Cores
-export const TenantThemeSchema = z.enum(['food', 'barber', 'health', 'drinks', 'default']).default('food')
+// 7. Temas e Cores Ampliados
+export const TenantThemeSchema = z.enum([
+  'food',
+  'barber',
+  'health',
+  'drinks',
+  'rose',
+  'amber',
+  'violet',
+  'blue',
+  'emerald',
+  'slate',
+  'default'
+]).default('food')
 
 // 8. Categorias Canônicas de Negócio
 export const BusinessCategorySchema = z.enum(['menu', 'shop', 'hub', 'pro'])

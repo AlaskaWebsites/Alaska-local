@@ -3,120 +3,171 @@ import { computed, isRef, type Ref } from 'vue'
 import type { Tenant, TenantTheme } from '~/types/tenant'
 
 export interface ThemeColors {
-    // Cores de Texto
-    primaryText: string
-    primaryTextHover: string
-
-    // Cores de Fundo
-    primaryBg: string
-    primaryBgHover: string
-    buttonPrimary: string
-
-    // Bordas
-    primaryBorder: string
-    primaryBorderHover: string
-
-    // Checkbox e Opção Selecionada no Modal
-    accentClass: string
-    selectedOptionClass: string
-    focusRing: string
-
-    // Badges e Tags
-    badgeBg: string
-    badgeText: string
-    badgeBorder: string
-
-    // Indicador da Categoria
-    categoryIndicator: string
+  primaryText: string
+  primaryTextHover: string
+  primaryBg: string
+  primaryBgHover: string
+  primaryBorder: string
+  buttonPrimary: string
+  badgeBg: string
+  badgeText: string
+  badgeBorder: string
+  categoryIndicator: string
+  focusRing: string
 }
 
 const RED_THEME: ThemeColors = {
-    primaryText: 'text-red-600',
-    primaryTextHover: 'hover:text-red-700',
-    primaryBg: 'bg-red-600',
-    primaryBgHover: 'hover:bg-red-700',
-    buttonPrimary: 'bg-red-600 hover:bg-red-700 text-white',
-    primaryBorder: 'border-red-600',
-    primaryBorderHover: 'hover:border-red-500',
-    accentClass: 'accent-red-600',
-    selectedOptionClass: 'border-red-500 bg-red-50/60',
-    focusRing: 'focus:ring-2 focus:ring-red-500 focus:border-red-500',
-    badgeBg: 'bg-red-50',
-    badgeText: 'text-red-700',
-    badgeBorder: 'border-red-200',
-    categoryIndicator: 'bg-red-600',
+  primaryText: 'text-red-600',
+  primaryTextHover: 'hover:text-red-700',
+  primaryBg: 'bg-red-600',
+  primaryBgHover: 'hover:bg-red-700',
+  primaryBorder: 'border-red-600',
+  buttonPrimary: 'bg-red-600 hover:bg-red-700 text-white',
+  badgeBg: 'bg-red-50',
+  badgeText: 'text-red-700',
+  badgeBorder: 'border-red-200',
+  categoryIndicator: 'bg-red-500',
+  focusRing: 'focus:ring-red-500'
+}
+
+const BARBER_THEME: ThemeColors = {
+  primaryText: 'text-amber-500',
+  primaryTextHover: 'hover:text-amber-600',
+  primaryBg: 'bg-amber-500',
+  primaryBgHover: 'hover:bg-amber-600',
+  primaryBorder: 'border-amber-500',
+  buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-white',
+  badgeBg: 'bg-amber-50',
+  badgeText: 'text-amber-800',
+  badgeBorder: 'border-amber-200',
+  categoryIndicator: 'bg-amber-500',
+  focusRing: 'focus:ring-amber-500'
+}
+
+const HEALTH_THEME: ThemeColors = {
+  primaryText: 'text-blue-600',
+  primaryTextHover: 'hover:text-blue-700',
+  primaryBg: 'bg-blue-600',
+  primaryBgHover: 'hover:bg-blue-700',
+  primaryBorder: 'border-blue-600',
+  buttonPrimary: 'bg-blue-600 hover:bg-blue-700 text-white',
+  badgeBg: 'bg-blue-50',
+  badgeText: 'text-blue-700',
+  badgeBorder: 'border-blue-200',
+  categoryIndicator: 'bg-blue-500',
+  focusRing: 'focus:ring-blue-500'
+}
+
+const DRINKS_THEME: ThemeColors = {
+  primaryText: 'text-amber-600',
+  primaryTextHover: 'hover:text-amber-700',
+  primaryBg: 'bg-amber-600',
+  primaryBgHover: 'hover:bg-amber-700',
+  primaryBorder: 'border-amber-600',
+  buttonPrimary: 'bg-amber-600 hover:bg-amber-700 text-white',
+  badgeBg: 'bg-amber-50',
+  badgeText: 'text-amber-800',
+  badgeBorder: 'border-amber-200',
+  categoryIndicator: 'bg-amber-500',
+  focusRing: 'focus:ring-amber-500'
+}
+
+const ROSE_THEME: ThemeColors = {
+  primaryText: 'text-rose-600',
+  primaryTextHover: 'hover:text-rose-700',
+  primaryBg: 'bg-rose-600',
+  primaryBgHover: 'hover:bg-rose-700',
+  primaryBorder: 'border-rose-600',
+  buttonPrimary: 'bg-rose-600 hover:bg-rose-700 text-white',
+  badgeBg: 'bg-rose-50',
+  badgeText: 'text-rose-700',
+  badgeBorder: 'border-rose-200',
+  categoryIndicator: 'bg-rose-500',
+  focusRing: 'focus:ring-rose-500'
+}
+
+const VIOLET_THEME: ThemeColors = {
+  primaryText: 'text-violet-600',
+  primaryTextHover: 'hover:text-violet-700',
+  primaryBg: 'bg-violet-600',
+  primaryBgHover: 'hover:bg-violet-700',
+  primaryBorder: 'border-violet-600',
+  buttonPrimary: 'bg-violet-600 hover:bg-violet-700 text-white',
+  badgeBg: 'bg-violet-50',
+  badgeText: 'text-violet-700',
+  badgeBorder: 'border-violet-200',
+  categoryIndicator: 'bg-violet-500',
+  focusRing: 'focus:ring-violet-500'
+}
+
+const EMERALD_THEME: ThemeColors = {
+  primaryText: 'text-emerald-600',
+  primaryTextHover: 'hover:text-emerald-700',
+  primaryBg: 'bg-emerald-600',
+  primaryBgHover: 'hover:bg-emerald-700',
+  primaryBorder: 'border-emerald-600',
+  buttonPrimary: 'bg-emerald-600 hover:bg-emerald-700 text-white',
+  badgeBg: 'bg-emerald-50',
+  badgeText: 'text-emerald-700',
+  badgeBorder: 'border-emerald-200',
+  categoryIndicator: 'bg-emerald-500',
+  focusRing: 'focus:ring-emerald-500'
+}
+
+const SLATE_THEME: ThemeColors = {
+  primaryText: 'text-slate-900',
+  primaryTextHover: 'hover:text-slate-700',
+  primaryBg: 'bg-slate-900',
+  primaryBgHover: 'hover:bg-slate-800',
+  primaryBorder: 'border-slate-900',
+  buttonPrimary: 'bg-slate-900 hover:bg-slate-800 text-white',
+  badgeBg: 'bg-slate-100',
+  badgeText: 'text-slate-800',
+  badgeBorder: 'border-slate-200',
+  categoryIndicator: 'bg-slate-900',
+  focusRing: 'focus:ring-slate-500'
 }
 
 export const THEME_PRESETS: Record<TenantTheme, ThemeColors> = {
-    default: RED_THEME,
-    food: RED_THEME,
-    barber: {
-        primaryText: 'text-amber-500',
-        primaryTextHover: 'hover:text-amber-600',
-        primaryBg: 'bg-amber-500',
-        primaryBgHover: 'hover:bg-amber-600',
-        buttonPrimary: 'bg-amber-500 hover:bg-amber-600 text-white',
-        primaryBorder: 'border-amber-500',
-        primaryBorderHover: 'hover:border-amber-500',
-        accentClass: 'accent-amber-500',
-        selectedOptionClass: 'border-amber-500 bg-amber-50/60',
-        focusRing: 'focus:ring-2 focus:ring-amber-500 focus:border-amber-500',
-        badgeBg: 'bg-amber-50',
-        badgeText: 'text-amber-800',
-        badgeBorder: 'border-amber-200',
-        categoryIndicator: 'bg-amber-500',
-    },
-    health: {
-        primaryText: 'text-teal-600',
-        primaryTextHover: 'hover:text-teal-700',
-        primaryBg: 'bg-teal-600',
-        primaryBgHover: 'hover:bg-teal-700',
-        buttonPrimary: 'bg-teal-600 hover:bg-teal-700 text-white',
-        primaryBorder: 'border-teal-600',
-        primaryBorderHover: 'hover:border-teal-500',
-        accentClass: 'accent-teal-600',
-        selectedOptionClass: 'border-teal-500 bg-teal-50/60',
-        focusRing: 'focus:ring-2 focus:ring-teal-500 focus:border-teal-500',
-        badgeBg: 'bg-teal-50',
-        badgeText: 'text-teal-800',
-        badgeBorder: 'border-teal-200',
-        categoryIndicator: 'bg-teal-600',
-    },
-    drinks: {
-        primaryText: 'text-purple-600',
-        primaryTextHover: 'hover:text-purple-700',
-        primaryBg: 'bg-purple-600',
-        primaryBgHover: 'hover:bg-purple-700',
-        buttonPrimary: 'bg-purple-600 hover:bg-purple-700 text-white',
-        primaryBorder: 'border-purple-600',
-        primaryBorderHover: 'hover:border-purple-500',
-        accentClass: 'accent-purple-600',
-        selectedOptionClass: 'border-purple-500 bg-purple-50/60',
-        focusRing: 'focus:ring-2 focus:ring-purple-500 focus:border-purple-500',
-        badgeBg: 'bg-purple-50',
-        badgeText: 'text-purple-800',
-        badgeBorder: 'border-purple-200',
-        categoryIndicator: 'bg-purple-600',
-    },
+  default: RED_THEME,
+  food: RED_THEME,
+  barber: BARBER_THEME,
+  health: HEALTH_THEME,
+  drinks: DRINKS_THEME,
+  rose: ROSE_THEME,
+  amber: DRINKS_THEME,
+  violet: VIOLET_THEME,
+  blue: HEALTH_THEME,
+  emerald: EMERALD_THEME,
+  slate: SLATE_THEME
 }
 
 export function useTenantTheme(
-    tenantSource?: Ref<Tenant | TenantTheme | null | undefined> | Tenant | TenantTheme | null
+  tenantOrTheme?: Tenant | Partial<Tenant> | TenantTheme | Ref<Tenant | Partial<Tenant> | TenantTheme | null | undefined> | null
 ) {
-    const activeTheme = computed<TenantTheme>(() => {
-        const raw = isRef(tenantSource) ? tenantSource.value : tenantSource
-        if (!raw) return 'food'
-        if (typeof raw === 'string') return (raw as TenantTheme) || 'food'
-        return raw.theme || 'food'
-    })
+  const activeTheme = computed<TenantTheme>(() => {
+    if (!tenantOrTheme) return 'food'
+    const val = isRef(tenantOrTheme) ? tenantOrTheme.value : tenantOrTheme
+    if (!val) return 'food'
 
-    const themeClasses = computed<ThemeColors>(() => {
-        return THEME_PRESETS[activeTheme.value] || THEME_PRESETS.food
-    })
-
-    return {
-        theme: activeTheme,
-        activeTheme,
-        themeClasses,
+    if (typeof val === 'string') {
+      return (val as TenantTheme) in THEME_PRESETS ? (val as TenantTheme) : 'food'
     }
+
+    if (typeof val === 'object' && 'theme' in val && val.theme) {
+      return val.theme in THEME_PRESETS ? val.theme : 'food'
+    }
+
+    return 'food'
+  })
+
+  const themeClasses = computed<ThemeColors>(() => {
+    return THEME_PRESETS[activeTheme.value] || THEME_PRESETS.food
+  })
+
+  return {
+    theme: activeTheme,
+    activeTheme,
+    themeClasses
+  }
 }
