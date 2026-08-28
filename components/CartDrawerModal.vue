@@ -3,72 +3,107 @@
   <Teleport to="body">
     <div
       v-if="isOpen"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="cart-drawer-title"
-      class="fixed inset-0 z-50 flex justify-end"
+      class="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-xs transition-opacity duration-300"
+      @click="emit('close')"
     >
-      <!-- Overlay Backdrop -->
-      <div
-        class="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-        @click="emit('close')"
-        aria-hidden="true"
-      ></div>
-
-      <!-- Drawer Content Panel -->
-      <div
-        class="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between overflow-hidden z-10 animate-in slide-in-from-right duration-300"
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-drawer-title"
+        class="fixed inset-y-0 right-0 max-w-full flex pl-10"
+        @click.stop
       >
-        <!-- Header do Drawer -->
-        <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-          <div class="flex items-center gap-2">
-            <ShoppingCart class="w-5 h-5 text-slate-800" aria-hidden="true" />
-            <h2 id="cart-drawer-title" class="font-bold text-base text-slate-900">
-              Sua Sacola
-            </h2>
-            <span
-              v-if="items.length > 0"
-              class="text-xs px-2 py-0.5 rounded-full font-bold"
-              :class="[themeClasses.badgeBg, themeClasses.badgeText]"
-            >
-              {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
-            </span>
+        <div class="w-screen max-w-md bg-white text-slate-800 shadow-2xl flex flex-col h-full border-l border-slate-200">
+          <!-- 1. Header da Gaveta -->
+          <div class="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
+            <div class="flex items-center gap-2">
+              <ShoppingCart class="w-5 h-5" :class="themeClasses.primaryText" aria-hidden="true" />
+              <h2 id="cart-drawer-title" class="text-base font-extrabold text-slate-900">
+                Sua Sacola
+              </h2>
+              <span
+                v-if="items.length > 0"
+                class="px-2 py-0.5 rounded-full text-[11px] font-bold"
+                :class="[themeClasses.badgeBg, themeClasses.badgeText]"
+              >
+                {{ totalItemsCount }} {{ totalItemsCount === 1 ? 'item' : 'itens' }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button
+                v-if="items.length > 0"
+                @click="handleClearCart"
+                class="p-2 text-slate-400 hover:text-rose-600 rounded-full hover:bg-slate-100 transition-colors cursor-pointer text-xs font-semibold"
+                aria-label="Esvaziar sacola de compras"
+              >
+                <Trash2 class="w-4 h-4" aria-hidden="true" />
+              </button>
+              <button
+                @click="emit('close')"
+                class="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Fechar sacola"
+              >
+                <X class="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
-          <button
-            @click="emit('close')"
-            class="p-1.5 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer"
-            aria-label="Fechar sacola"
-            title="Fechar sacola"
-          >
-            <X class="w-5 h-5" aria-hidden="true" />
-          </button>
-        </div>
+          <!-- 2. Conteúdo Rolável -->
+          <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
+            <!-- Estado Vazio -->
+            <div v-if="items.length === 0" class="py-16 text-center space-y-3">
+              <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+                <ShoppingBag class="w-8 h-8" aria-hidden="true" />
+              </div>
+              <h3 class="font-bold text-base text-slate-800">Sua sacola está vazia</h3>
+              <p class="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+                Navegue pelo cardápio ou catálogo para adicionar itens e fechar seu pedido.
+              </p>
+              <button
+                @click="emit('close')"
+                class="mt-2 px-5 py-2.5 rounded-2xl text-xs font-bold text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                :class="themeClasses.buttonPrimary"
+              >
+                Ver Cardápio / Produtos
+              </button>
+            </div>
 
-        <!-- Conteúdo Rolável -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-6">
-          <!-- Lista de Itens do Pedido -->
-          <div v-if="items.length > 0" class="space-y-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Itens Selecionados
-            </h3>
+            <!-- Lista de Itens Adicionados -->
+            <div v-else class="space-y-4">
+              <div
+                v-for="(item, index) in items"
+                :key="index"
+                class="p-3.5 rounded-2xl border border-slate-200/90 bg-white shadow-2xs space-y-2"
+              >
+                <div class="flex items-start justify-between gap-2">
+                  <div class="flex items-start gap-2.5">
+                    <span
+                      class="px-2 py-0.5 rounded-lg text-xs font-bold shrink-0 mt-0.5"
+                      :class="[themeClasses.badgeBg, themeClasses.badgeText]"
+                    >
+                      {{ item.quantity }}x
+                    </span>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-900 leading-tight">
+                        {{ item.product?.name || 'Produto' }}
+                      </h4>
+                      <span class="text-xs font-semibold text-slate-600 block mt-0.5">
+                        {{ formatCurrency(getItemPrice(item)) }}
+                      </span>
+                    </div>
+                  </div>
 
-            <div
-              v-for="(item, index) in items"
-              :key="index"
-              class="p-3 bg-slate-50 rounded-2xl border border-slate-100 flex items-start justify-between gap-3"
-            >
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2">
-                  <span class="font-black text-xs px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
-                    {{ item.quantity }}x
-                  </span>
-                  <h4 class="font-bold text-xs text-slate-900 truncate">
-                    {{ item.product.name }}
-                  </h4>
+                  <button
+                    @click="emit('remove-item', index)"
+                    class="text-slate-400 hover:text-rose-600 p-1 rounded-md transition-colors cursor-pointer"
+                    aria-label="Remover item da sacola"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" aria-hidden="true" />
+                  </button>
                 </div>
 
-                <!-- Opcionais / Adicionais Escolhidos -->
+                <!-- Opcionais / Adicionais -->
                 <div v-if="getCartItemOptions(item).length > 0" class="mt-1 space-y-0.5 pl-6">
                   <p
                     v-for="opt in getCartItemOptions(item)"
@@ -76,7 +111,7 @@
                     class="text-[11px] text-slate-500 flex items-center justify-between"
                   >
                     <span>+ {{ opt.name }}</span>
-                    <span v-if="opt.price > 0" class="text-slate-400 font-medium">
+                    <span v-if="opt.price > 0" class="font-semibold text-slate-700">
                       {{ formatCurrency(opt.price) }}
                     </span>
                   </p>
@@ -86,297 +121,318 @@
                 <p v-if="getCartItemNotes(item)" class="text-[11px] text-slate-400 italic mt-1 pl-6">
                   "{{ getCartItemNotes(item) }}"
                 </p>
-
-                <p class="font-bold text-xs mt-2 pl-6" :class="themeClasses.primaryText">
-                  {{ formatCurrency(item.unitPrice * item.quantity) }}
-                </p>
               </div>
 
-              <!-- Botão Remover Item -->
-              <button
-                @click="emit('remove-item', index)"
-                class="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                :aria-label="`Remover ${item.product.name} da sacola`"
-                title="Remover item"
-              >
-                <Trash2 class="w-4 h-4" aria-hidden="true" />
-              </button>
+              <!-- 3. Formulário de Identificação & Entrega -->
+              <section aria-labelledby="checkout-form-title" class="pt-4 border-t border-slate-200 space-y-4">
+                <h3 id="checkout-form-title" class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Dados para Entrega & Contato
+                </h3>
+
+                <!-- Modalidade: Entrega vs Retirada -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl" role="radiogroup" aria-label="Modalidade de recebimento">
+                  <button
+                    type="button"
+                    role="radio"
+                    :aria-checked="form.deliveryType === 'delivery'"
+                    @click="form.deliveryType = 'delivery'"
+                    :class="[
+                      'py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer',
+                      form.deliveryType === 'delivery'
+                        ? 'bg-white text-slate-900 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    ]"
+                  >
+                    <Truck class="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Entrega</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="radio"
+                    :aria-checked="form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'"
+                    @click="form.deliveryType = 'takeaway'"
+                    :class="[
+                      'py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer',
+                      form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'
+                        ? 'bg-white text-slate-900 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
+                    ]"
+                  >
+                    <Store class="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Retirada</span>
+                  </button>
+                </div>
+
+                <!-- Nome e Telefone -->
+                <div class="space-y-2.5">
+                  <input
+                    id="checkout-name"
+                    v-model="form.customerName"
+                    type="text"
+                    placeholder="Seu Nome Completo *"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                    :class="themeClasses.focusRing"
+                    required
+                  />
+
+                  <input
+                    id="checkout-phone"
+                    v-model="form.customerPhone"
+                    type="tel"
+                    placeholder="WhatsApp para Acompanhamento *"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                    :class="themeClasses.focusRing"
+                    required
+                  />
+                </div>
+
+                <!-- Campos de Endereço (Apenas se Entrega) com ViaCEP -->
+                <div v-if="form.deliveryType === 'delivery'" class="space-y-2.5 animate-in fade-in duration-150">
+                  <div class="relative flex items-center">
+                    <input
+                      id="checkout-cep"
+                      v-model="formAddress.cep"
+                      @input="onCepInput"
+                      @blur="onCepBlur"
+                      type="text"
+                      maxlength="9"
+                      placeholder="CEP (ex: 01310-100)"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all pr-9"
+                      :class="themeClasses.focusRing"
+                    />
+                    <div v-if="isLoadingCep" class="absolute right-3 text-slate-400 pointer-events-none">
+                      <Loader2 class="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                    </div>
+                    <div v-else-if="formAddress.street && !cepError" class="absolute right-3 text-emerald-600 pointer-events-none">
+                      <Check class="w-3.5 h-3.5" aria-hidden="true" />
+                    </div>
+                  </div>
+
+                  <p v-if="cepError" class="text-[11px] text-rose-500 font-medium pl-1">
+                    {{ cepError }}
+                  </p>
+
+                  <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2 space-y-1">
+                      <input
+                        id="checkout-street"
+                        v-model="formAddress.street"
+                        type="text"
+                        placeholder="Rua / Avenida *"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                        :class="themeClasses.focusRing"
+                        required
+                      />
+                    </div>
+                    <div class="space-y-1">
+                      <input
+                        id="checkout-number"
+                        ref="numberInputRef"
+                        v-model="formAddress.number"
+                        type="text"
+                        placeholder="Nº *"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                        :class="themeClasses.focusRing"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2">
+                    <input
+                      id="checkout-neighborhood"
+                      v-model="formAddress.neighborhood"
+                      type="text"
+                      placeholder="Bairro *"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                      :class="themeClasses.focusRing"
+                      required
+                    />
+                    <input
+                      id="checkout-complement"
+                      v-model="formAddress.complement"
+                      type="text"
+                      placeholder="Complemento (Apto, Bloco)"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                      :class="themeClasses.focusRing"
+                    />
+                  </div>
+                </div>
+
+                <!-- 4. Forma de Pagamento -->
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                  <label class="text-xs font-bold text-slate-700 block">Forma de Pagamento</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      v-for="method in ['Pix', 'Cartão de Crédito', 'Cartão de Débito', 'Dinheiro']"
+                      :key="method"
+                      @click="form.paymentMethod = method"
+                      :class="[
+                        'py-2 px-3 text-xs font-bold rounded-xl border transition-all flex items-center justify-center gap-1.5 cursor-pointer',
+                        form.paymentMethod === method
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-2xs'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      ]"
+                    >
+                      <CreditCard v-if="method.includes('Cartão')" class="w-3.5 h-3.5" aria-hidden="true" />
+                      <Banknote v-else-if="method === 'Dinheiro'" class="w-3.5 h-3.5" aria-hidden="true" />
+                      <span v-else>💠</span>
+                      <span>{{ method }}</span>
+                    </button>
+                  </div>
+
+                  <!-- Card Interativo de Pagamento Pix (Estágio 1) -->
+                  <div
+                    v-if="form.paymentMethod === 'Pix'"
+                    class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 space-y-3 mt-2 animate-in fade-in duration-150"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                          💠
+                        </div>
+                        <div>
+                          <span class="text-xs font-extrabold text-emerald-950 block">Pagamento Instantâneo Pix</span>
+                          <span class="text-[11px] text-emerald-800 font-medium">
+                            {{ pixConfig?.beneficiary || tenant?.name || 'Alaska Local' }}
+                          </span>
+                        </div>
+                      </div>
+                      <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-900 border border-emerald-300">
+                        Pix D+0
+                      </span>
+                    </div>
+
+                    <!-- Bloco de Chave e Copia e Cola -->
+                    <div class="bg-white rounded-xl p-3 border border-emerald-200/90 space-y-2.5">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-500 font-medium">Chave Pix ({{ pixConfig?.keyType || 'Telefone' }}):</span>
+                        <span class="font-mono font-bold text-slate-800 select-all">{{ pixConfig?.key }}</span>
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-2 pt-0.5">
+                        <button
+                          type="button"
+                          @click="copyPixKey"
+                          class="py-2 px-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95"
+                        >
+                          <Copy class="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>{{ isPixKeyCopied ? 'Chave Copiada!' : 'Copiar Chave' }}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          @click="copyPixCode"
+                          class="py-2 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                        >
+                          <QrCode class="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>{{ isPixCodeCopied ? 'Código Copiado!' : `Copia e Cola (${formatCurrency(effectivePixAmount)})` }}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Toggle de Teste de 1 Centavo (R$ 0,01) -->
+                    <label v-if="pixConfig?.allowTestCent" class="flex items-center gap-2 text-xs text-emerald-950 cursor-pointer pt-0.5">
+                      <input
+                        type="checkbox"
+                        v-model="isTestCentMode"
+                        class="rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 cursor-pointer"
+                      />
+                      <span class="text-[11px] font-semibold">🧪 Testar Pix com R$ 0,01 (Modo de Teste)</span>
+                    </label>
+
+                    <!-- Aviso de Segurança e Liberação -->
+                    <div class="flex items-start gap-2 text-[11px] text-emerald-900 leading-relaxed bg-emerald-100/70 p-2.5 rounded-xl border border-emerald-200">
+                      <ShieldCheck class="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" aria-hidden="true" />
+                      <span>Transfira no app do seu banco e envie o comprovante no WhatsApp. O atendente confere o extrato para liberação imediata.</span>
+                    </div>
+                  </div>
+
+                  <!-- Campo de Troco (Apenas se Dinheiro) -->
+                  <div v-if="form.paymentMethod === 'Dinheiro'" class="space-y-1 pt-1 animate-in fade-in duration-150">
+                    <input
+                      id="checkout-change"
+                      v-model="form.changeFor"
+                      type="text"
+                      placeholder="Precisa de troco para quanto? (ex: R$ 50,00)"
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                      :class="themeClasses.focusRing"
+                    />
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
 
-          <!-- Estado Vazio da Sacola -->
-          <div v-else class="text-center py-12 space-y-3">
-            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
-              <ShoppingBag class="w-6 h-6" aria-hidden="true" />
-            </div>
-            <p class="text-sm font-bold text-slate-700">Sua sacola está vazia</p>
-            <p class="text-xs text-slate-400 max-w-xs mx-auto">
-              Adicione produtos deliciosos do cardápio para fazer seu pedido pelo WhatsApp.
-            </p>
-          </div>
-
-          <!-- Formulário de Dados para o Pedido -->
-          <div v-if="items.length > 0" class="space-y-4 pt-2 border-t border-slate-100">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Dados para o Pedido
-            </h3>
-
-            <!-- 1. Tipo de Entrega (Delivery vs Retirada) -->
-            <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl" role="radiogroup" aria-label="Tipo de Entrega">
-              <button
-                type="button"
-                role="radio"
-                :aria-checked="form.deliveryType === 'delivery'"
-                @click="form.deliveryType = 'delivery'"
-                :class="[
-                  'py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer',
-                  form.deliveryType === 'delivery'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800'
-                ]"
-              >
-                <Truck class="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Entrega</span>
-              </button>
-
-              <button
-                type="button"
-                role="radio"
-                :aria-checked="form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'"
-                @click="form.deliveryType = 'takeaway'"
-                :class="[
-                  'py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer',
-                  form.deliveryType === 'takeaway' || (form.deliveryType as string) === 'pickup'
-                    ? 'bg-white text-slate-900 shadow-xs'
-                    : 'text-slate-500 hover:text-slate-800'
-                ]"
-              >
-                <Store class="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Retirada</span>
-              </button>
-            </div>
-
-            <!-- 2. Nome do Cliente -->
-            <div class="space-y-1">
-              <label for="checkout-name" class="text-xs font-bold text-slate-700">
-                Seu Nome *
-              </label>
-              <input
-                id="checkout-name"
-                ref="nameInputRef"
-                v-model="form.customerName"
-                type="text"
-                placeholder="Como podemos te chamar?"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                :class="themeClasses.focusRing"
-                required
-              />
-            </div>
-
-            <!-- 3. Telefone / WhatsApp do Cliente -->
-            <div class="space-y-1">
-              <label for="checkout-phone" class="text-xs font-bold text-slate-700">
-                WhatsApp de Contato (Opcional)
-              </label>
-              <input
-                id="checkout-phone"
-                v-model="form.customerPhone"
-                type="tel"
-                placeholder="(11) 99999-9999"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                :class="themeClasses.focusRing"
-              />
-            </div>
-
-            <!-- 4. Endereço Completo com Busca de CEP (Apenas se for Entrega) -->
-            <div v-if="form.deliveryType === 'delivery'" class="space-y-2.5 pt-2 border-t border-dashed border-slate-200">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-700 block">Endereço de Entrega *</span>
-                <span v-if="isLoadingCep" class="text-[11px] text-slate-500 flex items-center gap-1 font-medium">
-                  <Loader2 class="w-3 h-3 animate-spin text-slate-600" aria-hidden="true" />
-                  <span>Buscando CEP...</span>
+          <!-- 5. Footer Fixo com Totais e Botão de Envio para o WhatsApp -->
+          <div v-if="items.length > 0" class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 space-y-3 shrink-0">
+            <div class="space-y-1.5 text-xs text-slate-600">
+              <div class="flex justify-between">
+                <span>Subtotal</span>
+                <span class="font-semibold text-slate-800">{{ formatCurrency(subtotal) }}</span>
+              </div>
+              <div v-if="form.deliveryType === 'delivery'" class="flex justify-between">
+                <span>Taxa de Entrega</span>
+                <span class="font-semibold text-slate-800">
+                  {{ deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Grátis' }}
                 </span>
               </div>
-
-              <!-- Campo de CEP com Busca Automática -->
-              <div class="space-y-1">
-                <div class="relative flex items-center">
-                  <input
-                    id="checkout-cep"
-                    v-model="formAddress.cep"
-                    @input="onCepInput"
-                    @blur="onCepBlur"
-                    type="text"
-                    inputmode="numeric"
-                    maxlength="9"
-                    placeholder="CEP (ex: 07901-020)"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                    :class="[themeClasses.focusRing, cepError ? 'border-red-400 bg-red-50/40' : '']"
-                  />
-                  <div v-if="isLoadingCep" class="absolute right-3 text-slate-400 pointer-events-none">
-                    <Loader2 class="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
-                  </div>
-                  <div v-else-if="formAddress.street && !cepError" class="absolute right-3 text-emerald-600 pointer-events-none">
-                    <Check class="w-3.5 h-3.5" aria-hidden="true" />
-                  </div>
-                </div>
-                <p v-if="cepError" class="text-[11px] text-red-500 font-medium pl-1">
-                  {{ cepError }}
-                </p>
-              </div>
-
-              <!-- Rua e Número -->
-              <div class="grid grid-cols-3 gap-2">
-                <div class="col-span-2 space-y-1">
-                  <input
-                    id="checkout-street"
-                    v-model="formAddress.street"
-                    type="text"
-                    placeholder="Rua / Avenida *"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                    :class="themeClasses.focusRing"
-                    required
-                  />
-                </div>
-                <div class="space-y-1">
-                  <input
-                    id="checkout-number"
-                    ref="numberInputRef"
-                    v-model="formAddress.number"
-                    type="text"
-                    placeholder="Nº *"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                    :class="themeClasses.focusRing"
-                    required
-                  />
-                </div>
-              </div>
-
-              <!-- Bairro e Complemento -->
-              <div class="grid grid-cols-2 gap-2">
-                <input
-                  id="checkout-neighborhood"
-                  v-model="formAddress.neighborhood"
-                  type="text"
-                  placeholder="Bairro *"
-                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                  :class="themeClasses.focusRing"
-                  required
-                />
-                <input
-                  id="checkout-complement"
-                  v-model="formAddress.complement"
-                  type="text"
-                  placeholder="Complemento (Apto, Bloco)"
-                  class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                  :class="themeClasses.focusRing"
-                />
+              <div class="flex justify-between text-sm font-extrabold text-slate-900 pt-1.5 border-t border-slate-200">
+                <span>Total do Pedido</span>
+                <span :class="themeClasses.primaryText">{{ formatCurrency(orderTotal) }}</span>
               </div>
             </div>
 
-            <!-- 5. Forma de Pagamento -->
-            <div class="space-y-1 pt-2 border-t border-dashed border-slate-200">
-              <label for="checkout-payment" class="text-xs font-bold text-slate-700">
-                Forma de Pagamento
-              </label>
-              <select
-                id="checkout-payment"
-                v-model="form.paymentMethod"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800 focus:bg-white focus:outline-none transition-all cursor-pointer"
-                :class="themeClasses.focusRing"
-              >
-                <option value="Pix">⚡ Pix (Chave / QR Code no WhatsApp)</option>
-                <option value="Cartão de Crédito">💳 Cartão de Crédito (na entrega)</option>
-                <option value="Cartão de Débito">💳 Cartão de Débito (na entrega)</option>
-                <option value="Dinheiro">💵 Dinheiro</option>
-              </select>
-            </div>
-
-            <!-- Troco para Dinheiro -->
-            <div v-if="form.paymentMethod === 'Dinheiro'" class="space-y-1">
-              <label for="checkout-change" class="text-xs font-bold text-slate-700">
-                Troco para quanto? (Opcional)
-              </label>
-              <input
-                id="checkout-change"
-                v-model.number="form.changeFor"
-                type="number"
-                placeholder="Ex: 50 ou 100"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
-                :class="themeClasses.focusRing"
-              />
-            </div>
-
-            <!-- 6. Observações Gerais do Pedido -->
-            <div class="space-y-1">
-              <label for="checkout-notes" class="text-xs font-bold text-slate-700">
-                Observações para a Cozinha / Entrega
-              </label>
-              <textarea
-                id="checkout-notes"
-                v-model="form.notes"
-                rows="2"
-                placeholder="Ex: Tocar o interfone, deixar na portaria..."
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all resize-none"
-                :class="themeClasses.focusRing"
-              ></textarea>
-            </div>
+            <button
+              type="button"
+              @click="handleSendWhatsApp"
+              :disabled="!isFormValid"
+              class="w-full py-3 px-4 rounded-2xl font-bold text-sm text-white shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed"
+              :class="themeClasses.buttonPrimary"
+            >
+              <Send class="w-4 h-4" aria-hidden="true" />
+              <span>Enviar Pedido pelo WhatsApp</span>
+            </button>
           </div>
         </div>
-
-        <!-- Footer com Valores e Botão de Enviar WhatsApp -->
-        <div v-if="items.length > 0" class="p-4 border-t border-slate-100 bg-slate-50/80 space-y-3 shrink-0">
-          <div class="space-y-1.5 text-xs text-slate-600">
-            <div class="flex justify-between">
-              <span>Subtotal dos itens</span>
-              <span class="font-bold text-slate-900">{{ formatCurrency(subtotal) }}</span>
-            </div>
-
-            <div v-if="form.deliveryType === 'delivery'" class="flex justify-between">
-              <span>Taxa de entrega</span>
-              <span class="font-bold text-slate-900">
-                {{ deliveryFee > 0 ? formatCurrency(deliveryFee) : 'Grátis' }}
-              </span>
-            </div>
-
-            <div class="flex justify-between text-sm font-black pt-1.5 border-t border-slate-200 text-slate-900">
-              <span>Total do Pedido</span>
-              <span :class="themeClasses.primaryText">{{ formatCurrency(orderTotal) }}</span>
-            </div>
-          </div>
-
-          <!-- Botão de Despacho para o WhatsApp -->
-          <button
-            @click="sendOrderViaWhatsApp"
-            :disabled="!isFormValid"
-            class="w-full py-3.5 px-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]"
-            :class="themeClasses.buttonPrimary"
-            aria-label="Finalizar e enviar pedido formatado para o WhatsApp"
-          >
-            <Send class="w-4 h-4" aria-hidden="true" />
-            <span>Enviar Pedido pelo WhatsApp ({{ formatCurrency(orderTotal) }})</span>
-          </button>
-        </div>
-      </div>
+      </aside>
     </div>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, toRef, nextTick } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
-import { ShoppingCart, X, Trash2, ShoppingBag, Truck, Store, Send, Loader2, Check } from 'lucide-vue-next'
-import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
-import { useCep } from '~/composables/useCep'
-import { formatCurrency, formatCep, sanitizeDigits } from '~/utils/formatters'
+import { useTenantTheme } from '~/composables/useTenantTheme'
+import { useCep, formatCep, sanitizeDigits } from '~/composables/useCep'
+import { formatCurrency } from '~/utils/formatters'
 import { generateWhatsAppOrderUrl } from '~/utils/whatsapp'
+import { generatePixPayload, getTenantPixConfig } from '~/utils/pix'
+import {
+  X,
+  Trash2,
+  ShoppingCart,
+  ShoppingBag,
+  Truck,
+  Store,
+  CreditCard,
+  Banknote,
+  Send,
+  Loader2,
+  Check,
+  Copy,
+  QrCode,
+  ShieldCheck
+} from 'lucide-vue-next'
 import type { Tenant, CartItem, CheckoutFormData } from '~/types'
 
 const props = defineProps<{
-  isOpen: boolean
-  tenant?: Tenant
+  tenant: Tenant
   items: CartItem[]
+  isOpen: boolean
 }>()
 
 const emit = defineEmits<{
@@ -385,56 +441,30 @@ const emit = defineEmits<{
   (e: 'clear-cart'): void
 }>()
 
-// 1. Tema Visual Dinâmico
-const { themeClasses } = useTenantTheme(computed(() => props.tenant))
+// 1. Tema Dinâmico
+const { themeClasses } = useTenantTheme(toRef(props, 'tenant'))
 
-// 2. Trava de Rolagem Acessível no Body
-const isModalOpen = computed(() => props.isOpen)
-useBodyScrollLock(isModalOpen)
+// 2. Trava de Scroll Acessível
+useBodyScrollLock(toRef(props, 'isOpen'))
 
-// 3. Foco Automático no Primeiro Campo e Referência do Número
-const nameInputRef = ref<HTMLInputElement | null>(null)
-const numberInputRef = ref<HTMLInputElement | null>(null)
-
-watch(
-  () => props.isOpen,
-  async (open) => {
-    if (open) {
-      await nextTick()
-      nameInputRef.value?.focus()
-    }
-  }
-)
-
-// 4. Fechamento via Tecla ESC
-if (import.meta.client) {
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && props.isOpen) {
-      emit('close')
-    }
-  })
-}
-
-// 5. Estado do Formulário com Persistência dos Dados do Cliente via LocalStorage
+// 3. Perfil de Checkout Persistente no LocalStorage
 const form = useLocalStorage<CheckoutFormData>('alaska_checkout_profile', {
   customerName: '',
   customerPhone: '',
   deliveryType: 'delivery',
-  paymentMethod: 'Pix',
-  changeFor: null,
-  notes: '',
   address: {
     cep: '',
     street: '',
     number: '',
     neighborhood: '',
     complement: ''
-  }
+  },
+  paymentMethod: 'Pix',
+  changeFor: ''
 }, {
   mergeDefaults: true
 })
 
-// Garantia defensiva de inicialização de address para perfis pré-existentes no localStorage
 const formAddress = computed(() => {
   if (!form.value.address) {
     form.value.address = {
@@ -448,7 +478,49 @@ const formAddress = computed(() => {
   return form.value.address
 })
 
-// Helpers para compatibilidade total entre itens do carrinho (options vs selectedOptions, notes vs observation)
+// 4. Configuração de Pix e Teste de 1 Centavo
+const isTestCentMode = ref(false)
+const isPixKeyCopied = ref(false)
+const isPixCodeCopied = ref(false)
+
+const pixConfig = computed(() => getTenantPixConfig(props.tenant))
+
+const effectivePixAmount = computed(() => {
+  if (isTestCentMode.value) return 0.01
+  return orderTotal.value
+})
+
+function copyPixKey() {
+  if (!pixConfig.value?.key) return
+  if (typeof navigator !== 'undefined' && navigator.clipboard) {
+    navigator.clipboard.writeText(pixConfig.value.key)
+    isPixKeyCopied.value = true
+    setTimeout(() => {
+      isPixKeyCopied.value = false
+    }, 2500)
+  }
+}
+
+function copyPixCode() {
+  if (!pixConfig.value?.key) return
+  const payload = generatePixPayload({
+    key: pixConfig.value.key,
+    beneficiary: pixConfig.value.beneficiary || props.tenant?.name,
+    city: pixConfig.value.city || 'SAO PAULO',
+    amount: effectivePixAmount.value,
+    txid: 'PEDIDO'
+  })
+
+  if (typeof navigator !== 'undefined' && navigator.clipboard) {
+    navigator.clipboard.writeText(payload)
+    isPixCodeCopied.value = true
+    setTimeout(() => {
+      isPixCodeCopied.value = false
+    }, 2500)
+  }
+}
+
+// 5. Helpers para Opcionais e Observações
 function getCartItemOptions(item: any): any[] {
   return item.options || item.selectedOptions || []
 }
@@ -457,24 +529,34 @@ function getCartItemNotes(item: any): string {
   return item.notes || item.observation || ''
 }
 
-// 6. Consulta Automática de CEP (ViaCEP)
+function getItemPrice(item: any): number {
+  const base = item.product?.price || item.unitPrice || 0
+  const opts = getCartItemOptions(item)
+  const optsTotal = opts.reduce((sum: number, o: any) => sum + (o.price || 0), 0)
+  return (base + optsTotal) * (item.quantity || 1)
+}
+
+const totalItemsCount = computed(() => {
+  return props.items.reduce((acc, item) => acc + (item.quantity || 1), 0)
+})
+
+// 6. Consulta de CEP (ViaCEP)
 const { isLoadingCep, cepError, lookupCep } = useCep()
+const numberInputRef = ref<HTMLInputElement | null>(null)
 
 async function triggerCepSearch(rawCep?: string) {
-  if (!rawCep) return
-  const clean = sanitizeDigits(rawCep)
+  const clean = sanitizeDigits(rawCep || '')
   if (clean.length === 8) {
     const address = await lookupCep(clean)
     if (address) {
       formAddress.value.street = address.street
       formAddress.value.neighborhood = address.neighborhood
-      formAddress.value.city = address.city
-      formAddress.value.state = address.state
       formAddress.value.cep = address.cep
 
-      // Micro-UX: Move o cursor automaticamente para o campo de número da residência
       await nextTick()
-      numberInputRef.value?.focus()
+      if (numberInputRef.value) {
+        numberInputRef.value.focus()
+      }
     }
   }
 }
@@ -497,12 +579,8 @@ function onCepBlur() {
 }
 
 // 7. Cálculos de Totais
-const totalItemsCount = computed(() => {
-  return props.items.reduce((acc, item) => acc + item.quantity, 0)
-})
-
 const subtotal = computed(() => {
-  return props.items.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0)
+  return props.items.reduce((sum, item) => sum + getItemPrice(item), 0)
 })
 
 const deliveryFee = computed(() => {
@@ -528,21 +606,30 @@ const isFormValid = computed(() => {
   return true
 })
 
-// 9. Despacho para o WhatsApp
-function sendOrderViaWhatsApp() {
-  if (!isFormValid.value || !props.tenant) return
+// 9. Envio para o WhatsApp
+function handleSendWhatsApp() {
+  if (!props.tenant || !isFormValid.value) return
 
-  const url = generateWhatsAppOrderUrl({
-    tenant: props.tenant,
+  const cartState: any = {
     items: props.items,
-    formData: form.value
-  })
+    deliveryType: form.value.deliveryType === 'takeaway' ? 'pickup' : 'delivery',
+    deliveryFee: deliveryFee.value,
+    customerName: form.value.customerName,
+    customerPhone: form.value.customerPhone,
+    address: formAddress.value,
+    paymentMethod: form.value.paymentMethod,
+    changeFor: form.value.changeFor ? parseFloat(form.value.changeFor) : null,
+    subtotal: subtotal.value,
+    total: isTestCentMode.value ? 0.01 : orderTotal.value
+  }
 
-  emit('clear-cart')
-  emit('close')
-
-  if (import.meta.client) {
+  const url = generateWhatsAppOrderUrl(props.tenant, cartState)
+  if (typeof window !== 'undefined') {
     window.open(url, '_blank')
   }
+}
+
+function handleClearCart() {
+  emit('clear-cart')
 }
 </script>
