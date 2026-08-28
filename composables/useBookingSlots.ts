@@ -98,6 +98,7 @@ export function generateBookingDays(
       displayDate,
       weekDay,
       isToday,
+      isTomorrow,
       isClosed,
     })
   }
