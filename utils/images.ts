@@ -165,10 +165,9 @@ export function handleImageError(
   const fallbackUrl = customFallbackUrl || getFallbackImageUrl(categoryOrTheme)
 
   if (target.src !== fallbackUrl) {
-    if (!target.dataset) {
-      target.dataset = {}
+    if (target.dataset) {
+      target.dataset.hasFallbackError = 'true'
     }
-    target.dataset.hasFallbackError = 'true'
     target.src = fallbackUrl
   }
 }
