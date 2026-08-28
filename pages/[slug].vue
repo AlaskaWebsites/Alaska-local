@@ -4,7 +4,7 @@
     <!-- 1. Banner de Capa Hero -->
     <div class="relative h-48 sm:h-64 w-full bg-slate-900 overflow-hidden">
       <img v-if="tenant.banner" :src="tenant.banner" :alt="`Banner de ${tenant.name}`"
-        class="w-full h-full object-cover opacity-80" />
+        class="w-full h-full object-cover opacity-80" @error="handleImageError($event, tenant.theme)" />
       <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
 
       <!-- Botão Voltar para o Início / Showcase -->
@@ -32,7 +32,7 @@
             <!-- Logo Flutuante com Fallback -->
             <div class="relative h-20 w-20 sm:h-24 sm:w-24 rounded-2xl bg-white p-1 shadow-md border border-slate-100 shrink-0 overflow-hidden">
               <img v-if="tenant.logo" :src="tenant.logo" :alt="`Logo de ${tenant.name}`"
-                class="w-full h-full object-cover rounded-xl" />
+                class="w-full h-full object-cover rounded-xl" @error="handleImageError($event, tenant.theme)" />
               <div v-else class="w-full h-full flex items-center justify-center font-bold text-2xl"
                 :class="themeClasses.primaryText">
                 {{ tenant.name.charAt(0) }}
@@ -119,7 +119,7 @@
       <ProductSearchInput v-model="searchQuery" :theme="tenant.theme" @clear="clearSearch" />
     </div>
 
-    <!-- Feedback de Busca Ativa com Contagem de Resultados -->
+    <!-- Contagem de Resultados da Busca -->
     <div v-if="isSearching && hasResults"
       class="max-w-4xl mx-auto px-4 mt-3 flex items-center justify-between text-xs text-slate-600 animate-in fade-in duration-150">
       <span>
@@ -127,13 +127,13 @@
       </span>
       <button @click="clearSearch" class="font-bold text-xs hover:underline cursor-pointer"
         :class="themeClasses.primaryText">
-        Ver catálogo completo
+        Limpar busca
       </button>
     </div>
 
-    <!-- Estado Vazio quando a Busca não encontra resultados -->
+    <!-- Estado Vazio da Busca -->
     <div v-if="isSearching && !hasResults"
-      class="max-w-4xl mx-auto px-4 py-16 text-center space-y-3.5 animate-in fade-in duration-200" role="status">
+      class="max-w-4xl mx-auto px-4 mt-8 py-12 text-center bg-white rounded-3xl border border-slate-200/80 shadow-sm space-y-3 animate-in fade-in duration-200">
       <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
         <Search class="w-6 h-6" aria-hidden="true" />
       </div>
@@ -179,7 +179,8 @@
           class="shrink-0 w-64 bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer group active:scale-[0.99]">
           <div class="relative h-32 w-full bg-slate-100 overflow-hidden">
             <img v-if="product.image" :src="product.image" :alt="product.name"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
+              @error="handleImageError($event, tenant.theme)" />
           </div>
 
           <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
@@ -238,7 +239,7 @@
                 <span class="font-extrabold text-sm" :class="themeClasses.primaryText">
                   {{ formatCurrency(product.price) }}
                 </span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border"
+                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold border"
                   :class="[themeClasses.badgeBg, themeClasses.badgeText, themeClasses.badgeBorder]">
                   {{ isServiceStore ? 'Agendar' : (product.optionGroups?.length ? 'Montar' : '+ Adicionar') }}
                 </span>
@@ -248,7 +249,8 @@
             <!-- Imagem do Produto / Serviço -->
             <div class="h-20 w-20 sm:h-24 sm:w-24 rounded-xl bg-slate-100 overflow-hidden shrink-0">
               <img v-if="product.image" :src="product.image" :alt="product.name"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy"
+                @error="handleImageError($event, tenant.theme)" />
             </div>
           </div>
         </div>
@@ -280,7 +282,7 @@
       </div>
     </div>
 
-    <!-- 10. Drawer Modular de Finalização do Carrinho -->
+    <!-- 10. Drawer Lateral da Sacola -->
     <CartDrawerModal :is-open="isCartDrawerOpen" :tenant="tenant" :items="cartItems" @close="isCartDrawerOpen = false"
       @remove-item="removeCartItem" @clear-cart="clearCart" />
 
@@ -312,10 +314,10 @@ import { ref, computed } from 'vue'
 import { useTenant } from '~/composables/useTenant'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useOpeningHours } from '~/composables/useOpeningHours'
-import { useShare } from '~/composables/useShare'
 import { useProductSearch } from '~/composables/useProductSearch'
 import { useCart } from '~/composables/useCart'
 import { formatCurrency } from '~/utils/formatters'
+import { handleImageError } from '~/utils/images'
 import ProductSearchInput from '~/components/ProductSearchInput.vue'
 import BookingModal from '~/components/BookingModal.vue'
 import {
@@ -344,9 +346,24 @@ const { themeClasses } = useTenantTheme(tenant)
 const { isOpen } = useOpeningHours(tenant)
 
 // 4. Compartilhamento e Toast
-const { isCopied, shareStore } = useShare(tenant)
+const isCopied = ref(false)
+function shareStore() {
+  if (navigator.share) {
+    navigator.share({
+      title: tenant.value?.name,
+      text: tenant.value?.description,
+      url: window.location.href
+    }).catch(() => {})
+  } else {
+    navigator.clipboard.writeText(window.location.href)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2500)
+  }
+}
 
-// 5. Busca Rápida de Produtos em Tempo Real
+// 5. Busca de Produtos em Tempo Real (useProductSearch)
 const {
   searchQuery,
   isSearching,
@@ -358,9 +375,9 @@ const {
 
 // 6. Carrinho Persistente Multi-Tenant via LocalStorage (useCart)
 const {
-  items: cartItems,
-  addItem: handleAddProductToCart,
-  removeItem: removeCartItem,
+  cartItems,
+  addToCart,
+  removeCartItem,
   clearCart,
   totalItemsCount,
   cartSubtotal
@@ -414,6 +431,11 @@ function openBookingModal() {
 
 function closeProductModal() {
   selectedProduct.value = null
+}
+
+function handleAddProductToCart(item: CartItem) {
+  addToCart(item)
+  closeProductModal()
 }
 
 // 9. Destaques Dinâmicos
