@@ -1,17 +1,20 @@
 // composables/useTenant.ts
 import { computed, isRef, type Ref } from 'vue'
+import { useRoute, useAsyncData, useRuntimeConfig } from '#app'
 import { TenantSchema, type Tenant } from '~/types/tenant'
 
 /**
  * Composable reativo e SSR-safe para resolução de Tenant pelo slug da rota ou customizado.
- * Retorna referências reativas síncronas com tipagem estrita Ref<Tenant | null>.
+ * Adota estratégia híbrida: tenta buscar do backend NestJS primeiro e faz fallback gracioso
+ * para os arquivos JSON locais em ~/data/*.json caso o backend esteja indisponível.
  */
 export function useTenant(customSlug?: string | Ref<string | null | undefined>) {
     const route = useRoute()
+    const config = useRuntimeConfig()
+    const apiBaseUrl = config.public?.apiBaseUrl
 
-    // Resolve o slug reativamente
     const slug = computed(() => {
-        if (customSlug) {
+        if (customSlug !== undefined && customSlug !== null) {
             const val = isRef(customSlug) ? customSlug.value : customSlug
             if (val) return String(val).toLowerCase()
         }
@@ -21,32 +24,43 @@ export function useTenant(customSlug?: string | Ref<string | null | undefined>) 
     const { data: tenant, pending, error, refresh } = useAsyncData<Tenant | null>(
         `tenant-${slug.value}`,
         async () => {
+            // 1. Estratégia API-First: Tenta buscar do backend NestJS se houver baseURL configurada
+            if (apiBaseUrl) {
+                try {
+                    const res = await $fetch<{ success: boolean; data: unknown }>(
+                        `${apiBaseUrl}/tenants/${slug.value}`,
+                        { timeout: 2500 }
+                    )
+                    if (res && res.success && res.data) {
+                        return TenantSchema.parse(res.data)
+                    }
+                } catch {
+                    // Falha silenciosa na API: prossegue para o fallback local JSON
+                }
+            }
+
+            // 2. Fallback Gracioso: Carrega do arquivo JSON local em data/
             try {
                 const files = import.meta.glob('~/data/*.json', { eager: true }) as Record<
                     string,
-                    { default: any }
+                    { default?: Tenant; [key: string]: unknown }
                 >
-                const targetSlug = slug.value
 
-                // Busca direta pelo slug correspondente
-                for (const key in files) {
-                    if (key.endsWith(`/${targetSlug}.json`)) {
-                        const raw = files[key].default || files[key]
-                        const parsed = TenantSchema.safeParse(raw)
-                        if (parsed.success) {
-                            return parsed.data
-                        }
+                for (const path in files) {
+                    const fileContent = files[path]
+                    const rawData = (fileContent?.default || fileContent) as Partial<Tenant>
+                    if (rawData && rawData.slug && rawData.slug.toLowerCase() === slug.value) {
+                        return TenantSchema.parse(rawData)
                     }
                 }
 
-                // Fallback de segurança para hamburgueria-x ou primeiro catálogo
-                for (const key in files) {
-                    if (key.includes('hamburgueria-x.json')) {
-                        const raw = files[key].default || files[key]
-                        const parsed = TenantSchema.safeParse(raw)
-                        if (parsed.success) {
-                            return parsed.data
-                        }
+                // Fallback secundário por nome do arquivo
+                for (const path in files) {
+                    const fileName = path.split('/').pop()?.replace('.json', '').toLowerCase()
+                    if (fileName === slug.value) {
+                        const fileContent = files[path]
+                        const rawData = (fileContent?.default || fileContent) as Partial<Tenant>
+                        return TenantSchema.parse(rawData)
                     }
                 }
 
