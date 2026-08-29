@@ -26,6 +26,7 @@ export const ProductSchema = z.object({
   price: z.number(),
   image: z.string().optional().default(''),
   available: z.boolean().default(true),
+  durationMinutes: z.number().optional(),
   optionGroups: z.array(OptionGroupSchema).optional().default([])
 })
 
@@ -75,11 +76,11 @@ export const StoreReviewsSchema = z.object({
 })
 
 // 6. Schema de Configuração de Pix Direto (Estágio 1)
-export const PixKeyTypeSchema = z.enum(['cpf', 'cnpj', 'email', 'phone', 'random']).default('phone')
+export const PixKeyTypeSchema = z.enum(['cpf', 'cnpj', 'email', 'phone', 'random']).default('random')
 
 export const PixConfigSchema = z.object({
   key: z.string(),
-  keyType: PixKeyTypeSchema.optional().default('phone'),
+  keyType: PixKeyTypeSchema.optional().default('random'),
   beneficiary: z.string().optional(),
   city: z.string().optional().default('SAO PAULO'),
   allowTestCent: z.boolean().optional().default(true),
@@ -104,7 +105,7 @@ export const TenantThemeSchema = z.enum([
 // 8. Categorias Canônicas de Negócio
 export const BusinessCategorySchema = z.enum(['menu', 'shop', 'hub', 'pro'])
 
-// 9. Schema Central do Estabelecimento (Tenant)
+// 9. Schema Principal de Tenant
 export const TenantSchema = z.object({
   slug: z.string(),
   name: z.string(),
@@ -116,18 +117,33 @@ export const TenantSchema = z.object({
   currency: z.string().default('R$'),
   deliveryFee: z.number().default(0),
   minOrderValue: z.number().default(0),
-  template: z.enum(['menu', 'hub', 'booking', 'pro', 'shop']).optional().default('menu'),
+  template: z.string().optional(),
   businessCategory: BusinessCategorySchema.optional(),
   theme: TenantThemeSchema.optional().default('food'),
   openingHours: OpeningHoursSchema.optional(),
+  pixConfig: PixConfigSchema.optional(),
   pix: PixConfigSchema.optional(),
   pixKey: z.string().optional(),
   pixKeyType: PixKeyTypeSchema.optional(),
   pixBeneficiary: z.string().optional(),
   pixCity: z.string().optional(),
+  professionals: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    role: z.string().optional(),
+    avatar: z.string().optional()
+  })).optional().default([]),
+  services: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().optional(),
+    price: z.number(),
+    durationMinutes: z.number().optional()
+  })).optional().default([]),
   categories: z.array(CategorySchema).optional().default([]),
   reviews: StoreReviewsSchema.optional(),
   paymentMethods: z.array(z.string()).optional().default(['Pix', 'Cartão de Crédito', 'Cartão de Débito', 'Dinheiro']),
+  category: z.string().optional(),
   distance: z.string().optional(),
   priceRange: z.string().optional().default('$$')
 })
