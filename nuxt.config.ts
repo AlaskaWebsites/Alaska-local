@@ -9,6 +9,9 @@ export default defineNuxtConfig({
       appDomain: process.env.NUXT_PUBLIC_APP_DOMAIN || 'alaska.app'
     }
   },
+  experimental: {
+    appManifest: false
+  },
   app: {
     head: {
       htmlAttrs: {
