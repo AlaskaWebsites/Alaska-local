@@ -275,27 +275,28 @@
               <textarea
                 v-model="notes"
                 rows="2"
-                placeholder="Alguma observação ou preferência? (Opcional)"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all"
+                placeholder="Alguma observação especial? (opcional)"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all resize-none"
                 :class="themeClasses.focusRing"
               ></textarea>
             </div>
 
-            <!-- Modalidades de Pagamento -->
-            <div class="space-y-2 pt-2 border-t border-slate-200">
-              <label class="text-xs font-bold text-slate-700 block">Opção de Pagamento & Reserva:</label>
+            <!-- Opções de Pagamento / Sinal via Pix -->
+            <div class="space-y-3 pt-2 border-t border-slate-200">
+              <label class="text-xs font-bold text-slate-700 block">Opção de Pagamento:</label>
+
               <div class="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   @click="paymentMode = 'on_service'"
                   :class="[
-                    'p-3 rounded-xl border text-xs font-bold transition-all text-left space-y-0.5 cursor-pointer',
+                    'p-3 rounded-2xl border text-left transition-all cursor-pointer',
                     paymentMode === 'on_service'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800 shadow-2xs'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   ]"
                 >
-                  <span class="block">📍 Pagar no Local</span>
+                  <span class="font-bold text-xs block">Pagar no Local</span>
                   <span class="text-[10px] text-slate-500 font-normal block">Cartão, Dinheiro ou Pix</span>
                 </button>
 
@@ -303,27 +304,27 @@
                   type="button"
                   @click="paymentMode = 'pix_deposit'"
                   :class="[
-                    'p-3 rounded-xl border text-xs font-bold transition-all text-left space-y-0.5 cursor-pointer',
+                    'p-3 rounded-2xl border text-left transition-all cursor-pointer',
                     paymentMode === 'pix_deposit'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800 shadow-2xs'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   ]"
                 >
-                  <span class="block">💠 Garantir com Sinal</span>
-                  <span class="text-[10px] text-slate-500 font-normal block">
-                    {{ formatCurrency(depositAmount) }} ({{ depositPercentage }}%)
-                  </span>
+                  <span class="font-bold text-xs block">Sinal via Pix</span>
+                  <span class="text-[10px] text-emerald-700 font-semibold block">Garantir Horário ({{ depositPercentage }}%)</span>
                 </button>
               </div>
 
               <!-- Card Pix para Agendamento com Sinal -->
               <div
                 v-if="paymentMode === 'pix_deposit'"
-                class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5 space-y-3 mt-2 animate-in fade-in duration-150"
+                class="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-3.5 space-y-2.5 animate-in fade-in duration-150 text-xs"
               >
-                <div class="flex items-center justify-between text-xs">
+                <div class="flex items-center justify-between">
                   <span class="text-emerald-950 font-extrabold">Sinal de Reserva via Pix:</span>
-                  <span class="font-bold text-emerald-800">{{ formatCurrency(effectiveDepositAmount) }}</span>
+                  <span class="font-extrabold text-sm text-emerald-900">
+                    {{ formatCurrency(isTestCentMode ? 0.01 : depositAmount) }}
+                  </span>
                 </div>
 
                 <div class="bg-white rounded-xl p-2.5 border border-emerald-200/90 space-y-2">
@@ -347,9 +348,41 @@
                       @click="copyPixCode"
                       class="py-1.5 px-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-2xs"
                     >
-                      <QrCode class="w-3.5 h-3.5" aria-hidden="true" />
+                      <Copy class="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{{ isPixCodeCopied ? 'Copiado!' : 'Copia e Cola' }}</span>
                     </button>
+                  </div>
+
+                  <!-- Botão Exibir / Gerar QR Code do Sinal -->
+                  <button
+                    type="button"
+                    @click="toggleShowBookingQrCode"
+                    class="w-full py-2 px-3 rounded-lg border border-emerald-300 bg-emerald-100/60 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-98 shadow-2xs"
+                  >
+                    <QrCode class="w-4 h-4 text-emerald-700" aria-hidden="true" />
+                    <span>{{ showBookingQrCode ? '▲ Ocultar QR Code' : '📷 Gerar / Visualizar QR Code do Sinal' }}</span>
+                  </button>
+
+                  <!-- Bloco Visual do QR Code Renderizado -->
+                  <div
+                    v-if="showBookingQrCode"
+                    class="p-3 bg-white rounded-xl border border-emerald-200 shadow-sm flex flex-col items-center justify-center space-y-2 animate-in fade-in zoom-in-95 duration-150"
+                  >
+                    <div class="p-2 bg-white rounded-lg border border-slate-100 flex items-center justify-center min-h-[160px] min-w-[160px]">
+                      <img
+                        v-if="bookingQrCodeDataUrl"
+                        :src="bookingQrCodeDataUrl"
+                        alt="QR Code Pix Sinal"
+                        class="w-40 h-40 object-contain"
+                      />
+                      <div v-else class="flex flex-col items-center justify-center text-slate-400 gap-1.5 text-xs py-6">
+                        <Loader2 class="w-5 h-5 animate-spin text-emerald-600" aria-hidden="true" />
+                        <span>Gerando QR Code...</span>
+                      </div>
+                    </div>
+                    <span class="text-[11px] text-slate-500 text-center font-medium">
+                      Escaneie com o app do seu banco para pagar o sinal
+                    </span>
                   </div>
                 </div>
 
@@ -360,31 +393,34 @@
                     v-model="isTestCentMode"
                     class="rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 cursor-pointer"
                   />
-                  <span class="text-[11px] font-semibold">🧪 Testar Sinal com R$ 0,01 (Modo de Teste)</span>
+                  <span class="text-[11px] font-semibold">🧪 Testar Sinal com R$ 0,01</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 4. Footer com Ações e Navegação -->
-        <div class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <!-- 4. Footer Fixo com Botões de Navegação -->
+        <div class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
           <button
             v-if="currentStep > 1"
             type="button"
             @click="currentStep--"
-            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+            class="px-4 py-2.5 rounded-2xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
           >
             Voltar
           </button>
-          <div v-else></div>
+
+          <div v-else class="text-xs font-semibold text-slate-500">
+            Passo 1 de 4
+          </div>
 
           <button
             v-if="currentStep < 4"
             type="button"
-            @click="goToNextStep"
-            :disabled="!canAdvanceFromCurrentStep"
-            class="px-6 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="nextStep"
+            :disabled="!canAdvanceStep"
+            class="px-6 py-2.5 rounded-2xl font-bold text-xs text-white shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :class="themeClasses.buttonPrimary"
           >
             Avançar
@@ -393,9 +429,9 @@
           <button
             v-else
             type="button"
-            @click="submitBooking"
-            :disabled="!isStep4Valid"
-            class="px-6 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="confirmBooking"
+            :disabled="!isBookingReady"
+            class="px-6 py-2.5 rounded-2xl font-bold text-xs text-white shadow-md flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :class="themeClasses.buttonPrimary"
           >
             <Send class="w-3.5 h-3.5" aria-hidden="true" />
@@ -408,45 +444,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRef, onMounted } from 'vue'
-import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
+import { ref, computed, toRef } from 'vue'
 import { useTenantTheme } from '~/composables/useTenantTheme'
+import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
+import { useBookingSlots } from '~/composables/useBookingSlots'
 import { formatCurrency } from '~/utils/formatters'
-import { generatePixPayload, getTenantPixConfig } from '~/utils/pix'
+import { generatePixPayload, getTenantPixConfig, generatePixQrCodeDataUrl } from '~/utils/pix'
 import {
-  X,
   Calendar,
+  X,
   ChevronRight,
   Check,
   Send,
   Copy,
+  Loader2,
   QrCode
 } from 'lucide-vue-next'
-import type { Tenant, BookingService, BookingProfessional } from '~/types'
+import type {
+  Tenant,
+  BookingService,
+  BookingProfessional
+} from '~/types'
 
 const props = defineProps<{
   tenant: Tenant
   isOpen: boolean
-  initialService?: BookingService | null
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
+  (e: 'confirmed', payload: unknown): void
 }>()
 
-// 1. Tema Dinâmico & Trava de Scroll
+// 1. Tema e Trava de Rolagem
 const { themeClasses } = useTenantTheme(toRef(props, 'tenant'))
 useBodyScrollLock(toRef(props, 'isOpen'))
 
 // 2. Estado de Navegação dos Steps
 const currentStep = ref(1)
 
-// 3. Estado de Seleção de Serviços
-const selectedServices = ref<BookingService[]>([])
+// 3. Catálogo de Serviços e Profissionais do Tenant
+const availableServices = computed<BookingService[]>(() => {
+  const t = props.tenant as any
+  if (t.services && Array.isArray(t.services) && t.services.length > 0) {
+    return t.services
+  }
+  if (t.categories && Array.isArray(t.categories)) {
+    const list: BookingService[] = []
+    for (const c of t.categories) {
+      if (c.products && Array.isArray(c.products)) {
+        for (const p of c.products) {
+          list.push({
+            id: p.id,
+            name: p.name,
+            description: p.description || '',
+            price: p.price || 0,
+            durationMinutes: p.durationMinutes || (props.tenant.businessCategory === 'pro' ? 45 : 30)
+          })
+        }
+      }
+    }
+    return list
+  }
+  return []
+})
 
-function isServiceSelected(id: string): boolean {
-  return selectedServices.value.some(s => s.id === id)
-}
+const availableProfessionals = computed<BookingProfessional[]>(() => {
+  const t = props.tenant as any
+  if (t.professionals && Array.isArray(t.professionals)) {
+    return t.professionals
+  }
+  return []
+})
+
+// 4. Seleções do Usuário
+const selectedServices = ref<BookingService[]>([])
+const selectedProfessional = ref<BookingProfessional | null>(null)
 
 function toggleService(service: BookingService) {
   const idx = selectedServices.value.findIndex(s => s.id === service.id)
@@ -457,94 +530,64 @@ function toggleService(service: BookingService) {
   }
 }
 
-const availableServices = computed<BookingService[]>(() => {
-  const services: BookingService[] = []
-  props.tenant.categories?.forEach((cat) => {
-    cat.products?.forEach((prod) => {
-      services.push({
-        id: prod.id,
-        name: prod.name,
-        description: prod.description || '',
-        price: prod.price,
-        durationMinutes: (prod as any).durationMinutes || (cat.name.toLowerCase().includes('barba') ? 30 : 40),
-        professionalIds: (prod as any).professionalIds || [],
-      })
-    })
-  })
-  return services
+function isServiceSelected(serviceId: string): boolean {
+  return selectedServices.value.some(s => s.id === serviceId)
+}
+
+const totalDuration = computed(() => {
+  return selectedServices.value.reduce((sum, s) => sum + (s.durationMinutes || 30), 0)
 })
 
-// 4. Estado de Profissional
-const selectedProfessional = ref<BookingProfessional | null>(null)
-const availableProfessionals = computed<BookingProfessional[]>(() => [
-  { id: 'prof-1', name: 'Carlos Santos', role: 'Barbeiro Master', available: true },
-  { id: 'prof-2', name: 'Lucas Oliveira', role: 'Visagista & Barbeiro', available: true },
-  { id: 'prof-3', name: 'Mateus Silva', role: 'Especialista em Cortes Clássicos', available: true }
-])
-
-// 5. Estado de Data e Horário (Próximos 30 dias)
-const selectedDate = ref('2026-08-28')
-const selectedTime = ref('14:00')
-
-const bookingDays = computed(() => {
-  const days = []
-  const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-  const weekDays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
-
-  const base = new Date()
-  for (let i = 0; i < 30; i++) {
-    const d = new Date(base)
-    d.setDate(base.getDate() + i)
-    const yyyy = d.getFullYear()
-    const mm = String(d.getMonth() + 1).padStart(2, '0')
-    const dd = String(d.getDate()).padStart(2, '0')
-    const dateStr = `${yyyy}-${mm}-${dd}`
-
-    days.push({
-      date: dateStr,
-      dayOfWeek: weekDays[d.getDay()],
-      dayNumber: d.getDate(),
-      monthName: months[d.getMonth()]
-    })
-  }
-  return days
+const totalPrice = computed(() => {
+  return selectedServices.value.reduce((sum, s) => sum + (s.price || 0), 0)
 })
 
-const availableSlots = computed(() => [
-  { time: '09:00' }, { time: '09:45' }, { time: '10:30' }, { time: '11:15' },
-  { time: '13:00' }, { time: '13:45' }, { time: '14:30' }, { time: '15:15' },
-  { time: '16:00' }, { time: '16:45' }, { time: '17:30' }, { time: '18:15' }
-])
+// 5. Motor de Horários e Datas via useBookingSlots
+const {
+  bookingDays,
+  selectedDate,
+  selectedTime,
+  availableSlots
+} = useBookingSlots(toRef(props, 'tenant'), totalDuration)
 
 // 6. Estado de Identificação e Pagamento Pix
 const customerName = ref('')
 const customerPhone = ref('')
 const notes = ref('')
 const paymentMode = ref<'on_service' | 'pix_deposit'>('on_service')
-
 const isTestCentMode = ref(false)
 const isPixKeyCopied = ref(false)
 const isPixCodeCopied = ref(false)
+const showBookingQrCode = ref(false)
+const bookingQrCodeDataUrl = ref('')
 
 const pixConfig = computed(() => getTenantPixConfig(props.tenant))
 const depositPercentage = computed(() => pixConfig.value?.depositPercentage || 30)
-
-const totalPrice = computed(() => {
-  return selectedServices.value.reduce((sum, s) => sum + s.price, 0)
-})
-
-const totalDuration = computed(() => {
-  return selectedServices.value.reduce((sum, s) => sum + (s.durationMinutes || 30), 0)
-})
 
 const depositAmount = computed(() => {
   return (totalPrice.value * depositPercentage.value) / 100
 })
 
-const effectiveDepositAmount = computed(() => {
-  if (isTestCentMode.value) return 0.01
-  return depositAmount.value
-})
+async function updateBookingQrCode() {
+  if (!pixConfig.value?.key) return
+  const payload = generatePixPayload({
+    key: pixConfig.value.key,
+    beneficiary: pixConfig.value.beneficiary || props.tenant?.name,
+    city: pixConfig.value.city || 'SAO PAULO',
+    amount: isTestCentMode.value ? 0.01 : depositAmount.value,
+    txid: 'SINAL'
+  })
+  if (payload) {
+    bookingQrCodeDataUrl.value = await generatePixQrCodeDataUrl(payload)
+  }
+}
+
+async function toggleShowBookingQrCode() {
+  showBookingQrCode.value = !showBookingQrCode.value
+  if (showBookingQrCode.value) {
+    await updateBookingQrCode()
+  }
+}
 
 function copyPixKey() {
   if (!pixConfig.value?.key) return
@@ -561,8 +604,8 @@ function copyPixCode() {
     key: pixConfig.value.key,
     beneficiary: pixConfig.value.beneficiary || props.tenant?.name,
     city: pixConfig.value.city || 'SAO PAULO',
-    amount: effectiveDepositAmount.value,
-    txid: 'AGENDAMENTO'
+    amount: isTestCentMode.value ? 0.01 : depositAmount.value,
+    txid: 'SINAL'
   })
 
   if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -572,7 +615,7 @@ function copyPixCode() {
   }
 }
 
-// 7. Validação de Navegação
+// 7. Validações por Step
 function canGoToStep(step: number): boolean {
   if (step === 2) return selectedServices.value.length > 0
   if (step === 3) return selectedServices.value.length > 0
@@ -580,60 +623,61 @@ function canGoToStep(step: number): boolean {
   return true
 }
 
-const canAdvanceFromCurrentStep = computed(() => {
+const canAdvanceStep = computed(() => {
   if (currentStep.value === 1) return selectedServices.value.length > 0
   if (currentStep.value === 2) return true
   if (currentStep.value === 3) return !!selectedDate.value && !!selectedTime.value
-  return false
+  return true
 })
 
-const isStep4Valid = computed(() => {
-  return customerName.value.trim().length >= 2 && customerPhone.value.trim().length >= 10
-})
-
-function goToNextStep() {
-  if (canAdvanceFromCurrentStep.value && currentStep.value < 4) {
+function nextStep() {
+  if (canAdvanceStep.value && currentStep.value < 4) {
     currentStep.value++
   }
 }
 
-// 8. Despacho no WhatsApp
-function submitBooking() {
-  if (!isStep4Valid.value || !props.tenant) return
+const isBookingReady = computed(() => {
+  return (
+    selectedServices.value.length > 0 &&
+    !!selectedDate.value &&
+    !!selectedTime.value &&
+    customerName.value.trim().length >= 2 &&
+    customerPhone.value.replace(/\D/g, '').length >= 10
+  )
+})
+
+// 8. Despacho Estruturado no WhatsApp
+function confirmBooking() {
+  if (!isBookingReady.value) return
 
   const cleanPhone = (props.tenant.phoneWhatsApp || '').replace(/\D/g, '')
-  const phone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`
+  const targetPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`
 
   const lines: string[] = []
   lines.push(`💈 *NOVO AGENDAMENTO — ${props.tenant.name.toUpperCase()}*`)
   lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`📅 *DATA & HORÁRIO:*`)
-  lines.push(`• Data: ${selectedDate.value}`)
-  lines.push(`• Horário: ${selectedTime.value}`)
-  lines.push(`• Profissional: ${selectedProfessional.value ? selectedProfessional.value.name : 'Qualquer disponível'}`)
+  lines.push(`👤 *CLIENTE:* ${customerName.value}`)
+  lines.push(`📱 *WhatsApp:* ${customerPhone.value}`)
+  lines.push(`📅 *DATA & HORÁRIO:* ${selectedDate.value} às ${selectedTime.value}`)
+  lines.push(`✂️ *PROFISSIONAL:* ${selectedProfessional.value ? selectedProfessional.value.name : 'Qualquer Profissional'}`)
+  lines.push(`⏱️ *DURAÇÃO ESTIMADA:* ${totalDuration.value} min`)
   lines.push(``)
-  lines.push(`✂️ *SERVIÇOS SELECIONADOS:*`)
-  selectedServices.value.forEach(s => {
-    lines.push(`• ${s.name} (${s.durationMinutes} min) — ${formatCurrency(s.price)}`)
-  })
+  lines.push(`📋 *SERVIÇOS SELECIONADOS:*`)
+  for (const s of selectedServices.value) {
+    lines.push(`• ${s.name} (${formatCurrency(s.price)})`)
+  }
   lines.push(``)
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`⏱️ Duração Estimada: ${totalDuration.value} minutos`)
-  lines.push(`*VALOR TOTAL: ${formatCurrency(totalPrice.value)}*`)
+  lines.push(`💰 *VALOR TOTAL:* ${formatCurrency(totalPrice.value)}`)
 
   if (paymentMode.value === 'pix_deposit') {
     lines.push(`💠 *SINAL VIA PIX:* ${formatCurrency(isTestCentMode.value ? 0.01 : depositAmount.value)}`)
-    lines.push(`💳 *Restante no Local:* ${formatCurrency(totalPrice.value - depositAmount.value)}`)
   } else {
-    lines.push(`💳 *PAGAMENTO:* No local (Atendimento presencial)`)
+    lines.push(`💳 *PAGAMENTO:* No Local / Atendimento`)
   }
 
-  lines.push(`━━━━━━━━━━━━━━━━━━━━━`)
-  lines.push(`👤 *CLIENTE:* ${customerName.value.trim()}`)
-  lines.push(`📱 *WHATSAPP:* ${customerPhone.value.trim()}`)
-
   if (notes.value.trim()) {
-    lines.push(`💬 *OBS:* "${notes.value.trim()}"`)
+    lines.push(``)
+    lines.push(`📝 *Observações:* "${notes.value}"`)
   }
 
   if (paymentMode.value === 'pix_deposit' && pixConfig.value) {
@@ -641,20 +685,19 @@ function submitBooking() {
     lines.push(`📌 *Comprovante do Pix do sinal anexado nesta conversa para confirmação.*`)
   }
 
-  lines.push(``)
-  lines.push(`_Agendamento via Alaska Local_`)
+  const message = lines.join('\n')
+  const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`
 
-  const text = encodeURIComponent(lines.join('\n'))
-  const url = `https://wa.me/${phone}?text=${text}`
-
-  if (typeof window !== 'undefined') {
-    window.open(url, '_blank')
+  if (import.meta.client) {
+    window.open(whatsappUrl, '_blank')
+    emit('confirmed', {
+      services: selectedServices.value,
+      professional: selectedProfessional.value,
+      date: selectedDate.value,
+      time: selectedTime.value,
+      totalPrice: totalPrice.value
+    })
+    emit('close')
   }
 }
-
-onMounted(() => {
-  if (props.initialService) {
-    selectedServices.value = [props.initialService]
-  }
-})
 </script>

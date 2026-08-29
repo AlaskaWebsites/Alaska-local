@@ -327,9 +327,41 @@
                           @click="copyPixCode"
                           class="py-2 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-2xs"
                         >
-                          <QrCode class="w-3.5 h-3.5" aria-hidden="true" />
+                          <Copy class="w-3.5 h-3.5" aria-hidden="true" />
                           <span>{{ isPixCodeCopied ? 'Código Copiado!' : `Copia e Cola (${formatCurrency(effectivePixAmount)})` }}</span>
                         </button>
+                      </div>
+
+                      <!-- Botão Exibir / Gerar QR Code -->
+                      <button
+                        type="button"
+                        @click="toggleShowQrCode"
+                        class="w-full py-2 px-3 rounded-xl border border-emerald-300 bg-emerald-100/60 hover:bg-emerald-100 text-emerald-950 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 shadow-2xs"
+                      >
+                        <QrCode class="w-4 h-4 text-emerald-700" aria-hidden="true" />
+                        <span>{{ showQrCode ? '▲ Ocultar QR Code' : '📷 Gerar / Visualizar QR Code Pix' }}</span>
+                      </button>
+
+                      <!-- Bloco Visual do QR Code Renderizado -->
+                      <div
+                        v-if="showQrCode"
+                        class="p-3 bg-white rounded-xl border border-emerald-200 shadow-sm flex flex-col items-center justify-center space-y-2 animate-in fade-in zoom-in-95 duration-150"
+                      >
+                        <div class="p-2 bg-white rounded-lg border border-slate-100 flex items-center justify-center min-h-[180px] min-w-[180px]">
+                          <img
+                            v-if="qrCodeDataUrl"
+                            :src="qrCodeDataUrl"
+                            alt="QR Code Pix"
+                            class="w-44 h-44 object-contain"
+                          />
+                          <div v-else class="flex flex-col items-center justify-center text-slate-400 gap-1.5 text-xs py-8">
+                            <Loader2 class="w-6 h-6 animate-spin text-emerald-600" aria-hidden="true" />
+                            <span>Gerando QR Code...</span>
+                          </div>
+                        </div>
+                        <span class="text-[11px] text-slate-500 text-center font-medium">
+                          Abra o app do seu banco e aponte a câmera para escanear
+                        </span>
                       </div>
                     </div>
 
@@ -407,10 +439,10 @@ import { ref, computed, toRef, nextTick } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
-import { useCep } from '~/composables/useCep'
-import { formatCurrency, formatCep, sanitizeDigits } from '~/utils/formatters'
+import { useCep, formatCep, sanitizeDigits } from '~/composables/useCep'
+import { formatCurrency } from '~/utils/formatters'
 import { generateWhatsAppOrderUrl } from '~/utils/whatsapp'
-import { generatePixPayload, getTenantPixConfig } from '~/utils/pix'
+import { generatePixPayload, getTenantPixConfig, generatePixQrCodeDataUrl } from '~/utils/pix'
 import {
   X,
   Trash2,
@@ -482,6 +514,8 @@ const formAddress = computed(() => {
 const isTestCentMode = ref(false)
 const isPixKeyCopied = ref(false)
 const isPixCodeCopied = ref(false)
+const showQrCode = ref(false)
+const qrCodeDataUrl = ref('')
 
 const pixConfig = computed(() => getTenantPixConfig(props.tenant))
 
@@ -489,6 +523,27 @@ const effectivePixAmount = computed(() => {
   if (isTestCentMode.value) return 0.01
   return orderTotal.value
 })
+
+async function updateQrCode() {
+  if (!pixConfig.value?.key) return
+  const payload = generatePixPayload({
+    key: pixConfig.value.key,
+    beneficiary: pixConfig.value.beneficiary || props.tenant?.name,
+    city: pixConfig.value.city || 'SAO PAULO',
+    amount: effectivePixAmount.value,
+    txid: 'PEDIDO'
+  })
+  if (payload) {
+    qrCodeDataUrl.value = await generatePixQrCodeDataUrl(payload)
+  }
+}
+
+async function toggleShowQrCode() {
+  showQrCode.value = !showQrCode.value
+  if (showQrCode.value) {
+    await updateQrCode()
+  }
+}
 
 function copyPixKey() {
   if (!pixConfig.value?.key) return
@@ -541,91 +596,82 @@ const totalItemsCount = computed(() => {
 })
 
 // 6. Consulta de CEP (ViaCEP)
-const { isLoadingCep, cepError, lookupCep } = useCep()
+const { fetchAddress, isLoading: isLoadingCep, error: cepError } = useCep()
 const numberInputRef = ref<HTMLInputElement | null>(null)
 
-async function triggerCepSearch(rawCep?: string) {
-  const clean = sanitizeDigits(rawCep || '')
-  if (clean.length === 8) {
-    const address = await lookupCep(clean)
-    if (address) {
-      formAddress.value.street = address.street
-      formAddress.value.neighborhood = address.neighborhood
-      formAddress.value.cep = address.cep
+async function onCepInput(e: Event) {
+  const input = e.target as HTMLInputElement
+  formAddress.value.cep = formatCep(input.value)
 
+  const rawDigits = sanitizeDigits(input.value)
+  if (rawDigits.length === 8) {
+    const data = await fetchAddress(rawDigits)
+    if (data) {
+      formAddress.value.street = data.logradouro
+      formAddress.value.neighborhood = data.bairro
+      formAddress.value.city = data.localidade
       await nextTick()
-      if (numberInputRef.value) {
-        numberInputRef.value.focus()
-      }
+      numberInputRef.value?.focus()
     }
   }
 }
 
-function onCepInput(e: Event) {
-  const target = e.target as HTMLInputElement
-  const formatted = formatCep(target.value)
-  formAddress.value.cep = formatted
-
-  const clean = sanitizeDigits(formatted)
-  if (clean.length === 8) {
-    triggerCepSearch(clean)
-  }
-}
-
 function onCepBlur() {
-  if (formAddress.value.cep) {
-    triggerCepSearch(formAddress.value.cep)
+  const rawDigits = sanitizeDigits(formAddress.value.cep || '')
+  if (rawDigits.length > 0 && rawDigits.length < 8) {
+    cepError.value = 'CEP incompleto (deve ter 8 dígitos)'
   }
 }
 
-// 7. Cálculos de Totais
+// 7. Cálculos Financeiros
 const subtotal = computed(() => {
   return props.items.reduce((sum, item) => sum + getItemPrice(item), 0)
 })
 
 const deliveryFee = computed(() => {
-  if (form.value.deliveryType === 'takeaway' || (form.value.deliveryType as string) === 'pickup') return 0
-  return props.tenant?.deliveryFee || 0
+  if (form.value.deliveryType === 'delivery') {
+    return props.tenant.deliveryFee || 0
+  }
+  return 0
 })
 
 const orderTotal = computed(() => {
   return subtotal.value + deliveryFee.value
 })
 
-// 8. Validação do Formulário
 const isFormValid = computed(() => {
-  if (!form.value.customerName?.trim()) return false
   if (props.items.length === 0) return false
-
+  if (!form.value.customerName.trim()) return false
   if (form.value.deliveryType === 'delivery') {
     if (!formAddress.value.street?.trim()) return false
     if (!formAddress.value.number?.trim()) return false
     if (!formAddress.value.neighborhood?.trim()) return false
   }
-
   return true
 })
 
-// 9. Envio para o WhatsApp
+// 8. Despacho no WhatsApp
 function handleSendWhatsApp() {
-  if (!props.tenant || !isFormValid.value) return
+  if (!isFormValid.value) return
 
-  const cartState: any = {
+  const cartState = {
     items: props.items,
-    deliveryType: form.value.deliveryType === 'takeaway' ? 'pickup' : 'delivery',
-    deliveryFee: deliveryFee.value,
     customerName: form.value.customerName,
     customerPhone: form.value.customerPhone,
+    deliveryType: form.value.deliveryType,
     address: formAddress.value,
     paymentMethod: form.value.paymentMethod,
-    changeFor: form.value.changeFor ? parseFloat(form.value.changeFor) : null,
+    changeFor: form.value.changeFor,
     subtotal: subtotal.value,
-    total: isTestCentMode.value ? 0.01 : orderTotal.value
+    deliveryFee: deliveryFee.value,
+    total: orderTotal.value
   }
 
-  const url = generateWhatsAppOrderUrl(props.tenant, cartState)
-  if (typeof window !== 'undefined') {
+  const url = generateWhatsAppOrderUrl(props.tenant, cartState as any)
+  if (import.meta.client) {
     window.open(url, '_blank')
+    emit('clear-cart')
+    emit('close')
   }
 }
 
