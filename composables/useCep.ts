@@ -3,6 +3,9 @@ import { ref } from 'vue'
 import { ViaCepResponseSchema, type ViaCepResponse } from '~/types'
 import { sanitizeDigits, formatCep } from '~/utils/formatters'
 
+// Re-exporta utilitários para compatibilidade total com imports nomeados estáticos
+export { formatCep, sanitizeDigits }
+
 export interface ParsedAddress {
   cep: string
   street: string
@@ -40,7 +43,7 @@ export async function fetchAddressByCep(rawCep: string): Promise<ParsedAddress |
   try {
     const response = await $fetch<unknown>(`https://viacep.com.br/ws/${clean}/json/`, {
       retry: 1,
-      timeout: 6000,
+      timeout: 6000
     })
 
     const parsed = ViaCepResponseSchema.parse(response)
@@ -56,7 +59,7 @@ export async function fetchAddressByCep(rawCep: string): Promise<ParsedAddress |
       neighborhood: parsed.bairro || '',
       city: parsed.localidade || '',
       state: parsed.uf || '',
-      raw: parsed,
+      raw: parsed
     }
   } catch (e) {
     console.error('Erro ao consultar ViaCEP:', e)
@@ -68,11 +71,11 @@ export async function fetchAddressByCep(rawCep: string): Promise<ParsedAddress |
  * Composable Reativo para consulta de CEP com estado de loading e mensagens de erro
  */
 export function useCep() {
-  const isLoadingCep = ref(false)
-  const cepError = ref<string | null>(null)
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
 
-  async function lookupCep(rawCep: string): Promise<ParsedAddress | null> {
-    cepError.value = null
+  async function fetchAddress(rawCep: string): Promise<ParsedAddress | null> {
+    error.value = null
     const clean = sanitizeCep(rawCep)
 
     if (!clean) {
@@ -80,34 +83,42 @@ export function useCep() {
     }
 
     if (!isValidCep(clean)) {
-      cepError.value = 'CEP inválido. Digite 8 números.'
+      error.value = 'CEP inválido. Digite 8 números.'
       return null
     }
 
-    isLoadingCep.value = true
+    isLoading.value = true
 
     try {
       const address = await fetchAddressByCep(clean)
       if (!address) {
-        cepError.value = 'CEP não encontrado.'
+        error.value = 'CEP não encontrado.'
         return null
       }
       return address
     } catch (e) {
-      cepError.value = 'Erro ao buscar CEP. Preencha manualmente.'
+      error.value = 'Erro ao buscar CEP. Preencha manualmente.'
       return null
     } finally {
-      isLoadingCep.value = false
+      isLoading.value = false
     }
   }
 
+  // Aliases para máxima compatibilidade entre componentes
+  const isLoadingCep = isLoading
+  const cepError = error
+  const lookupCep = fetchAddress
+
   return {
+    isLoading,
+    error,
     isLoadingCep,
     cepError,
+    fetchAddress,
     lookupCep,
     sanitizeCep,
     isValidCep,
     formatCep,
-    fetchAddressByCep,
+    fetchAddressByCep
   }
 }
