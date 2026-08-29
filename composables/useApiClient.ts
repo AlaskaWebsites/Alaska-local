@@ -29,6 +29,52 @@ export interface PixBrCodeResponse {
   }
 }
 
+export interface CreateOrderInput {
+  tenantSlug: string
+  customerName: string
+  customerPhone: string
+  deliveryType: 'delivery' | 'pickup'
+  address?: {
+    street: string
+    number: string
+    neighborhood: string
+    cep?: string
+    city?: string
+    state?: string
+    complement?: string
+    reference?: string
+  }
+  items: Array<{
+    productId: string
+    productName: string
+    quantity: number
+    unitPriceCents: number
+    options?: Array<{ id: string; name: string; priceCents: number }>
+    observation?: string
+  }>
+  paymentMethod: 'Pix' | 'Cartão de Crédito' | 'Cartão de Débito' | 'Dinheiro'
+  changeForCents?: number
+  isTestCent?: boolean
+}
+
+export interface CreateBookingInput {
+  tenantId: string
+  customerName: string
+  customerPhone: string
+  services: Array<{
+    id: string
+    name: string
+    priceCents: number
+    durationMinutes: number
+  }>
+  professionalId?: string
+  professionalName?: string
+  date: string
+  time: string
+  notes?: string
+  paymentMode?: 'on_service' | 'pix_deposit' | 'pix_full'
+}
+
 /**
  * Cliente HTTP tipado e resiliente para comunicação com o Alaska Local Backend NestJS.
  */
@@ -93,11 +139,37 @@ export function useApiClient() {
     }
   }
 
+  async function createOrder(input: CreateOrderInput): Promise<{ success: boolean; data?: unknown } | null> {
+    try {
+      return await $fetch<{ success: boolean; data: unknown }>(`${baseUrl}/orders`, {
+        method: 'POST',
+        body: input,
+        timeout: 5000
+      })
+    } catch {
+      return null
+    }
+  }
+
+  async function createBooking(input: CreateBookingInput): Promise<{ success: boolean; data?: unknown } | null> {
+    try {
+      return await $fetch<{ success: boolean; data: unknown }>(`${baseUrl}/bookings`, {
+        method: 'POST',
+        body: input,
+        timeout: 5000
+      })
+    } catch {
+      return null
+    }
+  }
+
   return {
     baseUrl,
     checkHealth,
     fetchTenantBySlug,
     resolveTenantByDomain,
-    generatePixBrCode
+    generatePixBrCode,
+    createOrder,
+    createBooking
   }
 }
