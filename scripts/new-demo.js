@@ -1,7 +1,7 @@
 // scripts/new-demo.js
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -31,8 +31,8 @@ const templateMap = {
   burger: 'hamburgueria-x.json',
   adega: 'adega-prime.json',
   drinks: 'adega-prime.json',
-  pizza: 'pizzaria-napolitana.json',
-  pizzaria: 'pizzaria-napolitana.json',
+  pizza: 'restaurante-bella-italia.json',
+  pizzaria: 'restaurante-bella-italia.json',
   hub: 'barbearia-style.json',
   barber: 'barbearia-style.json',
   barbearia: 'barbearia-style.json',
@@ -46,8 +46,8 @@ const templatePath = path.join(rootDir, 'data', templateFile)
 const newPath = path.join(rootDir, 'data', `${slug}.json`)
 
 if (fs.existsSync(newPath)) {
-  console.log(`⚠️ A demo "${slug}.json" já existe em data/!`)
-  process.exit(0)
+  console.log(`❌ Já existe uma demonstração com o slug "${slug}" em data/${slug}.json`)
+  process.exit(1)
 }
 
 if (!fs.existsSync(templatePath)) {
@@ -59,6 +59,11 @@ const templateData = JSON.parse(fs.readFileSync(templatePath, 'utf-8'))
 templateData.slug = slug
 templateData.name = name
 templateData.phoneWhatsApp = phone.replace(/\D/g, '')
+if (templateData.pixConfig) {
+  templateData.pixConfig.key = '7e3ed5e6-6097-4b15-88a3-221caba64141'
+  templateData.pixConfig.keyType = 'random'
+  templateData.pixConfig.beneficiary = name
+}
 
 fs.writeFileSync(newPath, JSON.stringify(templateData, null, 2), 'utf-8')
 console.log(`✅ Nova demo (${vertical.toUpperCase()}) criada com sucesso: data/${slug}.json`)
