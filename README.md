@@ -1,118 +1,107 @@
-# 🏔️ Alaska Local — Vitrines Digitais & Cardápios Mobile-First
+# 🏔️ Alaska Local — Vitrines Digitais & Catálogos Mobile-First
 
-> **Vitrines digitais de alta conversão, agendamentos online e checkout estruturado direto no WhatsApp para comércios locais e profissionais liberais.**  
-> **One Codebase, Infinite Domains • 0% de Comissões • Padrão iFood & Dark Modern**
+> Solução digital de alta performance para estabelecimentos locais (alimentação, adegas, boutiques, semijoias, barbearias e clínicas). Desenvolvido com **Nuxt 3**, **Vue 3**, **Tailwind CSS**, **Zod** e integração híbrida API-First com o backend **NestJS 11**.
 
----
-
-## 📱 Visão Geral do Projeto
-
-O **Alaska Local** é uma plataforma *B2B Local* desenvolvida em **Nuxt 3, Vue 3 e Tailwind CSS**, projetada para resolver a principal dor do pequeno e médio varejo: **vender pelo WhatsApp sem a fricção e as taxas abusivas dos marketplaces (iFood cobra até 27%) e sem a lentidão dos e-commerces tradicionais**.
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           ECOSSISTEMA ALASKA LOCAL                          │
-├──────────────────────────────────────┬──────────────────────────────────────┤
-│ 🍔 ALASKA MENU                       │ 🛍️ ALASKA SHOP                       │
-│ Food service, pizzarias, adegas 24h, │ Boutiques de moda, semijoias,        │
-│ hamburguerias e delivery de comida.  │ calçados, cosméticos e acessórios.   │
-├──────────────────────────────────────┼──────────────────────────────────────┤
-│ 💈 ALASKA HUB                        │ ⚖️ ALASKA PRO                        │
-│ Barbearias, salões de beleza,        │ Clínicas odontológicas, médicos,     │
-│ estúdios de estética e tatuagem.     │ psicólogos e profissionais liberais. │
-└──────────────────────────────────────┴──────────────────────────────────────┘
-```
+[![Nuxt 3](https://img.shields.io/badge/Nuxt-3.17.6-00DC82?logo=nuxt.js)](https://nuxt.com/)
+[![Vue 3](https://img.shields.io/badge/Vue-3.5.13-4FC08D?logo=vue.js)](https://vuejs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.17-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-4.1.11-6E9F18?logo=vitest)](https://vitest.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.2-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
-## ✨ Principais Funcionalidades & Micro-UX
+## 🎯 Visão Geral & 4 Verticais Canônicas
 
-1. **One Codebase, Infinite Domains:**
-   - Uma única aplicação serve centenas de lojas através de rotas dinâmicas (`/[slug]`), subdomínios (`[slug].alaska.app`) e domínios próprios (`www.cliente.com.br`) resolvidos via middleware.
-2. **Busca em Tempo Real Zero Latência (`useProductSearch`):**
-   - Filtragem instantânea client-side com normalização Unicode NFD (pesquisar `"acai"` encontra `"Açaí"`).
-3. **Autopreenchimento de Endereço via CEP (`useCep`):**
-   - Integração com a API do ViaCEP com máscara em tempo real e foco automático no campo de número.
-4. **Horários Noturnos & Badges Dinâmicos (`useOpeningHours`):**
-   - Tratamento de turnos que viram a meia-noite (ex: 18h às 3h) com status dinâmico (*"Aberto até às 03:00"*, *"Fechado • Abre hoje às 18:00"*).
-5. **Módulo de Agendamentos & Venda Híbrida (`BookingModal` & `useBookingSlots`):**
-   - Slot picker de 30/45/60 min para barbearias e clínicas, escolha de profissionais e sinal via Pix.
-6. **Pagamentos Pix no Estágio 1 (`utils/pix.ts`):**
-   - Geração de BR Code EMV oficial do Banco Central com CRC-16 CCITT, chave com botão Copiar, e **modo teste com Pix de R$ 0,01**.
-7. **Prova Social no Padrão iFood (`StoreReviewsModal`):**
-   - Score de 1 a 5 estrelas, distribuição percentual em barras e avaliações com tags de itens elogiados.
-8. **Resiliência Visual (`utils/images.ts`):**
-   - Fallback gracioso com Data URI SVG em memória gerado na paleta de cores do tema da loja (zero CLS).
-9. **Acessibilidade W3C/WCAG 2.1 AA:**
-   - Trava de rolagem (`useBodyScrollLock`), atalho universal `Escape`, semântica de landmarks (`<main>`, `<header>`) e suporte a leitores de tela.
+O **Alaska Local** é uma plataforma *One Codebase, Infinite Domains* projetada para transformar o atendimento de pequenos e médios comércios em uma experiência moderna, sem taxas por pedido e com fechamento direto no WhatsApp.
+
+* 🍔 **Alaska Menu**: Food service, hamburguerias, pizzarias, adegas 24h, espetarias e confeitarias.
+* 🛍️ **Alaska Shop**: Boutiques de moda feminina, semijoias finas, calçados e cosméticos com sacola inteligente.
+* 💈 **Alaska Hub**: Barbearias, salões de beleza e estúdios com agendamento de horários e venda de produtos upsell.
+* ⚖️ **Alaska Pro**: Clínicas médicas, odontologia, psicólogos e advogados com agendamento de consultas e avaliações.
 
 ---
 
-## 🚀 Como Executar o Projeto Localmente
+## ✨ Funcionalidades Principais
 
-### Pré-requisitos
-- Node.js 18+ (recomendado Node 20+)
-- npm ou pnpm
+* **📱 Mobile-First & PWA-Ready**: Interface fluida, rápida e responsiva otimizada para smartphones.
+* **🔍 Busca em Tempo Real (Zero Latência)**: Composable `useProductSearch` com normalização Unicode, ignorando acentos e cedilhas.
+* **📍 Autopreenchimento de CEP (ViaCEP)**: Validação Zod, preenchimento automático de logradouro/bairro e máscara dinâmica.
+* **💠 Pagamento Instantâneo Pix D+0**:
+  * Geração do **BR Code EMV oficial** do Banco Central com checksum **CRC-16 CCITT**.
+  * Geração visual de **QR Code** no client-side em Base64 Data URL.
+  * Botões de um clique: **Copiar Chave** e **Copia e Cola**.
+  * **🧪 Modo de Teste de 1 Centavo (R$ 0,01)** para validação real de recebimento bancário.
+* **📅 Agendamento de Serviços (`useBookingSlots`)**: Seleção de procedimentos, profissional, carrossel de 30 dias e horários livres com sinal opcional via Pix.
+* **⭐ Prova Social Estilo iFood**: Sistema de avaliações em 5 níveis de serviço, distribuição de notas e selos de confiança.
+* **📳 Feedback Tátil (`useHaptic`)**: Vibração suave ao adicionar itens na sacola via Vibration API.
+* **♿ Acessibilidade W3C / WCAG**: Modais semânticos (`role="dialog"`, `aria-modal="true"`, `useBodyScrollLock` e suporte à tecla `Escape`).
 
-### Instalação & Execução
+---
+
+## 🏛️ Lojas de Demonstração Disponíveis
+
+| Slug | Nome | Vertical | Tema Visual |
+| :--- | :--- | :--- | :--- |
+| `/adega-prime` | Adega & Distribuidora Prime | Alaska Menu | Amber (Dourado/Âmbar) |
+| `/hamburgueria-x` | Hamburgueria X Artesanal | Alaska Menu | Food (Vermelho) |
+| `/espetaria-brasa` | Espetaria & Jantinha Brasa Nobre | Alaska Menu | Food (Vermelho) |
+| `/cafe-central` | Café Central & Bistrô | Alaska Menu | Food (Vermelho) |
+| `/restaurante-bella-italia` | Restaurante Bella Italia | Alaska Menu | Food (Vermelho) |
+| `/bella-donna` | Bella Donna Boutique | Alaska Shop | Drinks (Púrpura/Rosa) |
+| `/karine-finardi` | Karine Finardi Semijoias | Alaska Shop | Barber/Rose (Dourado) |
+| `/barbearia-style` | Barbearia Style | Alaska Hub | Barber (Âmbar/Dark) |
+| `/clinica-sorriso` | Clínica Sorriso Odontologia | Alaska Pro | Health (Azul/Teal) |
+
+---
+
+## 🛠️ Tecnologias & Arquitetura
+
+* **Framework**: Nuxt 3 (SSR + Nitro Engine)
+* **Linguagem**: TypeScript 5.8 (Strict Mode)
+* **Estilização**: Tailwind CSS 3.4 com paletas dinâmicas por vertical
+* **Validação de Dados**: Zod 3.24 (Schemas canônicos em `types/`)
+* **Ícones**: Lucide Vue Next
+* **Gerador de QR Code**: `qrcode` (PNG Base64)
+* **Testes**: Vitest 4.1 (22 suítes, 163 testes automatizados)
+
+---
+
+## 🚀 Como Executar Localmente
+
+### 1. Pré-requisitos
+* Node.js 20+ ou 22+
+* npm ou pnpm
+
+### 2. Instalação das Dependências
 ```bash
-# 1. Instalar dependências
+git clone https://github.com/AlaskaWebsites/Alaska-local.git
+cd Alaska-local
 npm install
+```
 
-# 2. Iniciar servidor de desenvolvimento Nuxt 3
+### 3. Configuração de Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto (opcional para rodar com fallback JSON local ou integrado ao backend):
+```env
+# URL da API NestJS (Opcional - se vazio, utiliza os catálogos data/*.json)
+NUXT_PUBLIC_API_BASE_URL=http://localhost:3333/api/v1
+```
+
+### 4. Executando em Desenvolvimento
+```bash
 npm run dev
-
-# Acesse a vitrine central em: http://localhost:3000
-# Acesse lojas de exemplo:
-# • http://localhost:3000/hamburgueria-x (Alaska Menu)
-# • http://localhost:3000/karine-finardi (Alaska Shop - Semijoias)
-# • http://localhost:3000/barbearia-style (Alaska Hub - Barbearia)
-# • http://localhost:3000/clinica-sorriso (Alaska Pro - Clínica)
-# • http://localhost:3000/adega-prime (Alaska Menu - Adega 24h)
 ```
+Acesse no navegador:
+* Showcase geral: `http://localhost:3000`
+* Demonstração direta: `http://localhost:3000/adega-prime`
 
----
-
-## 🧪 Testes Unitários & Engenharia de Qualidade
-
-O projeto possui **160 testes unitários automatizados** rodando via **Vitest** cobrindo 100% dos fluxos de negócio:
-
+### 5. Executando os Testes Automatizados (Vitest)
 ```bash
-# Executar toda a suíte de testes unitários
 npm run test
-
-# Executar em modo interativo (Watch)
-npm run test:watch
 ```
+*Suíte com 22 arquivos de teste e 163 testes unitários com 100% de aprovação.*
 
 ---
 
-## ⚡ CLI de Demonstrações Comerciais (Show, Don't Tell)
-
-Gere a vitrine digital completa de um novo cliente em menos de 10 segundos:
-
-```bash
-# Uso: node scripts/new-demo.js <slug> "<Nome do Negócio>" "<WhatsApp>" [vertical]
-# Verticais: shop, menu, hub, pro, adega, pizza
-
-# Exemplo 1: Loja de Semijoias
-node scripts/new-demo.js joias-luxo "Joias de Luxo" "11987654321" shop
-
-# Exemplo 2: Barbearia
-node scripts/new-demo.js navalha-de-ouro "Barbearia Navalha de Ouro" "11977778888" hub
-```
-
----
-
-## 📚 Documentação Técnica & Arquitetural
-
-A documentação detalhada está organizada na pasta [`docs/`](./docs/README.md):
-
-* **[Índice Geral de Documentação](./docs/README.md)**
-* **[Registros de Decisões de Arquitetura (ADRs 001 a 012)](./docs/adrs/)**
-* **[Guias de Design System & Temas](./docs/architecture/design-system-e-temas.md)**
-* **[Padrões de Acessibilidade & Micro-UX](./docs/architecture/padroes-de-acessibilidade-e-ux.md)**
-* **[Estratégia de Testes Vitest](./docs/architecture/estrategia-de-testes-e-qualidade.md)**
-* **[Plano de Negócios & Precificação](./docs/commercial/PLANO_DE_NEGOCIO.md)**
-* **[Pitch de Vendas & Scripts WhatsApp](./docs/commercial/PITCH_E_SCRIPTS.md)**
-* **[Roadmap de Evolução](./docs/architecture/roadmap.md)**
+## 📜 Licença
+Distribuído sob licença MIT. Desenvolvido pela equipe **Alaska Websites**.
