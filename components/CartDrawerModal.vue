@@ -308,7 +308,7 @@
                     <!-- Bloco de Chave e Copia e Cola -->
                     <div class="bg-white rounded-xl p-3 border border-emerald-200/90 space-y-2.5">
                       <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-500 font-medium">Chave Pix ({{ pixConfig?.keyType || 'Telefone' }}):</span>
+                        <span class="text-slate-500 font-medium">Chave Pix ({{ formatKeyTypeLabel(pixConfig?.keyType) }}):</span>
                         <span class="font-mono font-bold text-slate-800 select-all">{{ pixConfig?.key }}</span>
                       </div>
 
@@ -516,6 +516,16 @@ const isPixKeyCopied = ref(false)
 const isPixCodeCopied = ref(false)
 const showQrCode = ref(false)
 const qrCodeDataUrl = ref('')
+
+function formatKeyTypeLabel(type?: string): string {
+  if (!type) return 'Aleatória'
+  if (type === 'random') return 'Aleatória'
+  if (type === 'phone') return 'Celular'
+  if (type === 'cpf') return 'CPF'
+  if (type === 'cnpj') return 'CNPJ'
+  if (type === 'email') return 'E-mail'
+  return type
+}
 
 const pixConfig = computed(() => getTenantPixConfig(props.tenant))
 

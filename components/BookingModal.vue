@@ -328,7 +328,7 @@
 
                 <div class="bg-white rounded-xl p-2.5 border border-emerald-200/90 space-y-2">
                   <div class="flex items-center justify-between text-xs">
-                    <span class="text-slate-500 font-medium">Chave ({{ pixConfig?.keyType || 'Telefone' }}):</span>
+                    <span class="text-slate-500 font-medium">Chave ({{ formatKeyTypeLabel(pixConfig?.keyType) }}):</span>
                     <span class="font-mono font-bold text-slate-800 select-all">{{ pixConfig?.key }}</span>
                   </div>
 
@@ -519,6 +519,19 @@ const availableProfessionals = computed<BookingProfessional[]>(() => {
 const selectedServices = ref<BookingService[]>([])
 const selectedProfessional = ref<BookingProfessional | null>(null)
 
+function formatKeyTypeLabel(type?: string): string {
+  if (!type) return 'Aleatória'
+  if (type === 'random') return 'Aleatória'
+  if (type === 'phone') return 'Celular'
+  if (type === 'cpf') return 'CPF'
+  if (type === 'cnpj') return 'CNPJ'
+  if (type === 'email') return 'E-mail'
+  return type
+}
+
+const pixConfig = computed(() => getTenantPixConfig(props.tenant))
+const depositPercentage = computed(() => pixConfig.value?.depositPercentage || 30)
+
 watch(() => props.isOpen, (open) => {
   if (open) {
     if (props.initialService) {
@@ -596,9 +609,6 @@ const isPixKeyCopied = ref(false)
 const isPixCodeCopied = ref(false)
 const showBookingQrCode = ref(false)
 const bookingQrCodeDataUrl = ref('')
-
-const pixConfig = computed(() => getTenantPixConfig(props.tenant))
-const depositPercentage = computed(() => pixConfig.value?.depositPercentage || 30)
 
 const depositAmount = computed(() => {
   return (totalPrice.value * depositPercentage.value) / 100
