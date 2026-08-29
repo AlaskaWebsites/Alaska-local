@@ -275,28 +275,27 @@
               <textarea
                 v-model="notes"
                 rows="2"
-                placeholder="Alguma observação especial? (opcional)"
+                placeholder="Alguma observação ou preferência? (Opcional)"
                 class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium focus:bg-white focus:outline-none transition-all resize-none"
                 :class="themeClasses.focusRing"
               ></textarea>
             </div>
 
-            <!-- Opções de Pagamento / Sinal via Pix -->
-            <div class="space-y-3 pt-2 border-t border-slate-200">
-              <label class="text-xs font-bold text-slate-700 block">Opção de Pagamento:</label>
-
+            <!-- Modalidades de Pagamento -->
+            <div class="space-y-2 pt-2 border-t border-slate-200">
+              <label class="text-xs font-bold text-slate-700 block">Opção de Pagamento & Reserva:</label>
               <div class="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   @click="paymentMode = 'on_service'"
                   :class="[
-                    'p-3 rounded-2xl border text-left transition-all cursor-pointer',
+                    'p-3 rounded-xl border text-xs font-bold transition-all text-left space-y-0.5 cursor-pointer',
                     paymentMode === 'on_service'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-2xs'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   ]"
                 >
-                  <span class="font-bold text-xs block">Pagar no Local</span>
+                  <span class="block">📍 Pagar no Local</span>
                   <span class="text-[10px] text-slate-500 font-normal block">Cartão, Dinheiro ou Pix</span>
                 </button>
 
@@ -304,14 +303,14 @@
                   type="button"
                   @click="paymentMode = 'pix_deposit'"
                   :class="[
-                    'p-3 rounded-2xl border text-left transition-all cursor-pointer',
+                    'p-3 rounded-xl border text-xs font-bold transition-all text-left space-y-0.5 cursor-pointer',
                     paymentMode === 'pix_deposit'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-2xs'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-800 shadow-2xs'
                       : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                   ]"
                 >
-                  <span class="font-bold text-xs block">Sinal via Pix</span>
-                  <span class="text-[10px] text-emerald-700 font-semibold block">Garantir Horário ({{ depositPercentage }}%)</span>
+                  <span class="block">💠 Garantir com Sinal</span>
+                  <span class="text-[10px] text-emerald-700 font-semibold block">Sinal de {{ depositPercentage }}% via Pix</span>
                 </button>
               </div>
 
@@ -393,34 +392,31 @@
                     v-model="isTestCentMode"
                     class="rounded border-emerald-400 text-emerald-600 focus:ring-emerald-500 h-3.5 w-3.5 cursor-pointer"
                   />
-                  <span class="text-[11px] font-semibold">🧪 Testar Sinal com R$ 0,01</span>
+                  <span class="text-[11px] font-semibold">🧪 Testar Sinal com R$ 0,01 (Modo de Teste)</span>
                 </label>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 4. Footer Fixo com Botões de Navegação -->
-        <div class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+        <!-- 4. Footer com Ações e Navegação -->
+        <div class="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
           <button
             v-if="currentStep > 1"
             type="button"
             @click="currentStep--"
-            class="px-4 py-2.5 rounded-2xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-100 transition-colors cursor-pointer"
+            class="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
           >
             Voltar
           </button>
-
-          <div v-else class="text-xs font-semibold text-slate-500">
-            Passo 1 de 4
-          </div>
+          <div v-else></div>
 
           <button
             v-if="currentStep < 4"
             type="button"
-            @click="nextStep"
-            :disabled="!canAdvanceStep"
-            class="px-6 py-2.5 rounded-2xl font-bold text-xs text-white shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="goToNextStep"
+            :disabled="!canAdvanceFromCurrentStep"
+            class="px-6 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :class="themeClasses.buttonPrimary"
           >
             Avançar
@@ -429,9 +425,9 @@
           <button
             v-else
             type="button"
-            @click="confirmBooking"
-            :disabled="!isBookingReady"
-            class="px-6 py-2.5 rounded-2xl font-bold text-xs text-white shadow-md flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="submitBooking"
+            :disabled="!isStep4Valid"
+            class="px-6 py-2.5 rounded-xl text-xs font-bold text-white transition-all shadow-md active:scale-95 flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             :class="themeClasses.buttonPrimary"
           >
             <Send class="w-3.5 h-3.5" aria-hidden="true" />
@@ -444,56 +440,60 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, toRef } from 'vue'
-import { useTenantTheme } from '~/composables/useTenantTheme'
+import { ref, computed, toRef, watch, nextTick } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
-import { useBookingSlots } from '~/composables/useBookingSlots'
+import { useTenantTheme } from '~/composables/useTenantTheme'
 import { formatCurrency } from '~/utils/formatters'
 import { generatePixPayload, getTenantPixConfig, generatePixQrCodeDataUrl } from '~/utils/pix'
 import {
-  Calendar,
   X,
+  Calendar,
   ChevronRight,
   Check,
   Send,
   Copy,
-  Loader2,
-  QrCode
+  QrCode,
+  Loader2
 } from 'lucide-vue-next'
-import type {
-  Tenant,
-  BookingService,
-  BookingProfessional
-} from '~/types'
+import type { Tenant, BookingService, BookingProfessional } from '~/types'
 
-const props = defineProps<{
-  tenant: Tenant
-  isOpen: boolean
-}>()
+defineOptions({
+  inheritAttrs: false
+})
+
+const props = withDefaults(
+  defineProps<{
+    tenant: Tenant
+    isOpen: boolean
+    initialService?: BookingService | null
+  }>(),
+  {
+    initialService: null
+  }
+)
 
 const emit = defineEmits<{
   (e: 'close'): void
   (e: 'confirmed', payload: unknown): void
 }>()
 
-// 1. Tema e Trava de Rolagem
+// 1. Tema Dinâmico & Trava de Scroll
 const { themeClasses } = useTenantTheme(toRef(props, 'tenant'))
 useBodyScrollLock(toRef(props, 'isOpen'))
 
 // 2. Estado de Navegação dos Steps
 const currentStep = ref(1)
 
-// 3. Catálogo de Serviços e Profissionais do Tenant
+// 3. Catálogo de Serviços
 const availableServices = computed<BookingService[]>(() => {
-  const t = props.tenant as any
-  if (t.services && Array.isArray(t.services) && t.services.length > 0) {
-    return t.services
+  const list: BookingService[] = []
+  if (props.tenant.services && Array.isArray(props.tenant.services) && props.tenant.services.length > 0) {
+    return props.tenant.services
   }
-  if (t.categories && Array.isArray(t.categories)) {
-    const list: BookingService[] = []
-    for (const c of t.categories) {
-      if (c.products && Array.isArray(c.products)) {
-        for (const p of c.products) {
+  if (props.tenant.categories && Array.isArray(props.tenant.categories)) {
+    props.tenant.categories.forEach((cat) => {
+      if (cat.products && Array.isArray(cat.products)) {
+        cat.products.forEach((p) => {
           list.push({
             id: p.id,
             name: p.name,
@@ -501,18 +501,16 @@ const availableServices = computed<BookingService[]>(() => {
             price: p.price || 0,
             durationMinutes: p.durationMinutes || (props.tenant.businessCategory === 'pro' ? 45 : 30)
           })
-        }
+        })
       }
-    }
-    return list
+    })
   }
-  return []
+  return list
 })
 
 const availableProfessionals = computed<BookingProfessional[]>(() => {
-  const t = props.tenant as any
-  if (t.professionals && Array.isArray(t.professionals)) {
-    return t.professionals
+  if (props.tenant.professionals && Array.isArray(props.tenant.professionals)) {
+    return props.tenant.professionals
   }
   return []
 })
@@ -521,10 +519,23 @@ const availableProfessionals = computed<BookingProfessional[]>(() => {
 const selectedServices = ref<BookingService[]>([])
 const selectedProfessional = ref<BookingProfessional | null>(null)
 
+watch(() => props.isOpen, (open) => {
+  if (open) {
+    if (props.initialService) {
+      selectedServices.value = [props.initialService]
+      currentStep.value = 2
+    }
+  } else {
+    currentStep.value = 1
+    selectedServices.value = []
+    selectedProfessional.value = null
+  }
+})
+
 function toggleService(service: BookingService) {
-  const idx = selectedServices.value.findIndex(s => s.id === service.id)
-  if (idx >= 0) {
-    selectedServices.value.splice(idx, 1)
+  const index = selectedServices.value.findIndex(s => s.id === service.id)
+  if (index >= 0) {
+    selectedServices.value.splice(index, 1)
   } else {
     selectedServices.value.push(service)
   }
@@ -535,22 +546,47 @@ function isServiceSelected(serviceId: string): boolean {
 }
 
 const totalDuration = computed(() => {
-  return selectedServices.value.reduce((sum, s) => sum + (s.durationMinutes || 30), 0)
+  return selectedServices.value.reduce((acc, s) => acc + (s.durationMinutes || 30), 0)
 })
 
 const totalPrice = computed(() => {
-  return selectedServices.value.reduce((sum, s) => sum + (s.price || 0), 0)
+  return selectedServices.value.reduce((acc, s) => acc + (s.price || 0), 0)
 })
 
-// 5. Motor de Horários e Datas via useBookingSlots
-const {
-  bookingDays,
-  selectedDate,
-  selectedTime,
-  availableSlots
-} = useBookingSlots(toRef(props, 'tenant'), totalDuration)
+// 5. Horários & Datas
+const selectedDate = ref('')
+const selectedTime = ref('')
 
-// 6. Estado de Identificação e Pagamento Pix
+const bookingDays = computed(() => {
+  const days = []
+  const today = new Date()
+  const weekDays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
+  const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+
+  for (let i = 0; i < 30; i++) {
+    const d = new Date()
+    d.setDate(today.getDate() + i)
+    const dateStr = d.toISOString().split('T')[0]
+    days.push({
+      date: dateStr,
+      dayOfWeek: weekDays[d.getDay()],
+      dayNumber: d.getDate(),
+      monthName: months[d.getMonth()]
+    })
+  }
+  return days
+})
+
+const availableSlots = computed(() => {
+  return [
+    { time: '09:00' }, { time: '09:30' }, { time: '10:00' }, { time: '10:30' },
+    { time: '11:00' }, { time: '11:30' }, { time: '13:00' }, { time: '13:30' },
+    { time: '14:00' }, { time: '14:30' }, { time: '15:00' }, { time: '15:30' },
+    { time: '16:00' }, { time: '16:30' }, { time: '17:00' }, { time: '17:30' }
+  ]
+})
+
+// 6. Dados do Cliente & Pagamento
 const customerName = ref('')
 const customerPhone = ref('')
 const notes = ref('')
@@ -615,28 +651,21 @@ function copyPixCode() {
   }
 }
 
-// 7. Validações por Step
-function canGoToStep(step: number): boolean {
-  if (step === 2) return selectedServices.value.length > 0
-  if (step === 3) return selectedServices.value.length > 0
-  if (step === 4) return selectedServices.value.length > 0 && !!selectedDate.value && !!selectedTime.value
-  return true
-}
-
-const canAdvanceStep = computed(() => {
+// 7. Navegação
+const canAdvanceFromCurrentStep = computed(() => {
   if (currentStep.value === 1) return selectedServices.value.length > 0
   if (currentStep.value === 2) return true
   if (currentStep.value === 3) return !!selectedDate.value && !!selectedTime.value
   return true
 })
 
-function nextStep() {
-  if (canAdvanceStep.value && currentStep.value < 4) {
+function goToNextStep() {
+  if (canAdvanceFromCurrentStep.value && currentStep.value < 4) {
     currentStep.value++
   }
 }
 
-const isBookingReady = computed(() => {
+const isStep4Valid = computed(() => {
   return (
     selectedServices.value.length > 0 &&
     !!selectedDate.value &&
@@ -646,9 +675,9 @@ const isBookingReady = computed(() => {
   )
 })
 
-// 8. Despacho Estruturado no WhatsApp
-function confirmBooking() {
-  if (!isBookingReady.value) return
+// 8. Confirmação
+function submitBooking() {
+  if (!isStep4Valid.value || !props.tenant) return
 
   const cleanPhone = (props.tenant.phoneWhatsApp || '').replace(/\D/g, '')
   const targetPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`
@@ -678,11 +707,6 @@ function confirmBooking() {
   if (notes.value.trim()) {
     lines.push(``)
     lines.push(`📝 *Observações:* "${notes.value}"`)
-  }
-
-  if (paymentMode.value === 'pix_deposit' && pixConfig.value) {
-    lines.push(``)
-    lines.push(`📌 *Comprovante do Pix do sinal anexado nesta conversa para confirmação.*`)
   }
 
   const message = lines.join('\n')
