@@ -113,7 +113,7 @@ export async function generatePixQrCodeDataUrl(payload: string): Promise<string>
   try {
     return await QRCode.toDataURL(payload, {
       margin: 1,
-      width: 320,
+      width: 300,
       errorCorrectionLevel: 'M',
       color: {
         dark: '#0f172a',
@@ -126,34 +126,37 @@ export async function generatePixQrCodeDataUrl(payload: string): Promise<string>
 }
 
 /**
- * Extrai a configuração de Pix do tenant (seja por objeto `pix` ou campos legados planos).
+ * Extrai a configuração de Pix do tenant (suporta objeto `pixConfig`, `pix` ou campos legados).
  */
 export function getTenantPixConfig(tenant?: Partial<Tenant> | null): PixConfig | null {
   if (!tenant) return null
 
-  if (tenant.pix && tenant.pix.key) {
+  // 1. Objeto pixConfig (Padrão Canônico do TenantSchema) ou pix
+  const pix = (tenant as any).pixConfig || (tenant as any).pix
+  if (pix && pix.key) {
     return {
-      key: tenant.pix.key,
-      keyType: tenant.pix.keyType || 'phone',
-      beneficiary: tenant.pix.beneficiary || tenant.name,
-      city: tenant.pix.city || 'SAO PAULO',
-      allowTestCent: tenant.pix.allowTestCent ?? true,
-      depositPercentage: tenant.pix.depositPercentage ?? 30
+      key: pix.key,
+      keyType: pix.keyType || 'random',
+      beneficiary: pix.beneficiary || tenant.name || 'Alaska Local',
+      city: pix.city || 'SAO PAULO',
+      allowTestCent: pix.allowTestCent ?? true,
+      depositPercentage: pix.depositPercentage ?? 30
     }
   }
 
-  if (tenant.pixKey) {
+  // 2. Campos planos legados
+  if ((tenant as any).pixKey) {
     return {
-      key: tenant.pixKey,
-      keyType: tenant.pixKeyType || 'phone',
-      beneficiary: tenant.pixBeneficiary || tenant.name,
-      city: tenant.pixCity || 'SAO PAULO',
+      key: (tenant as any).pixKey,
+      keyType: (tenant as any).pixKeyType || 'random',
+      beneficiary: (tenant as any).pixBeneficiary || tenant.name || 'Alaska Local',
+      city: (tenant as any).pixCity || 'SAO PAULO',
       allowTestCent: true,
       depositPercentage: 30
     }
   }
 
-  // Fallback: se não configurado explicitamente, usa o WhatsApp do tenant como chave de telefone
+  // 3. Fallback: se não configurado explicitamente, usa o WhatsApp do tenant como chave de telefone
   if (tenant.phoneWhatsApp) {
     return {
       key: tenant.phoneWhatsApp.replace(/\D/g, ''),

@@ -28,7 +28,7 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
   describe('generatePixPayload', () => {
     it('deve gerar payload BR Code completo para valor normal', () => {
       const payload = generatePixPayload({
-        key: '11999998888',
+        key: '7e3ed5e6-6097-4b15-88a3-221caba64141',
         beneficiary: 'Karine Finardi',
         city: 'SAO PAULO',
         amount: 89.90,
@@ -37,7 +37,7 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
 
       expect(payload).toContain('000201')
       expect(payload).toContain('br.gov.bcb.pix')
-      expect(payload).toContain('11999998888')
+      expect(payload).toContain('7e3ed5e6-6097-4b15-88a3-221caba64141')
       expect(payload).toContain('540589.90')
       expect(payload).toContain('5802BR')
       expect(payload).toContain('Karine Finardi')
@@ -47,7 +47,7 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
 
     it('deve suportar geração de Pix de 1 centavo (R$ 0,01) para modo de teste', () => {
       const payload = generatePixPayload({
-        key: '11999998888',
+        key: '7e3ed5e6-6097-4b15-88a3-221caba64141',
         beneficiary: 'Alaska Local',
         city: 'SAO PAULO',
         amount: 0.01,
@@ -62,7 +62,7 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
   describe('generatePixQrCodeDataUrl', () => {
     it('deve gerar imagem QR Code em Data URL a partir do payload Pix', async () => {
       const payload = generatePixPayload({
-        key: '11988887777',
+        key: '7e3ed5e6-6097-4b15-88a3-221caba64141',
         beneficiary: 'Adega Prime',
         city: 'SAO PAULO',
         amount: 50.00
@@ -75,13 +75,13 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
   })
 
   describe('getTenantPixConfig', () => {
-    it('deve extrair configuração de objeto pix explícito no tenant', () => {
+    it('deve extrair configuração de objeto pixConfig explícito no tenant', () => {
       const tenant: Partial<Tenant> = {
         slug: 'loja-teste',
         name: 'Loja Teste',
-        pix: {
-          key: '11987654321',
-          keyType: 'phone',
+        pixConfig: {
+          key: '7e3ed5e6-6097-4b15-88a3-221caba64141',
+          keyType: 'random',
           beneficiary: 'Loja Teste ME',
           city: 'SAO PAULO',
           allowTestCent: true,
@@ -91,7 +91,8 @@ describe('Unit: Utilitário de Geração de Pix e BR Code EMV (utils/pix.ts)', (
 
       const config = getTenantPixConfig(tenant)
       expect(config).not.toBeNull()
-      expect(config?.key).toBe('11987654321')
+      expect(config?.key).toBe('7e3ed5e6-6097-4b15-88a3-221caba64141')
+      expect(config?.keyType).toBe('random')
       expect(config?.beneficiary).toBe('Loja Teste ME')
       expect(config?.depositPercentage).toBe(50)
     })
