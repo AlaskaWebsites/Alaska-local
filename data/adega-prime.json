@@ -25,8 +25,8 @@
     "close": "03:00"
   },
   "pixConfig": {
-    "key": "11988889999",
-    "keyType": "phone",
+    "key": "7e3ed5e6-6097-4b15-88a3-221caba64141",
+    "keyType": "random",
     "beneficiary": "Adega & Distribuidora Prime",
     "city": "SAO PAULO",
     "allowTestCent": true,

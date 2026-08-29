@@ -7,72 +7,87 @@
   "phoneWhatsApp": "11966665555",
   "address": "Rua da Saúde, 321 - Centro",
   "currency": "R$",
-  "deliveryFee": 0,
-  "minOrderValue": 0,
-  "template": "pro",
+  "deliveryFee": 0.0,
+  "minOrderValue": 0.0,
+  "theme": "pro",
   "businessCategory": "pro",
-  "theme": "health",
+  "category": "Odontologia & Saúde Integrada",
+  "distance": "1,1 km",
+  "priceRange": "$$$",
+  "paymentMethods": [
+    "Pix",
+    "Cartão de Crédito",
+    "Cartão de Débito",
+    "Dinheiro"
+  ],
   "openingHours": {
     "open": "08:00",
-    "close": "18:00"
+    "close": "19:00"
   },
-  "categories": [
+  "pixConfig": {
+    "key": "7e3ed5e6-6097-4b15-88a3-221caba64141",
+    "keyType": "random",
+    "beneficiary": "Clínica Sorriso Odontologia",
+    "city": "SAO PAULO",
+    "allowTestCent": true,
+    "depositPercentage": 30
+  },
+  "professionals": [
     {
-      "id": "consultas-avaliacoes",
-      "name": "Consultas & Avaliações",
-      "icon": "stethoscope",
-      "products": [
-        {
-          "id": "avaliacao-geral",
-          "name": "Avaliação Clínica Geral + Check-up Digital",
-          "description": "Exame visual minucioso, mapeamento da saúde gengival, diagnóstico e plano de tratamento personalizado.",
-          "price": 100.0,
-          "image": "https://images.unsplash.com/photo-1629909615184-74f495363b67?w=600&h=600&fit=crop&q=80",
-          "available": true,
-          "optionGroups": [
-            {
-              "id": "periodo-preferencial",
-              "title": "Período de Preferência",
-              "required": true,
-              "min": 1,
-              "max": 1,
-              "options": [
-                { "id": "manha", "name": "Manhã (08h às 12h)", "price": 0, "maxQuantity": 1 },
-                { "id": "tarde", "name": "Tarde (13h às 18h)", "price": 0, "maxQuantity": 1 }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "limpeza-completa",
-          "name": "Limpeza Completa (Profilaxia + Remoção de Tártaro)",
-          "description": "Remoção ultrassônica de tártaro e placa bacteriana, polimento dental com pasta profilática e aplicação de flúor.",
-          "price": 150.0,
-          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&h=600&fit=crop&q=80",
-          "available": true
-        }
-      ]
+      "id": "prof-dra-camila",
+      "name": "Dra. Camila Nogueira (CRO 123456)",
+      "role": "Especialista em Estética Dental e Clareamento",
+      "avatar": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&q=80"
     },
     {
-      "id": "estetica-dental",
+      "id": "prof-dr-rodrigo",
+      "name": "Dr. Rodrigo Santos (CRO 654321)",
+      "role": "Implantodontia e Reabilitação Oral",
+      "avatar": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150&h=150&fit=crop&q=80"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-estetica-dental",
       "name": "Estética & Clareamento",
       "icon": "sparkles",
       "products": [
         {
-          "id": "clareamento-caseiro",
-          "name": "Clareamento Dental Caseiro Supervisionado",
-          "description": "Confecção de moldeiras personalizadas de silicone + 4 seringas de gel clareador de alta eficiência.",
+          "id": "prod-clareamento-laser",
+          "name": "Clareamento Dental em Consultório (Sessão)",
+          "description": "Clareamento a laser de alta potência com gel protetor gengival e resultado visível na primeira sessão.",
           "price": 450.0,
-          "image": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&h=600&fit=crop&q=80",
-          "available": true
+          "durationMinutes": 60,
+          "image": "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
         },
         {
-          "id": "restauracao-estetica",
-          "name": "Restauração Estética em Resina",
-          "description": "Reconstrução anatômica de dentes fraturados ou substituição de restaurações escuras por resina com cor natural.",
+          "id": "prod-limpeza-completa",
+          "name": "Profilaxia Completa & Remoção de Tártaro",
+          "description": "Limpeza profunda com ultrassom, jato de bicarbonato e aplicação tópica de flúor.",
           "price": 180.0,
-          "image": "https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&h=600&fit=crop&q=80",
-          "available": true
+          "durationMinutes": 45,
+          "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
+        }
+      ]
+    },
+    {
+      "id": "cat-avaliacoes-clinicas",
+      "name": "Avaliações & Procedimentos",
+      "icon": "check-circle",
+      "products": [
+        {
+          "id": "prod-avaliacao-estetica",
+          "name": "Avaliação Inicial & Planejamento 3D",
+          "description": "Consulta completa com diagnóstico digital, fotos intraorais e plano de tratamento personalizado.",
+          "price": 120.0,
+          "durationMinutes": 45,
+          "image": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=500&h=350&fit=crop&q=80",
+          "available": true,
+          "optionGroups": []
         }
       ]
     }
@@ -85,36 +100,40 @@
       "experienceLabel": "Atendimento humanizado",
       "description": "Com base nos atendimentos dos últimos 3 meses, a clínica oferece odontologia moderna com profissionais qualificados.",
       "badges": [
-        { "icon": "star", "label": "Profissionais atenciosos", "status": "success" },
-        { "icon": "chat-alert", "label": "Ambiente esterilizado", "status": "success" },
-        { "icon": "check-doc", "label": "Tratamentos indolores", "status": "success" }
+        {
+          "icon": "star",
+          "label": "Profissionais atenciosos",
+          "status": "success"
+        },
+        {
+          "icon": "chat-alert",
+          "label": "Ambiente esterilizado",
+          "status": "success"
+        },
+        {
+          "icon": "check-doc",
+          "label": "Tratamentos indolores",
+          "status": "success"
+        }
       ]
     },
-    "distribution": { "5": 86, "4": 10, "3": 3, "2": 1, "1": 0 },
+    "distribution": {
+      "5": 86,
+      "4": 10,
+      "3": 3,
+      "2": 1,
+      "1": 0
+    },
     "comments": [
       {
         "id": "rev-1",
         "author": "Patrícia Mendes",
         "rating": 5,
         "date": "Há 2 dias",
-        "comment": "Limpeza completa super profissional! Raspagem ultrassônica delicada, sem dor nenhuma. O doutor explicou tudo com calma e o ambiente é impecável.",
-        "itemsOrdered": ["1x Limpeza Completa (Profilaxia + Remoção de Tártaro)"]
-      },
-      {
-        "id": "rev-2",
-        "author": "João Alberto",
-        "rating": 5,
-        "date": "Há 1 semana",
-        "comment": "Clareamento caseiro supervisionado excelente! As moldeiras ficaram perfeitas e o acompanhamento semanal foi muito atencioso. Resultado visível após 2 semanas.",
-        "itemsOrdered": ["1x Clareamento Dental Caseiro Supervisionado"]
-      },
-      {
-        "id": "rev-3",
-        "author": "Carla Dias",
-        "rating": 4,
-        "date": "Há 2 semanas",
-        "comment": "Restauração estética ficou incrível, nem parece que foi feita! Cor exata do dente natural. Só a espera foi um pouco longa no dia, mas o resultado compensou.",
-        "itemsOrdered": ["1x Restauração Estética em Resina"]
+        "comment": "Limpeza completa super profissional! Raspagem ultrassônica delicada, sem dor nenhuma.",
+        "itemsOrdered": [
+          "1x Limpeza Completa"
+        ]
       }
     ]
   }

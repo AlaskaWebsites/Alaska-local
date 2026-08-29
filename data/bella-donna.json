@@ -25,6 +25,14 @@
     "open": "09:00",
     "close": "19:00"
   },
+  "pixConfig": {
+    "key": "7e3ed5e6-6097-4b15-88a3-221caba64141",
+    "keyType": "random",
+    "beneficiary": "Bella Donna Boutique",
+    "city": "FRANCISCO MORATO",
+    "allowTestCent": true,
+    "depositPercentage": 30
+  },
   "categories": [
     {
       "id": "conjuntos-alfaiataria",
@@ -46,10 +54,30 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "tam-p", "name": "Tamanho P (Veste 36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "tam-m", "name": "Tamanho M (Veste 40)", "price": 0, "maxQuantity": 1 },
-                { "id": "tam-g", "name": "Tamanho G (Veste 42/44)", "price": 0, "maxQuantity": 1 },
-                { "id": "tam-gg", "name": "Tamanho GG (Veste 46)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "tam-p",
+                  "name": "Tamanho P (Veste 36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tam-m",
+                  "name": "Tamanho M (Veste 40)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tam-g",
+                  "name": "Tamanho G (Veste 42/44)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tam-gg",
+                  "name": "Tamanho GG (Veste 46)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             },
             {
@@ -59,10 +87,30 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "cor-terracota", "name": "Terracota Queimado", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-nude", "name": "Nude Areia Elegance", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-preto", "name": "Preto Clássico", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-verde-oliva", "name": "Verde Oliva", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "cor-terracota",
+                  "name": "Terracota Queimado",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-nude",
+                  "name": "Nude Areia Elegance",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-preto",
+                  "name": "Preto Clássico",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-verde-oliva",
+                  "name": "Verde Oliva",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -82,9 +130,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "sb-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "sb-m", "name": "M (40)", "price": 0, "maxQuantity": 1 },
-                { "id": "sb-g", "name": "G (42/44)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "sb-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "sb-m",
+                  "name": "M (40)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "sb-g",
+                  "name": "G (42/44)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             },
             {
@@ -94,9 +157,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "c-fucsia", "name": "Rosa Fúcsia Vibrante", "price": 0, "maxQuantity": 1 },
-                { "id": "c-offwhite", "name": "Off-White Puro", "price": 0, "maxQuantity": 1 },
-                { "id": "c-azul", "name": "Azul Serenity", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "c-fucsia",
+                  "name": "Rosa Fúcsia Vibrante",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "c-offwhite",
+                  "name": "Off-White Puro",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "c-azul",
+                  "name": "Azul Serenity",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -116,10 +194,30 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "cp-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "cp-m", "name": "M (40)", "price": 0, "maxQuantity": 1 },
-                { "id": "cp-g", "name": "G (42)", "price": 0, "maxQuantity": 1 },
-                { "id": "cp-gg", "name": "GG (44/46)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "cp-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cp-m",
+                  "name": "M (40)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cp-g",
+                  "name": "G (42)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cp-gg",
+                  "name": "GG (44/46)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -146,9 +244,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "vm-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "vm-m", "name": "M (40/42)", "price": 0, "maxQuantity": 1 },
-                { "id": "vm-g", "name": "G (44/46)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "vm-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "vm-m",
+                  "name": "M (40/42)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "vm-g",
+                  "name": "G (44/46)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             },
             {
@@ -158,9 +271,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "est-floral", "name": "Floral Botânico Fundo Preto", "price": 0, "maxQuantity": 1 },
-                { "id": "est-terracota", "name": "Terracota Liso", "price": 0, "maxQuantity": 1 },
-                { "id": "est-poa", "name": "Poá Clássico P&B", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "est-floral",
+                  "name": "Floral Botânico Fundo Preto",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "est-terracota",
+                  "name": "Terracota Liso",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "est-poa",
+                  "name": "Poá Clássico P&B",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -180,9 +308,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "vl-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "vl-m", "name": "M (40/42)", "price": 0, "maxQuantity": 1 },
-                { "id": "vl-g", "name": "G (44/46)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "vl-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "vl-m",
+                  "name": "M (40/42)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "vl-g",
+                  "name": "G (44/46)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -218,10 +361,30 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "cs-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "cs-m", "name": "M (40)", "price": 0, "maxQuantity": 1 },
-                { "id": "cs-g", "name": "G (42/44)", "price": 0, "maxQuantity": 1 },
-                { "id": "cs-gg", "name": "GG (46)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "cs-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cs-m",
+                  "name": "M (40)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cs-g",
+                  "name": "G (42/44)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cs-gg",
+                  "name": "GG (46)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             },
             {
@@ -231,9 +394,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "cor-champagne", "name": "Champanhe Acetinado", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-branco", "name": "Branco Perolado", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-azul-noite", "name": "Azul Marinho Noite", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "cor-champagne",
+                  "name": "Champanhe Acetinado",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-branco",
+                  "name": "Branco Perolado",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-azul-noite",
+                  "name": "Azul Marinho Noite",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -278,9 +456,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "sp-nude", "name": "Nude Dourado", "price": 0, "maxQuantity": 1 },
-                { "id": "sp-preto", "name": "Preto Noite", "price": 0, "maxQuantity": 1 },
-                { "id": "sp-verde", "name": "Verde Esmeralda", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "sp-nude",
+                  "name": "Nude Dourado",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "sp-preto",
+                  "name": "Preto Noite",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "sp-verde",
+                  "name": "Verde Esmeralda",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
@@ -316,9 +509,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "tt-p", "name": "P (36/38)", "price": 0, "maxQuantity": 1 },
-                { "id": "tt-m", "name": "M (40/42)", "price": 0, "maxQuantity": 1 },
-                { "id": "tt-g", "name": "G (44)", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "tt-p",
+                  "name": "P (36/38)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tt-m",
+                  "name": "M (40/42)",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "tt-g",
+                  "name": "G (44)",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             },
             {
@@ -328,9 +536,24 @@
               "min": 1,
               "max": 1,
               "options": [
-                { "id": "cor-preto-gala", "name": "Preto Gala", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-marsala", "name": "Vinho Marsala", "price": 0, "maxQuantity": 1 },
-                { "id": "cor-royal", "name": "Azul Royal", "price": 0, "maxQuantity": 1 }
+                {
+                  "id": "cor-preto-gala",
+                  "name": "Preto Gala",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-marsala",
+                  "name": "Vinho Marsala",
+                  "price": 0,
+                  "maxQuantity": 1
+                },
+                {
+                  "id": "cor-royal",
+                  "name": "Azul Royal",
+                  "price": 0,
+                  "maxQuantity": 1
+                }
               ]
             }
           ]
