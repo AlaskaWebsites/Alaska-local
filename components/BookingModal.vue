@@ -443,6 +443,7 @@
 import { ref, computed, toRef, watch, nextTick } from 'vue'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
+import { useApiClient } from '~/composables/useApiClient'
 import { formatCurrency } from '~/utils/formatters'
 import { generatePixPayload, getTenantPixConfig, generatePixQrCodeDataUrl } from '~/utils/pix'
 import {
@@ -699,6 +700,28 @@ function submitBooking() {
 
   const cleanPhone = (props.tenant.phoneWhatsApp || '').replace(/\D/g, '')
   const targetPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`
+
+  // Sincronização assíncrona não-bloqueante no backend NestJS/PostgreSQL
+  try {
+    const { createBooking } = useApiClient()
+    createBooking({
+      tenantId: props.tenant.id || `ten-${props.tenant.slug}`,
+      customerName: customerName.value,
+      customerPhone: customerPhone.value,
+      services: selectedServices.value.map(s => ({
+        id: s.id,
+        name: s.name,
+        priceCents: Math.round(s.price * 100),
+        durationMinutes: s.durationMinutes || 30
+      })),
+      professionalId: selectedProfessional.value?.id,
+      professionalName: selectedProfessional.value?.name,
+      date: selectedDate.value,
+      time: selectedTime.value,
+      notes: notes.value.trim() || undefined,
+      paymentMode: paymentMode.value
+    }).catch(() => {})
+  } catch {}
 
   const lines: string[] = []
   lines.push(`💈 *NOVO AGENDAMENTO — ${props.tenant.name.toUpperCase()}*`)

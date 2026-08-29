@@ -440,6 +440,7 @@ import { useLocalStorage } from '@vueuse/core'
 import { useBodyScrollLock } from '~/composables/useBodyScrollLock'
 import { useTenantTheme } from '~/composables/useTenantTheme'
 import { useCep } from '~/composables/useCep'
+import { useApiClient } from '~/composables/useApiClient'
 import { formatCurrency, formatCep, sanitizeDigits } from '~/utils/formatters'
 import { generateWhatsAppOrderUrl } from '~/utils/whatsapp'
 import { generatePixPayload, getTenantPixConfig, generatePixQrCodeDataUrl } from '~/utils/pix'
@@ -676,6 +677,32 @@ function handleSendWhatsApp() {
     deliveryFee: deliveryFee.value,
     total: orderTotal.value
   }
+
+  // Sincronização assíncrona não-bloqueante no backend NestJS/PostgreSQL
+  try {
+    const { createOrder } = useApiClient()
+    createOrder({
+      tenantSlug: props.tenant.slug,
+      customerName: form.value.customerName,
+      customerPhone: form.value.customerPhone,
+      deliveryType: form.value.deliveryType === 'takeaway' ? 'pickup' : (form.value.deliveryType as 'delivery' | 'pickup'),
+      address: form.value.deliveryType === 'delivery' ? formAddress.value : undefined,
+      items: props.items.map(item => ({
+        productId: item.product?.id || 'prod',
+        productName: item.product?.name || 'Produto',
+        quantity: item.quantity || 1,
+        unitPriceCents: Math.round((item.product?.price || 0) * 100),
+        options: getCartItemOptions(item).map(o => ({
+          id: o.id,
+          name: o.name,
+          priceCents: Math.round((o.price || 0) * 100)
+        })),
+        observation: getCartItemNotes(item) || undefined
+      })),
+      paymentMethod: form.value.paymentMethod as any,
+      isTestCent: isTestCentMode.value
+    }).catch(() => {})
+  } catch {}
 
   const url = generateWhatsAppOrderUrl(props.tenant, cartState as any)
   if (import.meta.client) {
