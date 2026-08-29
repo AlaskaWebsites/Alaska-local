@@ -669,6 +669,14 @@ const canAdvanceFromCurrentStep = computed(() => {
   return true
 })
 
+function canGoToStep(targetStep: number): boolean {
+  if (targetStep <= 1) return true
+  if (targetStep === 2) return selectedServices.value.length > 0
+  if (targetStep === 3) return selectedServices.value.length > 0
+  if (targetStep === 4) return selectedServices.value.length > 0 && !!selectedDate.value && !!selectedTime.value
+  return false
+}
+
 function goToNextStep() {
   if (canAdvanceFromCurrentStep.value && currentStep.value < 4) {
     currentStep.value++
